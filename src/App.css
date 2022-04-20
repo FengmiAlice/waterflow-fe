@@ -1,0 +1,99 @@
+/* @import '~antd/dist/antd.css'; */
+
+.App {
+  text-align: center;
+}
+.App-header {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+}
+.App-link {
+  color: rgb(112, 76, 182);
+}
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+.logoPic{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.logo-img{
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-float infinite 3s ease-in-out;
+  }
+}
+@keyframes App-logo-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+/* 侧边栏菜单
+ */
+ .c-PageLayout-index {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+.appMainWrap {
+  height: 100%;
+  flex: 1;
+  position: relative;
+  padding-top: 50px;
+}
+ 
+.appMain {
+  height: 100%;
+  overflow: auto;
+  padding: 15px;
+}
+ /* .c-PageLayout-sideBar {
+  height: 100%;
+  overflow: auto;
+} */
+.c-PageLayout-sideBar ::-webkit-scrollbar {
+  display: none;
+}
+.sideBarLayout {
+  min-height: 100%;
+  background-color: #001529;
+  user-select: none;
+}
+.v-signIn-index .title,  .v-signUp-index .title{
+  font-size: 18px;
+  text-align: center;
+  padding:50px 0 ;
+  letter-spacing: 1px;
+}
+.v-signIn-index .formWrap, .v-signUp-index .formWrap {
+  width: 350px;
+  margin: 0 auto;
+}
+.formWrap .moreWrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.formWrap .loginBtn {
+  width: 100%;
+  border-radius: 10px;
+}
+.formWrap .registerBtn{
+  width:100%;
+  border-radius: 10px;
+  margin:10px 0;
+}
