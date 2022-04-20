@@ -1,15 +1,17 @@
 
-import request from '../utils/request'
+import  Service  from '../utils/request'
 export function doSignIn(data){
-    return request({
-        url:'/login',
+    // const params = new URLSearchParams()
+    // params.append('page',config.page);
+    return Service({
+        url:'/proxy/login',
         method:'post',
         data
     })
 }
 export function doSignUp(data){
-    return request({
-        url:'/signUp',
+    return Service({
+        url:'/proxy/signUp',
         method:'post',
         data
     })

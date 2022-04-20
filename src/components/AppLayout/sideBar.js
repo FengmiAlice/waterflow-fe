@@ -67,18 +67,21 @@ function SideBar () {
             return ( <MenuUnfoldOutlined  onClick={ ()=>setCollapsed(!collapsed) } /> )
         }
     }
+
     return(
         <div  className="c-PageLayout-sideBar">
             <Layout  className="sideBarLayout">
                 <Sider trigger={null} collapsible collapsed={collapsed}   
                     width={200} className="site-layout-background" >
-                   
+                     
                     <div className="logoPic"> <img src={logo} className="logo-img" alt="logo" /></div>
                     <Menu  theme="dark" mode="inline"  style={{height:'100%', borderRight:0}}  >
                         {menuList}
                     </Menu>
                 </Sider>
+                
                 {renderButton() }  
+                <Link to="/signIn">跳转到登录页</Link>
             </Layout>  
                                 
         </div>         

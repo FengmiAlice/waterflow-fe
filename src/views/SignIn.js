@@ -5,17 +5,23 @@ import logo from '../logo.svg';
 import '../App.css'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { doSignIn } from '../api/login';
+import store from '../store'
 function SignIn(){
     // form实例
     const [form] = Form.useForm();
+    const { userStore } = store;
     const navigate = useNavigate()
      function handleLogin(){
-        form.validateFields().then(async (values) => {
+        form.validateFields().then( (values) => {
             console.log(values)
             // 调用登陆Api，获取结果
             let params = {username:values.username,password:values.password};
-            let res = await doSignIn(params);
-            console.log(res)
+             doSignIn(params).then((res)=>{
+                console.log(res)
+             });
+           
+            const ticket = ''
+            userStore.setTicket(ticket)
             // dispatch( setToken("111") );
             // 跳转到主页页面
             navigate('/');
@@ -51,7 +57,7 @@ function SignIn(){
                         <Form.Item name="remember" valuePropName="checked" noStyle>
                             <Checkbox>Remember me</Checkbox>
                         </Form.Item>
-                        <a className="login-form-forgot" href="#">忘记密码</a>
+                      
                         </div>
                     </Form.Item>
                     <Form.Item  >
