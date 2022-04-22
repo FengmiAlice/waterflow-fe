@@ -5,10 +5,10 @@
 
  const proxyConfig = {
    '/proxy': {
-     target: 'http://waterflow-cloud.cn/',
-     changeOrigin: true,
-     secure: false,
-     pathRewrite: { '^/proxy': '' }
+     target: 'http://waterflow-cloud.cn/',//设定目标服务器的 host
+     changeOrigin: true,//是否将主机标头的来源更改为目标URL
+     secure: false,//是否验证SSL证书
+     pathRewrite: { '^/proxy': '' }//将客户端请求路径转化为目标服务器地址
    },
  }
  

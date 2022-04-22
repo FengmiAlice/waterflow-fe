@@ -1,19 +1,9 @@
-// import React from 'react';
-// import logo from './logo.svg';
-// import { Counter } from './features/counter/Counter';
-// import RouterWaiter from 'react-router-waiter'
 import './App.css';
-import { useRoutes }  from 'react-router-dom'
 import  {routes}  from './router'
-
-
+import { useRoutes } from 'react-router-dom';
 export default function App(){
-  return  useRoutes(routes);
-  // return(
-  //   <RouterWaiter
-  //   routes={routes}
-  //   onRouteBefore={onRouteBefore}
-  // />
-  // )
+      const elements = useRoutes(routes)
+     return elements;
+
 }
 

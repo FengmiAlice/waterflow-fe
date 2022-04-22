@@ -1,27 +1,18 @@
 /**
  * @Description: 用户模块
- * @Author: Neo
- * @Date: 2021-12-21
- * @LastEditTime: 2021-12-27
- * @LastEditors: Neo
+
  */
 import { makeAutoObservable } from 'mobx'
 
-// interface UserInfoType {
-//   [propName: string]: any;
-// }
-
 export default class User {
-  ticket = ''
-  userInfo = {}
-
+  token = '';
+  userInfo={};
   constructor () {
     /**
      * state
      */
-    this.ticket = window.localStorage.getItem('ticket') || '' // 登录ticket
+    this.token =  window.localStorage.getItem('token')|| '' ;// 登录token
     this.userInfo = {} // 用户信息
-
     makeAutoObservable(this)
   }
 
@@ -30,18 +21,26 @@ export default class User {
    */
   // 是否已登录
   get isLogin () {
-    return !!this.ticket
+    return !!this.token;
   }
-
- 
-
+ // 是否已获取到userInfo
+ get isGotUserInfo () {
+  return this.userInfo.userId !== undefined
+}
   /**
    * action
    */
-  setTicket (val) {
-    this.ticket = val || ''
-    window.localStorage.setItem('ticket', this.ticket)
+  // 设置token
+  setToken (val) {
+    this.token = val || ''
+    window.localStorage.setItem('token', this.token)
   }
 
-
+  // 清空token
+  removeToken(){
+    window.localStorage['token'] = ''
+  }
+  async setUserInfo (userInfo) {
+    this.userInfo = userInfo || {}
+  }
 }

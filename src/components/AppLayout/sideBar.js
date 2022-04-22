@@ -18,16 +18,15 @@ function SideBar () {
     // 左侧菜单渲染
     function getMenuList() {
         const getLists = (routeList=[], prePath = '') => {
-            console.log(routeList)
-            
+            // console.log(routeList)
             let menuList = [];
             // 遍历路由
             routeList.forEach((v) => {
-                console.log(v)
+                // console.log(v)
                 v.meta = v.meta || {}
                 // 排除没有权限访问的路由
                 if (v.redirect || v.path === '*' || v.meta.hideMenu) {
-                    console.log("is hide.")
+                    // console.log("is hide.")
                     return;
                 }
                 if (v.path !== undefined) {
@@ -52,7 +51,7 @@ function SideBar () {
                     console.log("path is undefined")
                 }
             })
-            console.log(menuList)
+            // console.log(menuList)
             return menuList;
         }
         return getLists(routes);

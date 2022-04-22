@@ -1,5 +1,5 @@
 import React from 'react';
-import store from '../store/index'
+// import store from '../store'
 import { UserOutlined,HomeOutlined} from '@ant-design/icons';
 import SignIn from '../views/SignIn';
 import SignUp from '../views/SignUp';
@@ -10,12 +10,15 @@ import TestOne from '../views/TestOne';
 import TestTwo from '../views/TestTwo';
 import AppLayout from '../components/AppLayout';
 const routes = [
-   /*
-        noLogin:true,//当前路由访问是否需要重新登录
-        hideMenu: true,//是否在侧边栏隐藏当前路由
-   */
-    // {path:'/',
-    //     redirect:'/user'
+   /**
+    * @param {string} title // 路由页面标题，以及侧边栏菜单中的标题
+    * @param {element} icon // 侧边栏该路由菜单显示的图标
+    * @param {boolean} noLogin // 路由页面是否需要登录访问
+    * @param {boolean} hideMenu // 是否在侧边栏中隐藏该路由菜单
+    */
+    // {
+    //     path: '/',
+    //     redirect: '/signIn',
     // },
     {
         path:'/',
@@ -23,7 +26,6 @@ const routes = [
         meta:{
             title:"首页",
             icon: <HomeOutlined />,
-            noLogin:true,
         },
         children:[
            {
@@ -50,7 +52,6 @@ const routes = [
         meta:{
             title:"测试页",
             icon: <HomeOutlined />,
-            noLogin:true,
         },
         children:[
            {
@@ -93,33 +94,37 @@ const routes = [
         path: '*',
         meta: {
           title: '404',
-          noLogin: true,
+          noLogin:true,
           hideMenu: true,
         },
         element: <Page404 />,
     },
-
 ]
-const onRouteBefore = ({ pathname, meta }) => {
-    const { userStore } = store
-  
-    // 动态修改页面title
-    if (meta.title !== undefined) {
-      document.title = meta.title
-    }
-  
-    // 登录及权限判断
-    console.log(meta.noLogin)
-    if (!meta.noLogin) { // 路由是否需要登录
-      
-      if (userStore.isLogin) { // 用户是否已登录
-  
-      } else {
-        return `/signIn?redirectUrl=${encodeURIComponent(window.location.href)}`
-      }
-    }
-  }
+/**
+ * Description:全局路由拦截：控制路由配置的element属性
+ * pathname:当前路由路径
+ * meta:当前路由自定义meta属性
+ */
+// const onRouteBefore = ({ pathname, meta }) =>{
+//     console.log(pathname)
+//     console.log(meta)
+//     meta = meta || {}
+//     const { userStore } = store;
+//     // 动态修改页面title
+//     if (meta.title !== undefined) {
+//       document.title = meta.title
+//     }
+//     //判断未登录
+//     if (!meta.noLogin && userStore.isLogin) {// 路由是否需要登录
+//      console.log(11111)
+     
+//     }else{
+//         console.log(22222)
+//         return `/signIn?redirectUrl=${encodeURIComponent(window.location.href)}`
+//     }
+// }
+
 export {
     routes,
-    onRouteBefore,
+    // onRouteBefore,
 }

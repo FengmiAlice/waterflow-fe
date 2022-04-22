@@ -18,13 +18,13 @@ function SignIn(){
             let params = {username:values.username,password:values.password};
              doSignIn(params).then((res)=>{
                 console.log(res)
+                if(res.code === 0){
+                    const resToken = res.token;
+                    userStore.setToken(resToken)
+                    // 跳转到主页页面
+                    navigate('/');
+                }
              });
-           
-            const ticket = ''
-            userStore.setTicket(ticket)
-            // dispatch( setToken("111") );
-            // 跳转到主页页面
-            navigate('/');
         })
     }
     return(
