@@ -9,7 +9,7 @@ function SignUp(){
     const navigate = useNavigate();
     function handleSubmit(){
         form.validateFields().then(async (values) => {
-            console.log(values)
+            // console.log(values)
             // 调用登陆Api，获取结果
             let params = {
                 username:values.username,
@@ -20,7 +20,7 @@ function SignUp(){
             };
             let res = await doSignUp(params);
             console.log(res)
-            // dispatch( setToken("111") );
+          
             // 跳转到主页页面
             navigate('/signIn');
         })

@@ -1,4 +1,6 @@
     import axios from 'axios';  
+    import store from '../store';
+
     const Service = axios.create({
         // BaseURL:process.env.PUBLIC_URL,//设置公共url
         crossDomain:true,//设置是否允许跨域
@@ -9,9 +11,12 @@
     Service.interceptors.request.use(
         (config)=>{
             // console.log(config)
-            config.headers={
-                'Content-Type':'application/json;charset=utf-8',
-                "dataType": "json",
+            if(store.token){
+                config.headers={
+                    'Authorization':store.token,
+                    'Content-Type':'application/json;charset=utf-8',
+                    "dataType": "json",
+                }
             }
             return config;
         },
@@ -20,8 +25,14 @@
         }
     )
     // http响应拦截器
-    Service.interceptors.response.use((response)=>{
+    Service.interceptors.response.use(
+        (response)=>{
         // console.log(response)
+        // 如果响应头中有token,获取响应头中的authorization
+        if (response.headers.authorization) {
+            localStorage.setItem('authorization', response.headers.authorization);
+        }
+
         const res = response.data;
         if(res.code === 0){
             return Promise.resolve(res)

@@ -5,7 +5,7 @@ function Page404 () {
   const navigate = useNavigate()
 
   function toPageHome () {
-    navigate('/')
+    navigate('/user')
   }
 
   return (

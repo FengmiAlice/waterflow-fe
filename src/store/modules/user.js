@@ -21,7 +21,12 @@ export default class User {
    */
   // 是否已登录
   get isLogin () {
-    return !!this.token;
+    if(this.token !== '' && this.token !== null ){
+      return true
+    }else{
+      return false
+    }
+    // return !!this.token;//!!相当于Boolean()方法，把目标转化为布尔值
   }
  // 是否已获取到userInfo
  get isGotUserInfo () {
@@ -40,6 +45,7 @@ export default class User {
   removeToken(){
     window.localStorage['token'] = ''
   }
+  // 设置用户信息
   async setUserInfo (userInfo) {
     this.userInfo = userInfo || {}
   }

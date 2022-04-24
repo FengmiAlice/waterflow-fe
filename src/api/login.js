@@ -14,3 +14,10 @@ export function doSignUp(data){
         data
     })
 }
+export function getUserInfo(){
+    return Service({
+        url:'/proxy/getUserInfo',
+        method:'get',
+        
+    })
+}

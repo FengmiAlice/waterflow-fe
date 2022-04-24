@@ -5,24 +5,33 @@ import logo from '../logo.svg';
 import '../App.css'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { doSignIn } from '../api/login';
-import store from '../store'
+import store from '../store';
+
+
+
 function SignIn(){
     // form实例
     const [form] = Form.useForm();
     const { userStore } = store;
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    // url参数
+    // const query=getQueryObject();
+    // const redirectUrl =  decodeURIComponent(query.redirectUrl || '')
+
      function handleLogin(){
         form.validateFields().then( (values) => {
-            console.log(values)
+            // console.log(values)
             // 调用登陆Api，获取结果
             let params = {username:values.username,password:values.password};
              doSignIn(params).then((res)=>{
-                console.log(res)
+                // console.log(res)
                 if(res.code === 0){
-                    const resToken = res.token;
-                    userStore.setToken(resToken)
-                    // 跳转到主页页面
-                    navigate('/');
+                    //  设置一个假的token
+                    const token = localStorage.getItem('authorization');
+                    userStore.setToken(token)
+                    navigate('/user');  // 跳转到主页面
+                    
                 }
              });
         })
