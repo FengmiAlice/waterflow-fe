@@ -41,10 +41,11 @@ export default class User {
     window.localStorage.setItem('token', this.token)
   }
 
-  // 清空token
-  removeToken(){
-    window.localStorage['token'] = ''
-  }
+  // // 清空token
+  // removeToken(){
+  //   window.localStorage['token'] = ''
+  // }
+
   // 设置用户信息
   async setUserInfo (userInfo) {
     this.userInfo = userInfo || {}

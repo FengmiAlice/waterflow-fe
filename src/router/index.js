@@ -32,7 +32,7 @@ const routes = [
         },
         children:[
            {
-               path:'user',
+               path:'/user',
                meta:{
                 title:"用户页",
                 icon:<UserOutlined />
@@ -41,7 +41,7 @@ const routes = [
             //    element:<User />
            },
            {
-                path:'about',
+                path:'/about',
                 meta:{
                     title:'关于页',
                     icon:<UserOutlined />
@@ -52,7 +52,7 @@ const routes = [
         ]
     },
     {
-        path:'test',
+        path:'/test',
         element: <AppLayout />,
         meta:{
             title:"测试页",
@@ -61,21 +61,21 @@ const routes = [
         },
         children:[
            {
-               path:'testOne',
+               path:'/test/testOne',
                meta:{
                 title:"测试",
                 icon:<UserOutlined />
                },
-               component: () => import('../views/TestOne'),
+               component: () => import('../views/test/TestOne'),
             //    element:<TestOne />
            },
            {
-               path:'testTwo',
+               path:'/test/testTwo',
                meta:{
                 title:'测试2',
                 icon:<UserOutlined />
                },
-               component: () => import('../views/TestTwo'),
+               component: () => import('../views/test/TestTwo'),
             //    element:<TestTwo />
            },
         ]
@@ -127,11 +127,11 @@ const onRouteBefore = ({ pathname, meta }) =>{
     }
     //判断未登录
     if (!meta.noLogin) {// 路由是否需要登录
-        console.log(userStore.isLogin)
+        // console.log(userStore.isLogin)
         if(userStore.isLogin){//用户是否已登录
          
         }else {
-            return `/signIn?redirectUrl=${encodeURIComponent(window.location.href)}`
+            return `/signIn`
         }
     }
 }

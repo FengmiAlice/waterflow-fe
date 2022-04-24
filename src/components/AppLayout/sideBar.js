@@ -1,24 +1,26 @@
+
+import React from 'react'; 
+import {routes}  from '../../router';
+import {Link,useLocation} from 'react-router-dom';
+import { useStore, observer } from '../../hooks/storeHook';
 import logo from '../../logo.svg';
 import 'antd/dist/antd.css';
 import '../../App.css';
 import {Layout, Menu} from 'antd';
-import React, {useState}from 'react' 
-import {routes}  from '../../router'
-import {Link} from 'react-router-dom';//useLocation,matchRoutes
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 
 function SideBar () {
-    // const location = useLocation();//获取当前路由
-    // const { pathname }  = location;
-   
+    const { commonStore } = useStore();
+    const { sideBarCollapsed } = commonStore;
+    const location = useLocation();//获取当前路由
+    const { pathname }  = location;
+    // const openKeys = [] // 用于根据当前路由默认展开子菜单
     const menuList = getMenuList()
     // 左侧菜单渲染
     function getMenuList() {
-        const getLists = (routeList=[], prePath = '') => {
-            // console.log(routeList)
+        const getLists = (routeList=[]) => {
             let menuList = [];
             // 遍历路由
             routeList.forEach((v) => {
@@ -29,7 +31,8 @@ function SideBar () {
                     // console.log("is hide.")
                     return;
                 }
-                if (v.path !== undefined) {
+
+                if(v.path !== undefined){
                     // 如果有嵌套路由递归添加菜单
                     if (v.children) {
                         menuList.push((
@@ -37,7 +40,6 @@ function SideBar () {
                             {getLists(v.children)}
                         </SubMenu>
                         ))
-                    
                     } 
                     // 无嵌套路由,添加菜单结束
                     else {
@@ -47,9 +49,8 @@ function SideBar () {
                         </Menu.Item>
                         ))
                     }
-                } else {
-                    console.log("path is undefined")
-                }
+                } 
+
             })
             // console.log(menuList)
             return menuList;
@@ -57,34 +58,33 @@ function SideBar () {
         return getLists(routes);
     }
 
-    const [collapsed,setCollapsed] = useState(false)
-    function renderButton(){
-        const isCollapse = collapsed;
-        if(isCollapse === true){
-            return ( <MenuFoldOutlined onClick={ ()=> setCollapsed(!collapsed) }/> )
-        }else{
-            return ( <MenuUnfoldOutlined  onClick={ ()=>setCollapsed(!collapsed) } /> )
-        }
-    }
+    // const [collapsed,setCollapsed] = useState(false)
+    // function renderButton(){
+    //     const isCollapse = collapsed;
+    //     if(isCollapse === true){
+    //         return ( <MenuFoldOutlined onClick={ ()=> setCollapsed(!collapsed) }/> )
+    //     }else{
+    //         return ( <MenuUnfoldOutlined  onClick={ ()=>setCollapsed(!collapsed) } /> )
+    //     }
+    // }
 
     return(
         <div  className="c-PageLayout-sideBar">
             <Layout  className="sideBarLayout">
-                <Sider trigger={null} collapsible collapsed={collapsed}   
-                    width={200} className="site-layout-background" >
+                <Sider trigger={null} collapsible collapsed={sideBarCollapsed}  className="site-layout-background" >
                      
-                    <div className="logoPic"> <img src={logo} className="logo-img" alt="logo" /></div>
-                    <Menu  theme="dark" mode="inline"  style={{height:'100%', borderRight:0}}  >
+                    <div className="logoWrap"> <img src={logo} className="logo" alt="logo" /></div>
+                    <Menu  theme="dark" mode="inline"  style={{height:'100%', borderRight:0}}  selectedKeys={[pathname]}  >
                         {menuList}
                     </Menu>
                 </Sider>
                 
-                {renderButton() }  
-                <Link to="/signIn">跳转到登录页</Link>
+                {/* {renderButton() }  
+                <Link to="/signIn">跳转到登录页</Link> */}
             </Layout>  
                                 
         </div>         
     )
     
 }
-export default (SideBar);
+export default observer(SideBar);

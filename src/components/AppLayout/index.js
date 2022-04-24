@@ -3,19 +3,23 @@
  * @Description: 页面整体布局组件
  */
 
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom';
+import HeadBar from './headBar';
 import SideBar from './sideBar'
 
 import '../../App.css';
 import 'antd/dist/antd.css';
 import {Layout} from 'antd';
 const {  Content } = Layout;
+
 function AppLayout () {
   return (
     <div className="c-PageLayout-index">
       <SideBar />
 
       <div className="appMainWrap">
+          <HeadBar />
+          
             <Content className="appMain">
                 <Outlet />
             </Content>
