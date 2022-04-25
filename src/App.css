@@ -22,7 +22,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  
 }
 .logo-img{
   pointer-events: none;
@@ -51,10 +50,13 @@
   display: flex;
 }
 .appMainWrap {
+  width:100%;
   height: 100%;
   flex: 1;
   position: relative;
-  padding-top: 50px;
+  /* padding-top: 50px; */
+  margin-top:60px;
+  display: flex;
 }
  
 .appMain {
@@ -62,26 +64,28 @@
   overflow: auto;
   padding: 15px;
 }
-/* 侧边栏菜单
- */
-
- /* .c-PageLayout-sideBar {
-  height: 100%;
-  overflow: auto;
-} */
-.c-PageLayout-sideBar ::-webkit-scrollbar {
-  display: none;
+/* 顶部菜单*/
+.c-PageLayout-headBar {
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+  position: fixed;
+  top: 0;
+  width: 100%;
 }
-.sideBarLayout {
-  min-height: 100%;
-  background-color: #001529;
-  user-select: none;
+.headLeft {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-start;
+  margin-left: 15px;
 }
 .logoWrap {
   display: flex;
   align-items: center;
-  padding-left: 12px;
-  /* height: 50px; */
+  /* padding-left: 12px; */
+  height: 50px;
   margin-bottom: 5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -90,8 +94,53 @@
   background-size: 100% 100%;
   flex-basis: 26px;
   flex-shrink: 0;
-  /* height: 26px; */
+  height: 50px;
 }
+
+.headRight {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  margin-right: 15px;  
+}
+.userMenu {
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 5px 0 10px;
+}
+.userMenu :hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+.userMenu .iconArrowDown {
+  margin: 0 0 0 8px;
+}
+
+/* 侧边栏菜单
+ */
+ /* .ant-layout.ant-layout-has-sider{
+   flex-direction: column!important;
+ } */
+ /* .ant-layout-sider{
+   background:#fff!important;
+ } */
+ .c-PageLayout-sideBar {
+  /* height: 100%;
+  width:200px; */
+  /* overflow: auto; */
+}
+.c-PageLayout-sideBar ::-webkit-scrollbar {
+  display: none;
+}
+.sideBarLayout {
+  min-height: 100%;
+  background-color: #001529;
+  user-select: none;
+  flex-direction:column;
+}
+
 .v-signIn-index .title,  .v-signUp-index .title{
   font-size: 18px;
   text-align: center;
@@ -116,22 +165,7 @@
   border-radius: 10px;
   margin:10px 0;
 }
-/* 顶部菜单样式 */
-.c-PageLayout-headBar {
-  height: 50px;
-  display: flex;
-  justify-content: space-between;
-  box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
-  position: absolute;
-  top: 0;
-  width: 100%;
-  right: 0;
-}
-.headLeft {
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
+
 .toggleIcon {
   height: 40px;
   width: 40px;
@@ -147,24 +181,4 @@
 }
 .toggleIcon:hover {
   background: rgba(0, 0, 0, 0.02);
-}
-.headRight {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  justify-content: flex-end;
-  margin-right: 15px;  
-}
-.userMenu {
-  cursor: pointer;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  padding: 0 5px 0 10px;
-}
-.userMenu :hover {
-  background: rgba(0, 0, 0, 0.03);
-}
-.userMenu .iconArrowDown {
-  margin: 0 0 0 8px;
 }

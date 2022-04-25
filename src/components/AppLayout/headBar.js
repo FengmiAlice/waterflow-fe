@@ -1,18 +1,16 @@
 /**
  * @Description: 顶部栏
 */
-import {
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    DownOutlined,
-  } from '@ant-design/icons'
+import { DownOutlined } from '@ant-design/icons'
   import { useStore, observer } from '../../hooks/storeHook'
-  import { Breadcrumb, Menu, Dropdown, } from 'antd'
-  import { useLocation, useNavigate } from 'react-router-dom'
-  import '../../App.css'
+  import { Menu, Dropdown, } from 'antd'
+  import { useNavigate } from 'react-router-dom';
+  import logo from '../../logo.svg';
+  import '../../App.css';
+ 
+
 function HeadBar () {
-    const { commonStore, userStore } = useStore()
-    const { sideBarCollapsed } = commonStore;
+    const { userStore } = useStore()
     const { userInfo } = userStore;
     const navigate = useNavigate();
 
@@ -25,24 +23,14 @@ function HeadBar () {
         userStore.setToken('')
         navigate('/signIn')
     }
-    // 折叠菜单栏
-    function onToggle () {
-        commonStore.setSideBarCollapsed(!sideBarCollapsed)
-    }
-
+ 
+ 
       return (
         <div className="c-PageLayout-headBar">
           <div className="headLeft">
-            {/* 侧边栏折叠按钮 */}
-            <div className="toggleIcon" onClick={onToggle}>
-              {sideBarCollapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
-            </div>
-            {/* 面包屑导航 */}
-            {/* <Breadcrumb>
-              {extraBreadcrumbItems}
-            </Breadcrumb> */}
+              {/* logo图标 */}
+              <div className="logoWrap"> <img src={logo} className="logo" alt="logo" /></div>
           </div>
-    
           <div className="headRight">
             <Dropdown
               className="userMenu"

@@ -28,7 +28,6 @@ const routes = [
         meta:{
             title:"首页",
             icon: <HomeOutlined />,
-       
         },
         children:[
            {
@@ -63,7 +62,7 @@ const routes = [
            {
                path:'/test/testOne',
                meta:{
-                title:"测试",
+                title:"测试1",
                 icon:<UserOutlined />
                },
                component: () => import('../views/test/TestOne'),

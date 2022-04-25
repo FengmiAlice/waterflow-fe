@@ -2,13 +2,52 @@
 /**
  * 通用工具函数
 */
+import { routes } from '../router';
+/**
+ * 获取路由路径和路由meta字段的映射数据
+ */
+ function getRouteMetaMap(){
+    const getMap = (routeList=[],prePath='')=>{
+        let map = {};
+        routeList.forEach((v)=>{
+            v.meta = v.meta || {};
+            if(v.redirect || v.path === '*' || v.path === undefined){
+                return;
+            }
+     
+            // if(v.path ==='/'){
+            //     v.path = '/'
+            // }else{
+            //     map = {
+            //         ...map,
+            //         [v.path]: v.meta || {}
+            //       }
+            // }
+            if(v.path !== undefined){
+                    map = {
+                    ...map,
+                    [v.path]: v.meta || {}
+                  }
+            }
+            if(v.children){
+                map = {
+                    ...map,
+                    ...getMap(v.children,v.path+'/')
+                }
+            }
+          
+        })
+        // console.log(map)
+        return map;
+    }
+    return getMap(routes)
+}
 /**
  * @description: 根据url解析出路由path路径
  * @param {string} url 默认取当前页面地址
  * @param {boolean} isIncludeParams 是否需要包含路由参数，便于路由跳转携带数据
  * @return {string}
  */
-
  function getRoutePath (url = '', isIncludeParams = false) {
     url = url || window.location.href
     const divideStr = process.env.PUBLIC_URL + '/'
@@ -178,7 +217,10 @@ function getTimestamp(date) {
   return +new Date(date);
 }
 
+
+
 export {
+  getRouteMetaMap,
   getRoutePath,
   getQueryObject,
   getDataType,

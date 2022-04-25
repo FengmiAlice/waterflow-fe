@@ -3,24 +3,47 @@
  * @Description: 页面整体布局组件
  */
 
-import { Outlet } from 'react-router-dom';
+import { Outlet,Link,useLocation} from 'react-router-dom';
 import HeadBar from './headBar';
 import SideBar from './sideBar'
-
+import { getRouteMetaMap } from '../../utils/appTools'
 import '../../App.css';
 import 'antd/dist/antd.css';
-import {Layout} from 'antd';
+import {Layout,Breadcrumb} from 'antd';
 const {  Content } = Layout;
 
+
 function AppLayout () {
+  const location = useLocation();//获取当前路由
+
+    // 面包屑
+    const routeMetaMap = getRouteMetaMap();
+    // console.log(routeMetaMap)
+    const pathSnippets = location.pathname.split('/').filter(i=>i);
+    // console.log(pathSnippets)
+    const extraBreadcrumbItems = pathSnippets.map( ( _, index)=>{
+      const url=`/${pathSnippets.slice(0, index + 1).join('/')}`;
+      // console.log(url)
+      return(
+        <Breadcrumb.Item key={url}>
+            <Link to={url}>{routeMetaMap[url].title}</Link>
+        </Breadcrumb.Item>
+      )
+    })
+   
+    
   return (
     <div className="c-PageLayout-index">
-      <SideBar />
-
+        <HeadBar />
       <div className="appMainWrap">
-          <HeadBar />
+          <SideBar />
           
             <Content className="appMain">
+              <div>            
+                  <Breadcrumb>
+                      {extraBreadcrumbItems}
+                  </Breadcrumb>
+              </div>
                 <Outlet />
             </Content>
       </div>
