@@ -28,10 +28,15 @@ export default class User {
     }
     // return !!this.token;//!!相当于Boolean()方法，把目标转化为布尔值
   }
- // 是否已获取到userInfo
- get isGotUserInfo () {
-  return this.userInfo.userId !== undefined
-}
+  // 是否已获取到userInfo
+  get isGotUserInfo () {
+    if(this.userInfo.id !== undefined){
+      return true
+    }else{
+      return false
+    }
+    // return this.userInfo.id !== undefined
+  }
   /**
    * action
    */

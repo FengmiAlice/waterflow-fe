@@ -2,9 +2,9 @@
 /**
  * @Description: 组件工具函数类
  * */
-import React from 'react'
-import { Navigate } from 'react-router-dom'
-import Guard from './guard'
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import Guard from './guard';
 
 export default class Fn {
   routes
@@ -43,14 +43,15 @@ export default class Fn {
       }
       list.push(obj)
     })
-    return list
+    return list;
   }
 
   /**
-   * @description: 路由懒加载
+   * @description: 懒加载路由组件
    */
   lazyLoad (importFn, meta) {
-    const Element = React.lazy(importFn)
+    const Element = React.lazy(importFn);
+
     const lazyElement = (
       <React.Suspense fallback={this.loading}>
         <Element _meta={meta}/>

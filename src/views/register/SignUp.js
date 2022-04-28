@@ -1,9 +1,9 @@
 
 import React  from 'react';
-import {Form,Input,Button} from 'antd';
+import {Form,Input,Button,message} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
-import { doSignUp } from '../api/login';
+import { doSignUp } from '../../api/login';
 function SignUp(){
     const [form] = Form.useForm();
     const navigate = useNavigate();
@@ -19,10 +19,15 @@ function SignUp(){
                 email:values.email
             };
             let res = await doSignUp(params);
-            console.log(res)
+            // console.log(res)
+            if(res.status === 200){
+                message.success(res.data.message);
+                // 跳转到主页页面
+                navigate('/signIn');
+            }else{
+                message.error(res.data.message)
+            }
           
-            // 跳转到主页页面
-            navigate('/signIn');
         })
        
     }

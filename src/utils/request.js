@@ -1,19 +1,25 @@
     import axios from 'axios';  
     import store from '../store';
+    // import { message } from 'antd';
 
-    const Service = axios.create({
-        // BaseURL:process.env.PUBLIC_URL,//设置公共url
+    const { userStore } = store
+    // 创建axios实例
+    const service = axios.create({
+        BaseURL:process.env.PUBLIC_URL,//设置公共url
         crossDomain:true,//设置是否允许跨域
-        withCredentials:false,//设置是否允许携带cookie
+        withCredentials:false,//设置跨域请求中是否需要使用凭证
         timeout:5000,//设置超时时间
     })
     // http请求拦截器
-    Service.interceptors.request.use(
+    service.interceptors.request.use(
         (config)=>{
             // console.log(config)
-            if(store.token){
+            // 在发送请求之前对请求做一些配置
+            let token = userStore.token;
+            if(token){
+                // 请求配置自定义请求头
                 config.headers={
-                    'Authorization':store.token,
+                    'Authorization':token,
                     'Content-Type':'application/json;charset=utf-8',
                     "dataType": "json",
                 }
@@ -21,43 +27,37 @@
             return config;
         },
         (error)=>{
+            // 对请求错误做什么处理
             return Promise.reject(error)
         }
     )
     // http响应拦截器
-    Service.interceptors.response.use(
+    service.interceptors.response.use(
         (response)=>{
+        //对响应数据做些什么处理
         // console.log(response)
-        // 如果响应头中有token,获取响应头中的authorization
-        if (response.headers.authorization) {
-            localStorage.setItem('authorization', response.headers.authorization);
+        // 业务code
+        //status为200正常返回数据
+        if(response.status === 200){
+            return Promise.resolve(response)
         }
-
-        const res = response.data;
-        if(res.code === 0){
-            return Promise.resolve(res)
-        }else{
-            // 抛出错误信息
-            return Promise.reject(res)
-        }
+        return Promise.reject(response)
+        
     },
     (error)=>{
-        // 相应错误处理 比如： token 过期， 无权限访问， 路径不存在， 服务器问题等
-        switch (error.code) {
-            case 401:
-                break
-            case 403:
-                break
-            case 404:
-                break
-            case 500:
-                break
-            default:
-                console.log(error)
+        // 对响应错误的数据做些什么处理 比如： token 过期， 无权限访问， 路径不存在， 服务器问题等
+        // console.log(error.response)
+        let status = error.response.status
+         // 如果token过期返回登录页
+         if(status === 401){
+            const pre = window.location.origin + process.env.PUBLIC_URL
+            window.location.href =`${pre}/signIn`
         }
+      
+        // message.error('Error:'+error.message)
         return Promise.reject(error)
     }
 
 )
-export default Service;
+export default service;
 

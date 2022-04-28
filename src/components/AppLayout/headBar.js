@@ -13,10 +13,9 @@ function HeadBar () {
     const { userStore } = useStore()
     const { userInfo } = userStore;
     const navigate = useNavigate();
-
-    // 返回首页
-    function toPageHome () {
-        navigate('/user')
+    // 跳转到个人信息页
+    function turnToUserInfo(){
+      navigate('/userInfo')
     }
     //   退出登录
     function onLogout () {
@@ -37,7 +36,10 @@ function HeadBar () {
               overlay={
                 <Menu>
                   <Menu.Item key="0">
-                    <div onClick={toPageHome}>首页</div>
+                    <div onClick={turnToUserInfo}>个人信息</div>
+                  </Menu.Item>
+                  <Menu.Item key="0">
+                    <div>修改密码</div>
                   </Menu.Item>
                   <Menu.Divider />
                   <Menu.Item key="3">
@@ -46,7 +48,7 @@ function HeadBar () {
                 </Menu>
               }
             >
-              <div>{userInfo.nickName || ''}<DownOutlined className="iconArrowDown"/></div>
+              <div>{userInfo.name || ''}<DownOutlined className="iconArrowDown"/></div>
             </Dropdown>
           </div>
         </div>

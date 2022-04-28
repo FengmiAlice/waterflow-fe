@@ -6,7 +6,7 @@ import RouterWaiter from './components/RouteGuard/index';
 import {  BrowserRouter as Router} from 'react-router-dom';
 // import { getUserInfo } from './api/login';
 // import { useStore } from './hooks/storeHook'
-// import store from './store';
+
 import './App.css';
 import  { routes, onRouteBefore}  from './router';
 import { getRoutePath } from './utils/appTools';
@@ -14,12 +14,14 @@ import { getRoutePath } from './utils/appTools';
 function App(){
 //       const elements = useRoutes(routes)
 //      return elements;
-      // const store = useStore()
-      // const { userStore } = store
+
+      // const store = useStore();
+      // const { userStore } = store;
       // console.log(userStore)
-      const [isRender, setIsRender] = useState(false)
+      const [isRender, setIsRender] = useState(false);
+
       useEffect(()=> {
-            // console.log('---update---', document.lastModified)
+            // console.log('store', store)
             // 判断路由是否可渲染
             const path = getRoutePath();
             // console.log(path)
@@ -27,15 +29,17 @@ function App(){
                   setIsRender(true);
             }else{
                   setIsRender(true)
-                  // if (!userStore.isGotUserInfo) {
+                  // console.log(userStore.isGotUserInfo)
+                  // if (userStore.isGotUserInfo === false) {
                   //       getUserInfo().then((res) => {
-                  //             const data = res.data || {}
+                  //             console.log(res)
+                  //             let data = res.data.obj
                   //             userStore.setUserInfo(data)
-                  //             setIsRender(true)
+                            
                   //       })
                   // }
             }
-      }, []);
+      },[]);
      
 
       return(

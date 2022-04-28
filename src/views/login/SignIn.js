@@ -1,11 +1,11 @@
 import React  from 'react';
-import {Form,Input,Button,Checkbox} from 'antd';
+import {Form,Input,Button,Checkbox,message} from 'antd';
 import {useNavigate, Link} from 'react-router-dom';
-import logo from '../logo.svg';
-import '../App.css'
+import logo from '../../logo.svg';
+import '../../App.css'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { doSignIn } from '../api/login';
-import store from '../store';
+import { doSignIn,getUserInfo } from '../../api/login';
+import store from '../../store';
 
 
 
@@ -25,13 +25,24 @@ function SignIn(){
             // 调用登陆Api，获取结果
             let params = {username:values.username,password:values.password};
              doSignIn(params).then((res)=>{
-                // console.log(res)
-                if(res.code === 0){
-                    //  设置一个假的token
-                    const token = localStorage.getItem('authorization');
-                    userStore.setToken(token)
-                    navigate('/user');  // 跳转到主页面
+            //  console.log(res)
+                if(res.status=== 200){
+                    //  登录成功后重新获取token
+                    const token = res.headers.authorization;
+                    userStore.setToken(token);
                     
+                    // 登录之后获取用户信息
+                    getUserInfo().then((res) => {
+                        console.log(res)
+                        let data = res.data.obj
+                        userStore.setUserInfo(data)
+                       
+                    })
+
+                    navigate('/user');  // 跳转到主页面
+                    message.success("登录成功");
+                }else{
+                    message.error("登录失败");
                 }
              });
         })

@@ -13,6 +13,7 @@ import AppLayout from '../components/AppLayout';
 
 const routes = [
    /**
+    * 路由统一管理配置
     * @param {string} title // 路由页面标题，以及侧边栏菜单中的标题
     * @param {element} icon // 侧边栏该路由菜单显示的图标
     * @param {boolean} noLogin // 路由页面是否需要登录访问
@@ -36,16 +37,24 @@ const routes = [
                 title:"用户页",
                 icon:<UserOutlined />
                },
-            component: () => import( '../views/User'),
-            //    element:<User />
+                component: () => import( '../views/user/User'),
+                //    element:<User />
            },
+           {
+                path:'/userInfo',
+                meta:{
+                title:"个人信息页",
+                icon:<UserOutlined />
+                },
+                component: () => import( '../views/user/UserInfo'),
+            },
            {
                 path:'/about',
                 meta:{
                     title:'关于页',
                     icon:<UserOutlined />
                 },
-                component: () => import('../views/About'),
+                component: () => import('../views/user/About'),
                 // element:<About />
            },
         ]
@@ -86,7 +95,7 @@ const routes = [
             hideMenu: true,
             noLogin:true,
         },
-        component: () => import( '../views/SignIn'),
+        component: () => import( '../views/login/SignIn'),
         // element:<SignIn />
     },  
     {
@@ -96,7 +105,7 @@ const routes = [
             hideMenu: true,
             noLogin:true,
         },
-        component: () => import( '../views/SignUp'),
+        component: () => import( '../views/register/SignUp'),
         // element:<SignUp />
     },  
     {
@@ -106,12 +115,13 @@ const routes = [
           hideMenu: true,
           noLogin:true,
         },
-        component: () => import('../views/page404'),
+        component: () => import('../views/errorPage/Page404'),
         // element: <Page404 />,
     },
 ]
 /**
- * Description:全局路由拦截：控制路由配置的element属性
+ * 全局路由拦截思路：控制路由配置的element属性
+ * Description:全局路由拦截钩子函数
  * pathname:当前路由路径
  * meta:当前路由自定义meta属性
  */

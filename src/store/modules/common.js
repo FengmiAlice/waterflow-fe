@@ -1,5 +1,6 @@
 /**
  * @Description: 常规
+ * 侧边栏菜单展开收起状态
  */
 import { makeAutoObservable } from 'mobx'
 
