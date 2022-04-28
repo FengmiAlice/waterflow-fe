@@ -12,7 +12,7 @@ export default class User {
      * state
      */
     this.token =  window.localStorage.getItem('token')|| '' ;// 登录token
-    this.userInfo = {} // 用户信息
+    this.userInfo = window.localStorage.getItem('userInfo') || {} ;// 用户信息
     makeAutoObservable(this)
   }
 
@@ -54,5 +54,6 @@ export default class User {
   // 设置用户信息
   async setUserInfo (userInfo) {
     this.userInfo = userInfo || {}
+    window.localStorage.setItem('userInfo', this.userInfo)
   }
 }

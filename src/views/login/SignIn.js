@@ -5,14 +5,15 @@ import logo from '../../logo.svg';
 import '../../App.css'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { doSignIn,getUserInfo } from '../../api/login';
-import store from '../../store';
-
+// import store from '../../store';
+import { useStore } from '../../hooks/storeHook';
 
 
 function SignIn(){
     // form实例
     const [form] = Form.useForm();
-    const { userStore } = store;
+    // const { userStore } = store;
+    const { userStore } = useStore()
     const navigate = useNavigate();
 
     // url参数
@@ -25,7 +26,7 @@ function SignIn(){
             // 调用登陆Api，获取结果
             let params = {username:values.username,password:values.password};
              doSignIn(params).then((res)=>{
-            //  console.log(res)
+             console.log(res)
                 if(res.status=== 200){
                     //  登录成功后重新获取token
                     const token = res.headers.authorization;
@@ -34,12 +35,13 @@ function SignIn(){
                     // 登录之后获取用户信息
                     getUserInfo().then((res) => {
                         console.log(res)
-                        let data = res.data.obj
-                        userStore.setUserInfo(data)
-                       
+                        if(res.status === 200){
+                            let data = res.data.obj;
+                            userStore.setUserInfo(data)
+                        } 
                     })
-
-                    navigate('/user');  // 跳转到主页面
+                    // 跳转到主页面
+                    navigate('/user');  
                     message.success("登录成功");
                 }else{
                     message.error("登录失败");
@@ -55,7 +57,7 @@ function SignIn(){
             </header>
            
             <section >
-                <Form  className="formWrap" name="login"  form={form}  size="large"  autoComplete="off"  >
+                <Form  className="formWrap" name="login"  form={form}  size="large"  autoComplete="off"   initialValues={{ remember: true, }} >
                     <Form.Item  label="账号" name="username"  prefix={<UserOutlined className="site-form-item-icon"/>}  
                         rules={[
                                     {required:true,message:'请输入账号'},
@@ -74,10 +76,9 @@ function SignIn(){
                     </Form.Item>
                     <Form.Item  >
                         <div className="moreWrap">
-                        <Form.Item name="remember" valuePropName="checked" noStyle>
-                            <Checkbox>Remember me</Checkbox>
-                        </Form.Item>
-                      
+                            <Form.Item name="remember" valuePropName="checked" noStyle>
+                                <Checkbox>Remember me</Checkbox>
+                            </Form.Item>
                         </div>
                     </Form.Item>
                     <Form.Item  >

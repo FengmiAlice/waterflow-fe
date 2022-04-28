@@ -31,30 +31,32 @@ function SignUp(){
         })
        
     }
-    const formItemLayout = {
-        labelCol: {
-            xs: {
-              span: 24,
-            },
-            sm: {
-              span: 8,
-            },
-          },
-          wrapperCol: {
-            xs: {
-              span: 24,
-            },
-            sm: {
-              span: 16,
-            },
-          },
-    };
+    // 表单布局
+    // {...formItemLayout}
+    // const formItemLayout = {
+    //     labelCol: {
+    //         xs: {
+    //           span: 24,
+    //         },
+    //         sm: {
+    //           span: 8,
+    //         },
+    //       },
+    //       wrapperCol: {
+    //         xs: {
+    //           span: 24,
+    //         },
+    //         sm: {
+    //           span: 16,
+    //         },
+    //       },
+    // };
     
     return(
         <div className="v-signUp-index" >   
                 <h4 className="title">账号注册</h4>
             <section >
-                <Form  className="formWrap" name="login"  form={form} {...formItemLayout}  size="large"  autoComplete="off"  >
+                <Form  className="formWrap" name="login"  form={form}   size="large"  autoComplete="off"  >
 
                     <Form.Item  label="账号" name="username" prefix={<UserOutlined className="site-form-item-icon"/>}  
                         rules={[
@@ -106,7 +108,7 @@ function SignUp(){
                         <Input placeholder="请输入邮箱，用于找回密码，选填"    />
                     </Form.Item>
                     <Form.Item  >
-                        <Button type="primary" className="loginBtn" onClick={handleSubmit}>提交</Button>
+                        <Button type="primary" className="registerBtn" onClick={handleSubmit}>提交</Button>
                     </Form.Item>
                 </Form>
             </section>

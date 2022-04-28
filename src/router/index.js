@@ -41,14 +41,6 @@ const routes = [
                 //    element:<User />
            },
            {
-                path:'/userInfo',
-                meta:{
-                title:"个人信息页",
-                icon:<UserOutlined />
-                },
-                component: () => import( '../views/user/UserInfo'),
-            },
-           {
                 path:'/about',
                 meta:{
                     title:'关于页',
@@ -87,6 +79,15 @@ const routes = [
             //    element:<TestTwo />
            },
         ]
+    },
+    {
+        path:'/userInfo',
+        meta:{
+            title:"个人信息页",
+            hideMenu: true,
+            noLogin:true,
+        },
+        component: () => import( '../views/user/UserInfo'),
     },
     {
         path:'/signIn',

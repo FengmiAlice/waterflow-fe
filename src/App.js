@@ -4,8 +4,8 @@
 import React, { useEffect, useState } from 'react';
 import RouterWaiter from './components/RouteGuard/index';
 import {  BrowserRouter as Router} from 'react-router-dom';
-// import { getUserInfo } from './api/login';
-// import { useStore } from './hooks/storeHook'
+import { getUserInfo } from './api/login';
+import { useStore } from './hooks/storeHook'
 
 import './App.css';
 import  { routes, onRouteBefore}  from './router';
@@ -15,9 +15,9 @@ function App(){
 //       const elements = useRoutes(routes)
 //      return elements;
 
-      // const store = useStore();
-      // const { userStore } = store;
-      // console.log(userStore)
+      const store = useStore();
+      const { userStore } = store;
+      console.log(userStore)
       const [isRender, setIsRender] = useState(false);
 
       useEffect(()=> {
@@ -28,18 +28,18 @@ function App(){
             if(['/signIn'].includes(path)){
                   setIsRender(true);
             }else{
-                  setIsRender(true)
-                  // console.log(userStore.isGotUserInfo)
+                 
+                  console.log(userStore.isGotUserInfo)
                   // if (userStore.isGotUserInfo === false) {
-                  //       getUserInfo().then((res) => {
-                  //             console.log(res)
-                  //             let data = res.data.obj
-                  //             userStore.setUserInfo(data)
-                            
-                  //       })
+                        getUserInfo().then((res) => {
+                              console.log(res)
+                              let data = res.data.obj
+                              userStore.setUserInfo(data)
+                              setIsRender(true)
+                        })
                   // }
             }
-      },[]);
+      },[userStore]);
      
 
       return(
