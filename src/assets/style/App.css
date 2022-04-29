@@ -140,14 +140,32 @@
   user-select: none;
   flex-direction:column;
 }
-
-.v-signIn-index .title,  .v-signUp-index .title{
-  font-size: 18px;
+.v-signIn-index, .v-signUp-index{
+  height: 100vh;
+  background: url(../img/bg.jpeg) center top;
+  background-size: cover; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.signInSection, .signUpSection{
+    width: 400px;
+    background: #fff;
+    border-radius: 5px;
+    /* position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%); */
+}
+.signInSection .title,  .signUpSection .title{
+  font-size: 22px;
   text-align: center;
-  padding:50px 0 ;
+  padding:20px 0 ;
   letter-spacing: 1px;
 }
-.v-signIn-index .formWrap, .v-signUp-index .formWrap {
+.signInSection .formWrap, .signUpSection .formWrap {
   width: 350px;
   margin: 0 auto;
 }
@@ -156,15 +174,11 @@
   justify-content: space-between;
   align-items: center;
 }
-.formWrap .loginBtn ,.formWrap .registerBtn{
+ .loginBtn, .registerBtn{
   width: 100%;
   border-radius: 10px;
 }
-.formWrap .registerBtn{
-  width:100%;
-  border-radius: 10px;
-  margin:10px 0;
-}
+
 .infoFormWrap .userInfoBtn{
   width:100%;
   border-radius: 10px;

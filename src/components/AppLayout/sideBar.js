@@ -4,7 +4,7 @@ import {routes}  from '../../router';
 import {Link,useLocation} from 'react-router-dom';
 import { useStore, observer } from '../../hooks/storeHook';
 import 'antd/dist/antd.css';
-import '../../App.css';
+import '../../assets/style/App.css';
 import {Layout, Menu} from 'antd';
 import {
     MenuFoldOutlined,

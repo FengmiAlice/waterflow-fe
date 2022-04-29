@@ -39,7 +39,7 @@ function SignUp(){
     //           span: 24,
     //         },
     //         sm: {
-    //           span: 8,
+    //           span: 6,
     //         },
     //       },
     //       wrapperCol: {
@@ -54,10 +54,10 @@ function SignUp(){
     
     return(
         <div className="v-signUp-index" >   
-                <h4 className="title">账号注册</h4>
-            <section >
-                <Form  className="formWrap" name="login"  form={form}   size="large"  autoComplete="off"  >
-
+              
+            <section className='signUpSection'>
+            <h4 className="title">账号注册</h4>
+                <Form  className="formWrap" name="login"  form={form} labelCol={{span:4}}  size="large"  autoComplete="off"  >
                     <Form.Item  label="账号" name="username" prefix={<UserOutlined className="site-form-item-icon"/>}  
                         rules={[
                             {

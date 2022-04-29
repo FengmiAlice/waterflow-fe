@@ -7,7 +7,7 @@ import { Outlet,Link,useLocation} from 'react-router-dom';
 import HeadBar from './headBar';
 import SideBar from './sideBar'
 import { getRouteMetaMap } from '../../utils/appTools'
-import '../../App.css';
+import '../../assets/style/App.css';
 import 'antd/dist/antd.css';
 import {Layout,Breadcrumb} from 'antd';
 const {  Content } = Layout;

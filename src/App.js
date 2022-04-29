@@ -7,7 +7,7 @@ import {  BrowserRouter as Router} from 'react-router-dom';
 import { getUserInfo } from './api/login';
 import { useStore } from './hooks/storeHook'
 
-import './App.css';
+import './assets/style/App.css';
 import  { routes, onRouteBefore}  from './router';
 import { getRoutePath } from './utils/appTools';
 

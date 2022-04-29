@@ -4,7 +4,7 @@ import { UserOutlined, LockOutlined,ExclamationCircleOutlined } from '@ant-desig
 import {useNavigate} from 'react-router-dom';
 import { updateUserInfo } from '../../api/login';
 import { useStore } from '../../hooks/storeHook';
-import '../../App.css'
+import '../../assets/style/App.css'
 import { Modal} from 'antd';
 const {confirm} = Modal;
 
