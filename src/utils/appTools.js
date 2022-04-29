@@ -37,7 +37,6 @@ import { routes } from '../router';
             }
           
         })
-        // console.log(map)
         return map;
     }
     return getMap(routes)
@@ -216,8 +215,27 @@ function getTimestamp(date) {
   }
   return +new Date(date);
 }
-
-
+// 记住密码设置cookie
+function setCookie(name,value,expiryDate){
+    let currentDate=new Date();
+    currentDate.setDate(currentDate.getDate()+expiryDate);
+    document.cookie = name+'='+value+';expires='+currentDate;
+}
+// 获取cookie
+function getCookie(name){
+    let arr=document.cookie.split(';')
+    for(let i=0;i<arr.length;i++){
+        let arr2=arr[i].split('=');
+        if(arr2[0].trim() === name){
+            return arr2[1]
+        }
+    }
+    return '';
+}
+// 移除cookie
+function removeCookie(name){
+    setCookie(name,1,-1)
+}
 
 export {
   getRouteMetaMap,
@@ -227,5 +245,8 @@ export {
   formatDate,
   getTimestamp,
   debounce,
-  throttle
+  throttle,
+  setCookie,
+  getCookie,
+  removeCookie
 }

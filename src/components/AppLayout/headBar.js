@@ -17,8 +17,6 @@ function HeadBar () {
       const { userInfo } = userStore;
       // 使用useForm创建form实例
       const [form] = Form.useForm();
-     
-
       const navigate = useNavigate();
       const [isModalVisible, setIsModalVisible] = useState(false);
       useEffect(()=>{
@@ -41,7 +39,6 @@ function HeadBar () {
               // 确认按钮操作
               onOk() {
                   form.validateFields().then(async (values) => {
-                      // console.log(values)
                       // 调用登陆Api，获取结果
                       let params = {
                           name:values.name,
@@ -49,7 +46,6 @@ function HeadBar () {
                           email:values.email
                       };
                       let res = await updateUserInfo(params);
-                      console.log(res)
                       if(res.status === 200){
                           userStore.setUserInfo(res.data.obj)
                           message.success(res.data.message);

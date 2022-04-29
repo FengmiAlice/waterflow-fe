@@ -17,22 +17,16 @@ function App(){
 
       const store = useStore();
       const { userStore } = store;
-      console.log(userStore)
       const [isRender, setIsRender] = useState(false);
 
       useEffect(()=> {
-            // console.log('store', store)
             // 判断路由是否可渲染
             const path = getRoutePath();
-            // console.log(path)
             if(['/signIn'].includes(path)){
                   setIsRender(true);
             }else{
-                 
-                  console.log(userStore.isGotUserInfo)
                   // if (userStore.isGotUserInfo === false) {
                         getUserInfo().then((res) => {
-                              console.log(res)
                               let data = res.data.obj
                               userStore.setUserInfo(data)
                               setIsRender(true)

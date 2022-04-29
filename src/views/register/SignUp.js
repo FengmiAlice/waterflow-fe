@@ -9,7 +9,6 @@ function SignUp(){
     const navigate = useNavigate();
     function handleSubmit(){
         form.validateFields().then(async (values) => {
-            // console.log(values)
             // 调用登陆Api，获取结果
             let params = {
                 username:values.username,
@@ -19,7 +18,6 @@ function SignUp(){
                 email:values.email
             };
             let res = await doSignUp(params);
-            // console.log(res)
             if(res.status === 200){
                 message.success(res.data.message);
                 // 跳转到主页页面

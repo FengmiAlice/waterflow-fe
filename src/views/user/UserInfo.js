@@ -14,7 +14,6 @@ function UserInfo(){
     // 使用useForm setFieldsValue回显表格数据
     const [form] = Form.useForm();
     form.setFieldsValue(userInfo)
-    console.log(userStore)
 
     const navigate = useNavigate();
     // 提交表单数据
@@ -27,7 +26,6 @@ function UserInfo(){
             // 确认按钮操作
             onOk() {
                 form.validateFields().then(async (values) => {
-                    // console.log(values)
                     // 调用登陆Api，获取结果
                     let params = {
                         name:values.name,
@@ -35,7 +33,6 @@ function UserInfo(){
                         email:values.email
                     };
                     let res = await updateUserInfo(params);
-                    console.log(res)
                     if(res.status === 200){
                         userStore.setUserInfo(res.data.obj)
                         message.success(res.data.message);
@@ -46,7 +43,7 @@ function UserInfo(){
             },
             // 取消按钮操作
             onCancel() {
-                console.log('Cancel');
+                // console.log('Cancel');
             },
           });
     }
