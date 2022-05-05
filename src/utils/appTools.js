@@ -2,45 +2,45 @@
 /**
  * 通用工具函数
 */
+
 import { routes } from '../router';
 /**
  * 获取路由路径和路由meta字段的映射数据
+ * {
+ * '/index':'首页'
+ * }
  */
  function getRouteMetaMap(){
-    const getMap = (routeList=[],prePath='')=>{
-        let map = {};
+    const getMap = (routeList=[])=>{
+        let map = new Map();
         routeList.forEach((v)=>{
-            v.meta = v.meta || {};
-            if(v.redirect || v.path === '*' || v.path === undefined){
-                return;
-            }
-     
-            // if(v.path ==='/'){
-            //     v.path = '/'
-            // }else{
-            //     map = {
-            //         ...map,
-            //         [v.path]: v.meta || {}
-            //       }
-            // }
-            if(v.path !== undefined){
-                    map = {
-                    ...map,
-                    [v.path]: v.meta || {}
-                  }
-            }
-            if(v.children){
-                map = {
-                    ...map,
-                    ...getMap(v.children,v.path+'/')
-                }
-            }
-          
+            putTitleinMap(v,map)
         })
         return map;
     }
     return getMap(routes)
 }
+
+/**
+ * 把obj.title和obj.children.title放入map里
+ * 
+ * return void
+ */
+function putTitleinMap(obj,map){
+    obj.meta = obj.meta || {};
+ 
+    if(obj.redirect || obj.path === '*' || obj.path === undefined || obj.meta.hideMenu === true){
+        return;
+    }
+    map.set(obj.path, obj.meta.title)
+    if(obj.children){
+        obj.children.forEach( (k)=>{
+            // map.set(k.path,k.meta.title)
+            putTitleinMap(k,map)
+        })
+    }
+}
+
 /**
  * @description: 根据url解析出路由path路径
  * @param {string} url 默认取当前页面地址

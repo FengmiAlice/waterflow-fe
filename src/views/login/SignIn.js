@@ -73,7 +73,7 @@ function SignIn(){
                         } 
                     })
                     // 跳转到主页面
-                    navigate('/user');  
+                    navigate('/index/user');  
                     message.success("登录成功");
                 }else{
                     message.error("登录失败");

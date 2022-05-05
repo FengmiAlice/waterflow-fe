@@ -5,8 +5,9 @@
 
 import { Outlet,Link,useLocation} from 'react-router-dom';
 import HeadBar from './headBar';
-import SideBar from './sideBar'
-import { getRouteMetaMap } from '../../utils/appTools'
+import SideBar from './sideBar';
+import { getRouteMetaMap } from '../../utils/appTools';
+// import { routes } from '../../router';
 import '../../assets/style/App.css';
 import 'antd/dist/antd.css';
 import {Layout,Breadcrumb} from 'antd';
@@ -14,20 +15,27 @@ const {  Content } = Layout;
 
 
 function AppLayout () {
-  const location = useLocation();//获取当前路由
 
     // 面包屑
-    const routeMetaMap = getRouteMetaMap();
-    const pathSnippets = location.pathname.split('/').filter(i=>i);
-    const extraBreadcrumbItems = pathSnippets.map( ( _, index)=>{
-      const url=`/${pathSnippets.slice(0, index + 1).join('/')}`;
+    const location = useLocation();//获取当前路由
+    const routeMetaMap = getRouteMetaMap();//map对象集合
+    const pathSnippets = location.pathname.split('/').filter(i => i);//拆分当前路径
+    // 获取父路径及子路径
+    const urlArray=  pathSnippets.map((_, index) => {
+      const url = `/${pathSnippets.slice(0, index + 1).join('/')}`
+      return url;
+    })
+ console.log(urlArray)
+    const extraBreadcrumbItems = urlArray.map((v,index)=>{  
       return(
-        <Breadcrumb.Item key={url}>
-            <Link to={url}>{routeMetaMap[url].title}</Link>
+        <Breadcrumb.Item key={v}>
+            <Link to={v}>{routeMetaMap.get(v)} </Link>
         </Breadcrumb.Item>
       )
-    })
-   
+  })
+  console.log(extraBreadcrumbItems)
+  
+
     
   return (
     <div className="c-PageLayout-index">
