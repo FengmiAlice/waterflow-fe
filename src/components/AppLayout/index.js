@@ -16,16 +16,22 @@ const {  Content } = Layout;
 
 function AppLayout () {
 
-    // 面包屑
-    const location = useLocation();//获取当前路由
-    const routeMetaMap = getRouteMetaMap();//map对象集合
-    const pathSnippets = location.pathname.split('/').filter(i => i);//拆分当前路径
+    /*
+    面包屑功能
+    */ 
+    //获取当前路由
+    const location = useLocation();
+    //map对象集合
+    const routeMetaMap = getRouteMetaMap();
+    //拆分出当前路径
+    const pathSnippets = location.pathname.split('/').filter(i => i);
+    // console.log(pathSnippets)//['index','user]
     // 获取父路径及子路径
     const urlArray=  pathSnippets.map((_, index) => {
       const url = `/${pathSnippets.slice(0, index + 1).join('/')}`
       return url;
     })
- console.log(urlArray)
+    // console.log(urlArray)//["/index", "/index/user"]
     const extraBreadcrumbItems = urlArray.map((v,index)=>{  
       return(
         <Breadcrumb.Item key={v}>
@@ -33,7 +39,7 @@ function AppLayout () {
         </Breadcrumb.Item>
       )
   })
-  console.log(extraBreadcrumbItems)
+  // console.log(extraBreadcrumbItems)//元素集合
   
 
     

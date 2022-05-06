@@ -6,9 +6,10 @@
 import { routes } from '../router';
 /**
  * 获取路由路径和路由meta字段的映射数据
- * {
+ * 数据结构：{
  * '/index':'首页'
  * }
+ * 
  */
  function getRouteMetaMap(){
     const getMap = (routeList=[])=>{

@@ -3,14 +3,6 @@ import store from '../store'
 import { UserOutlined,HomeOutlined} from '@ant-design/icons';
 import AppLayout from '../components/AppLayout';
 
-// import SignIn from '../views/SignIn';
-// import SignUp from '../views/SignUp';
-// import Page404 from '../views/page404';
-// import User from '../views/User';
-// import About from '../views/About';
-// import TestOne from '../views/TestOne';
-// import TestTwo from '../views/TestTwo';
-
 const routes = [
    /**
     * 路由统一管理配置
@@ -41,12 +33,12 @@ const routes = [
                 //    element:<User />
            },
            {
-                path:'/index/about',
+                path:'/index/consume',
                 meta:{
-                    title:'关于页',
+                    title:'支出',
                     icon:<UserOutlined />
                 },
-                component: () => import('../views/user/About'),
+                component: () => import('../views/user/Consume'),
                 // element:<About />
            },
         ]
