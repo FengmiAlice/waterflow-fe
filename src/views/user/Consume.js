@@ -13,7 +13,7 @@ function Consume(){
     // 获取日期范围值
     function getRangeValue(date,dateString){
         // console.log(date)//原始日期
-        console.log(dateString)//字符串日期格式
+        // console.log(dateString)//字符串日期格式
         // 非空判断
         if(dateString !== '' || dateString !== undefined){
             times = dateString.join(' - ');
@@ -21,19 +21,22 @@ function Consume(){
             times = '';
         }
       
-        console.log(times)
+  
     }
     // 获取月份日期值
     function getMonthChange(date,dateString){
         // console.log(date)
-        console.log(dateString)
-        
-        month =dateString;
+        // console.log(dateString)
+        // 非空判断
+        dateString = dateString || '';
+        month = dateString;
     }
     // 获取年份日期值
     function getYearChange(date,dateString){
         // console.log(moment())
-        console.log(dateString)
+        // console.log(dateString)
+        // 非空判断
+        dateString = dateString || '';
         year=dateString;
     }
    
@@ -47,15 +50,7 @@ function Consume(){
         getConsumeList(param).then((res)=>{
             console.log(res)
         })
-        // axios.get('/proxy/consume/list',{
-        //     params:{
-        //         times:times,
-        //         month:month,
-        //         year:year
-        //     }
-        // }).then( (res)=>{
-        //     console.log(res)
-        // })
+
     }
 
 

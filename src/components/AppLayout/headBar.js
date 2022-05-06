@@ -54,10 +54,7 @@ function HeadBar () {
                       }
                   })
               },
-              // 取消按钮操作
-              // onCancel() {
-              //     console.log('Cancel');
-              // },
+
             });
             setIsModalVisible(true);
       }

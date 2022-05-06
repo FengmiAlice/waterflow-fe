@@ -33,13 +33,13 @@
         timeout:5000,//设置超时时间
     })
     function request (config) {  
+        //todo 拓展 额外配置参数
         return service(config)
       }
 
     // http请求拦截器
     service.interceptors.request.use(
         (config)=>{
-            // console.log(config)
             // 在发送请求之前对请求做一些配置
             let token = userStore.token;
             if(token){
@@ -64,7 +64,7 @@
                 // get请求
                 config.params = { ...config.params, ...config.data }
             }
-
+            
             showSpin();
             return config;
         },
@@ -80,7 +80,6 @@
       
         //对响应数据做些什么处理
         hideSpin();
-        // console.log(response)
         // 业务code
         //status为200正常返回数据
         if(response.status === 200){
@@ -93,7 +92,6 @@
     
         //对响应错误的数据做些什么处理 比如： token 过期， 无权限访问， 路径不存在， 服务器问题等
         hideSpin();
-        // console.log(error.response)
         error.response = error.response || {};
         let status = error.response.status;
          // 如果token过期返回登录页
