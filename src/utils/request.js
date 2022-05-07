@@ -77,12 +77,14 @@
     // http响应拦截器
     service.interceptors.response.use(
         (response)=>{
-      
         //对响应数据做些什么处理
         hideSpin();
         // 业务code
         //status为200正常返回数据
         if(response.status === 200){
+             //  每次调用接口成功后刷新token
+             const token = response.headers.authorization;
+             userStore.setToken(token);
             return Promise.resolve(response)
         }
         return Promise.reject(response)
