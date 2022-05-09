@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/img/logo.svg';
 import '../../assets/style/App.css';
 import { updateUserInfo } from '../../api/login';
-import { Form,Input,message,Menu, Dropdown,Modal } from 'antd';//Button
+import { Form,Input,Menu, Dropdown,Modal } from 'antd';//Button
 import { UserOutlined, LockOutlined,ExclamationCircleOutlined,DownOutlined } from '@ant-design/icons';
 const {confirm} = Modal;
  
@@ -46,11 +46,8 @@ function HeadBar () {
                           email:values.email
                       };
                       let res = await updateUserInfo(params);
-                      if(res.status === 200){
+                      if(res.data.success === true){
                           userStore.setUserInfo(res.data.obj)
-                          message.success(res.data.message);
-                      }else{
-                          message.error(res.data.message)
                       }
                   })
               },

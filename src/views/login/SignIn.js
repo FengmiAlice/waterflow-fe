@@ -1,11 +1,9 @@
-import React,{useState,useEffect}  from 'react';//
-import {Form,Input,Button,Checkbox,message} from 'antd';
+import React,{useState,useEffect}  from 'react';
+import {Form,Input,Button,Checkbox} from 'antd';
 import {useNavigate, Link} from 'react-router-dom';
-// import logo from '../../assets/img/logo.svg';
 import '../../assets/style/App.css'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { doSignIn,getUserInfo } from '../../api/login';
-// import store from '../../store';
 import { useStore } from '../../hooks/storeHook';
 import { removeCookie, setCookie ,getCookie} from '../../utils/appTools';
 
@@ -60,23 +58,22 @@ function SignIn(){
             // 调用登陆Api，获取结果
             let params = {username:values.username,password:values.password};
              doSignIn(params).then((res)=>{
-                if(res.status=== 200){
+  
+                if(res.data.success=== true){
                     //  登录成功后重新获取token
                     const token = res.headers.authorization;
                     userStore.setToken(token);
                     
                     // 登录之后获取用户信息
                     getUserInfo().then((res) => {
-                        if(res.status === 200){
+                 
+                        if(res.data.success === true){
                             let data = res.data.obj;
                             userStore.setUserInfo(data)
                         } 
                     })
                     // 跳转到主页面
                     navigate('/index/user');  
-                    message.success("登录成功");
-                }else{
-                    message.error("登录失败");
                 }
              });
         })

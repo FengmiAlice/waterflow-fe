@@ -206,3 +206,14 @@
 .toggleIcon:hover {
   background: rgba(0, 0, 0, 0.02);
 }
+
+/* 支出页面样式 */
+.searchFormHeader{
+  margin:20px 0;
+  box-sizing: border-box;
+  padding:5px;
+}
+.addConsumeBtn, .exportConsumeBtn{
+  margin-right:10px;
+  /* border-radius:10px!important; */
+}

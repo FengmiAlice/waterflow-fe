@@ -1,5 +1,5 @@
 import React  from 'react';
-import {Form,Input,Button,message} from 'antd';
+import {Form,Input,Button} from 'antd';
 import { UserOutlined, LockOutlined,ExclamationCircleOutlined } from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
 import { updateUserInfo } from '../../api/login';
@@ -33,24 +33,21 @@ function UserInfo(){
                         email:values.email
                     };
                     let res = await updateUserInfo(params);
-                    if(res.status === 200){
+                    if(res.data.success === true){
                         userStore.setUserInfo(res.data.obj)
-                        message.success(res.data.message);
-                    }else{
-                        message.error(res.data.message)
                     }
                 })
             },
             // 取消按钮操作
-            onCancel() {
-                // console.log('Cancel');
-            },
+            // onCancel() {
+            //     console.log('Cancel');
+            // },
           });
     }
     // 返回上一页
     function handleBack(){
          // 跳转到主页页面
-         navigate('/user');
+         navigate('/index/user');
     }
     // const formItemLayout = {
     //     labelCol: {

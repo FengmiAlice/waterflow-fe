@@ -18,5 +18,5 @@ export function getUserInfo(){
 
 // 更新个人信息
 export function updateUserInfo(data){
-    return http('post','/proxy/update',data)
+    return http('post','/proxy/user/update',data)
 }

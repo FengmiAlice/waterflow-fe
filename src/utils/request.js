@@ -1,7 +1,7 @@
     import axios from 'axios';  
     import ReactDOM from 'react-dom';
     import store from '../store';
-    import { Spin } from 'antd';//message,
+    import { message, Spin } from 'antd';
 
     // 获取store数据
     const { userStore } = store;
@@ -66,27 +66,41 @@
             }
             
             showSpin();
+
             return config;
         },
+
         (error)=>{
             // 对请求错误做什么处理
             hideSpin();
+
             return Promise.reject(error)
         }
     )
     // http响应拦截器
     service.interceptors.response.use(
         (response)=>{
+            // console.log(response)
         //对响应数据做些什么处理
         hideSpin();
-        // 业务code
-        //status为200正常返回数据
+    
+        //status为200表示http协议请求成功
         if(response.status === 200){
              //  每次调用接口成功后刷新token
              const token = response.headers.authorization;
              userStore.setToken(token);
+
+
+            // 业务代码
+            // 对全局的success失败判断给出提示
+            if(response.data.success === false){
+                message.error('Error:'+response.data.message)
+            }
+
             return Promise.resolve(response)
         }
+
+    
         return Promise.reject(response)
         
     },

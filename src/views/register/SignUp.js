@@ -1,6 +1,6 @@
 
 import React  from 'react';
-import {Form,Input,Button,message} from 'antd';
+import {Form,Input,Button} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
 import { doSignUp } from '../../api/login';
@@ -18,12 +18,9 @@ function SignUp(){
                 email:values.email
             };
             let res = await doSignUp(params);
-            if(res.status === 200){
-                message.success(res.data.message);
+            if(res.data.success=== true){
                 // 跳转到主页页面
                 navigate('/signIn');
-            }else{
-                message.error(res.data.message)
             }
           
         })
