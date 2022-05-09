@@ -177,7 +177,10 @@ function Consume(){
         console.log(e.target.value)
         setKeyword(e.target.value)
     }
+    // 添加支出记录选择年月日事件
+    function getDateChange(){
 
+    }
 
     // 删除表格中的一行数据
     function handleDelete(text,record,index){
@@ -216,7 +219,7 @@ function Consume(){
     // 添加支出记录弹窗信息确认操作
     function handleSubmit(){
     confirm({
-        title: '确认修改?',
+        title: '确认提交?',
         icon: <ExclamationCircleOutlined />,
         okText:"确定",
         cancelText:"取消",
@@ -225,10 +228,10 @@ function Consume(){
             form.validateFields().then(async (values) => {
                 // 调用登陆Api，获取结果
                 let params = {
-                    typeId:values.typeId,
+                    typeId:values.consumeType,
                     time:values.time,
                     description:values.description,
-                    paymentId:values.paymentId,
+                    paymentId:values.paymentType,
                     amount:values.amount,
                     note:values.note
                 };
@@ -344,9 +347,9 @@ function Consume(){
             {/* 添加支出记录弹窗 */}
             <Modal title="添加支出记录" forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="提交" cancelText="取消" >
               <section >
-                      <Form  className="formWrap  infoFormWrap" name="consume"  form={form}   size="large"  autoComplete="off" >
-                          <Form.Item  label="支出类别" name="username" prefix={<UserOutlined className="site-form-item-icon"/>}  >
-                            <Select style={{ width: 120 }} onChange={typeChange} allowClear={true}>
+                      <Form  className="formWrap  infoFormWrap" name="consume"  form={form}  labelCol={{span:4}}  size="middle"  autoComplete="off" >
+                          <Form.Item  label="支出类别" name="consumeType" prefix={<UserOutlined className="site-form-item-icon"/>}  >
+                            <Select style={{ width: 120 }} onChange={typeChange} placeholder="请选择" allowClear >
                                 {
                                     selectedTypeArray.map( (item,index,arr) => (
                                     
@@ -357,38 +360,31 @@ function Consume(){
                                     }
                             </Select>
                           </Form.Item>
-                          <Form.Item  label="昵称" name="name" prefix={<UserOutlined className="site-form-item-icon"/>}  
-                              rules={[
-                                  { 
-                                      pattern: /^[\u4e00-\u9fa5]|[a-zA-Z]/, 
-                                      message: "昵称可以是字母或者中文"
-                                  }
-                              ]} >
-                              
-                              <Input  placeholder="请输入昵称"   />
+                          <Form.Item  label="支出时间" name="time" prefix={<UserOutlined className="site-form-item-icon"/>}   >
+                            <DatePicker  format='YYYY-MM-DD'  onChange={getDateChange} />
                           </Form.Item>
                   
-                          <Form.Item label="手机号" name="phone" prefix={<LockOutlined className="site-form-item-icon"/>} 
-                              rules={[ 
-                                  {
-                                      pattern:/^1[345678]\d{9}$/,
-                                      message: "请输入正确的11位手机号"
-                                  }
-                              ]}>
-                              
-                              <Input  placeholder="请输入手机号，用于找回密码，选填"    />
+                          <Form.Item label="详情" name="description" prefix={<LockOutlined className="site-form-item-icon"/>} >
+                              <Input  placeholder="购买了什么，或者去哪玩了"    />
                           </Form.Item>
-                          <Form.Item label="邮箱" name="email"  prefix={<LockOutlined className="site-form-item-icon"/>} 
-                              rules={[   
-                                  {
-                                      pattern:/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
-                                      message: "请输入正确的邮箱格式"
-                                  }
-                              ]}>
-                                  
-                              <Input  type="text" placeholder="请输入邮箱，用于找回密码，选填"  />
+                          <Form.Item label="付款方式" name="paymentType"  prefix={<LockOutlined className="site-form-item-icon"/>} > 
+                            <Select  style={{ width: 120 }}  onChange={paymentTypeChange} placeholder="请选择" allowClear>
+                                    {
+                                    paymentTypeArray.map( (item,index,arr) => (
+                                    
+                                        <Option key={item.id} value={item.id}>
+                                            {item.name}
+                                        </Option>
+                                    ))
+                                    }
+                            </Select>
                           </Form.Item>
-                         
+                          <Form.Item label="金额" name="amount" prefix={<LockOutlined className="site-form-item-icon"/>} >
+                              <Input  placeholder="越精确越好，可以写小数"    />
+                          </Form.Item>
+                          <Form.Item label="补充描述" name="note" prefix={<LockOutlined className="site-form-item-icon"/>} >
+                              <Input  type="textarea" placeholder="请输入补充描述，记录一段往事供将来回忆"    />
+                          </Form.Item>
                       </Form>
                   </section>
             </Modal>
