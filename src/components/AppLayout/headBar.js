@@ -34,7 +34,7 @@ function HeadBar () {
           confirm({
               title: '确认修改?',
               icon: <ExclamationCircleOutlined />,
-              okText:"确定",
+              okText:"确认",
               cancelText:"取消",
               // 确认按钮操作
               onOk() {
@@ -95,9 +95,9 @@ function HeadBar () {
             </Dropdown>
           </div>
             {/* 个人信息弹窗 */}
-            <Modal title="个人信息" forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="提交" cancelText="取消" >
+            <Modal title="个人信息" forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
               <section >
-                      <Form  className="formWrap  infoFormWrap" name="login"  form={form}   size="large"  autoComplete="off" >
+                      <Form  className="formWrap  infoFormWrap" name="login"  form={form}  labelCol={{span:4}}  size="large"  autoComplete="off" >
                           <Form.Item  label="账号" name="username" prefix={<UserOutlined className="site-form-item-icon"/>}  >
                               <Input  placeholder="请输入账号"   disabled/>
                           </Form.Item>

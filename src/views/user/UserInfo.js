@@ -21,7 +21,7 @@ function UserInfo(){
         confirm({
             title: '确认修改?',
             icon: <ExclamationCircleOutlined />,
-            okText:"确定",
+            okText:"确认",
             cancelText:"取消",
             // 确认按钮操作
             onOk() {

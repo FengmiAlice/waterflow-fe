@@ -259,7 +259,7 @@ function Consume(){
     function handleDelete(row){
         // 弹框
         confirm({
-            title: '是否确认删除?',
+            title: '确认删除?',
             okText: '确认',
             okType: 'danger',
             cancelText: '取消', 
@@ -341,7 +341,7 @@ function Consume(){
     confirm({
         title: '确认提交?',
         icon: <ExclamationCircleOutlined />,
-        okText:"确定",
+        okText:"确认",
         cancelText:"取消",
         // 确认按钮操作
         onOk() {
@@ -479,7 +479,7 @@ function Consume(){
             />
 
             {/* 添加或编辑支出记录弹窗 */}
-            <Modal title={consumeTitle} forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="提交" cancelText="取消" >
+            <Modal title={consumeTitle} forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
               <section >
                       <Form  className="formWrap  infoFormWrap" name="consume"  form={form}  labelCol={{span:4}}  size="middle"  autoComplete="off" >
                           <Form.Item  label="支出类别" name="typeId"   >
