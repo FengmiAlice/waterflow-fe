@@ -1,32 +1,50 @@
 import React, {useCallback, useEffect,useState,useRef} from 'react';
-import { DatePicker,Form,Button,Input,Table,Select,Space,message,Modal } from 'antd';
+import { useStore } from '../../hooks/storeHook';
+import { DatePicker,Form,Button,Input,Table,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
-import { getConsumeList,getConsumeTypeList, getPaymentTypeList,addTableRow,deleteTableRow } from '../../api/user';
-import { UserOutlined, LockOutlined,ExclamationCircleOutlined } from '@ant-design/icons';
+import { getConsumeList,getConsumeTypeList, getPaymentTypeList,addTableRow,deleteTableRow,deleteTableRowArray,exportTable } from '../../api/user';
+import {ExclamationCircleOutlined} from '@ant-design/icons';//EditOutlined,DeleteOutlined,PlusOutlined,VerticalAlignBottomOutlined,SearchOutlined,
 import '../../assets/style/App.css';
 const {  RangePicker } = DatePicker; 
 const { Option } = Select;
 const {confirm} = Modal;
 
 function Consume(){
-   
-  
         // 列表的column项配置
-       const columns = [
+        const columns = [
             {
-            title: '支出日期',
-            key:'time',
-            dataIndex: 'time',
+                title: '支出日期',
+                key:'time',
+                dataIndex: 'time',
             },
             {
-            title: '支出类别',
-            key:'typeId',
-            dataIndex: 'typeId',
+                title: '支出类别',
+                key:'typeId',
+                dataIndex: 'typeId',
+                render: record => 
+                (
+                <>
+                    {
+                        selectedTypeArray.map( item =>
+                        {
+                        
+                            if(item.id === record) {
+                                return (
+                                    <Space  key={item.id}>
+                                        {item.name}
+                                    </Space>
+                                )
+                            }
+                            return null;
+                        })
+                    }
+                </>
+                )
             },
             {
-            title: '支出内容',
-            key:'description',
-            dataIndex: 'description',
+                title: '支出内容',
+                key:'description',
+                dataIndex: 'description',
             },
             {
                 title: '金额',
@@ -37,6 +55,23 @@ function Consume(){
                 title: '付款方式',
                 key:'paymentId',
                 dataIndex: 'paymentId',
+                render: record => 
+                (
+                <>
+                    {
+                        paymentTypeArray.map(item=>{
+                            if(item.id === record) {
+                                return (
+                                    <Space  key={item.id}>
+                                    {item.name}
+                                  </Space>
+                                )
+                            }
+                            return null;
+                        })
+                    }
+                </>
+                )
             },
             {
                 title: '操作',
@@ -44,47 +79,61 @@ function Consume(){
                 render: (text, record,index) =>
                     tableData.length >= 1 ? (
                     <Space size="middle">
-                        <Button size="small" type="text">编辑</Button>
-                        <Button size="small" type="text" onClick={ ()=> handleDelete(text,record,index)}>删除</Button>
+                        <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
+                        <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
                       
                     </Space>
-                    // <Popconfirm title="确定删除?"  okText="确定" cancelText="取消" onConfirm={() => this.handleDelete(record.key)}>
-                    //   <a onClick={handleDelete(record.key)}>删除</a>
-                    // </Popconfirm>
-              
                   ) : null,
-            },
-       ];
-    
-       const [initFlag,setInitFlag] = useState(false);//初始渲染标识
-       const [total, setTotal] = useState(0); // 设置总页数
-       const [tableData, setTableData] = useState([]);// 设置表格数据
-       const [selectedTypeArray,setSelectedTypeArray] = useState([]);//设置支出类别列表
-       const [consumeType, setConsumeType]= useState('');//设置支出类别
-       const [paymentTypeArray,setPaymentTypeArray] = useState([]);//设置支付方式列表
-       const [paymentType,setPaymentType] = useState('');//设置支付方式值
-        // 使用useForm创建form实例
-       const [form] = Form.useForm();
-       const [isModalVisible, setIsModalVisible] = useState(false)//设置弹窗显示或隐藏
-       const [keyword,setKeyword] = useState('');
+            }
+        ];
+
+        const { userStore } = useStore()
+        const { userInfo } = userStore;
+    const [initFlag,setInitFlag] = useState(false);//初始渲染标识
+    const [total, setTotal] = useState(0); // 设置总页数
+    const [tableData, setTableData] = useState([]);// 设置表格数据
+    const [selectedTypeArray,setSelectedTypeArray] = useState([]);//设置支出类别列表
+    const [paymentTypeArray,setPaymentTypeArray] = useState([]);//设置支付方式列表
+    // 使用useForm创建form实例
+    const [form] = Form.useForm();
+    const [isModalVisible, setIsModalVisible] = useState(false)//设置弹窗显示或隐藏
+    const [consumeTitle,setConsumeTitle] =useState('');//设置添加编辑弹框title值
+    const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
+    const[selectedRowKeys,setSelectedRowKeys] = useState([]);//表格全选
+    // 列表选择配置
+    const rowSelection = {
+        selectedRowKeys,
+        onChange:onSelectChange
+    }
+    // 选择项选中后发生的变化
+    function onSelectChange(selectedRowKeys){
+        // console.log(selectedRowKeys)
+        setSelectedRowKeys(selectedRowKeys)
+    }
+
 
        const page = useRef(1);// 设置当前页码
        const size = useRef(10);// 设置每页条数
        const month = useRef();//设置月份
        const year = useRef();//设置年份
        const times = useRef();//设置时间选择
-   
- 
+       const consumeType= useRef('');//设置搜索支出类别值
+       const paymentType = useRef('');//设置搜索支付方式值
+       const keyword = useRef('');//设置搜索关键字值
+       const addConsumeType= useRef('');//设置新增支出记录类别值
+       const addPaymentType= useRef('');//设置新增支出记录支付方式值
+      
+
+
           // 点击分页按钮触发方法
         const pageChange = useCallback((currentPage,currentSize)=>{
- 
             page.current = currentPage;
             size.current = currentSize;
-               handleSearch();
+            handleSearch();
         },[])
+
        //在页码或者页数变化的时候更新，传一个空数组，只执行一次（在组件挂载和卸载时执行）
        useEffect(()=>{
-
             if(!initFlag ){
                 // console.log("初始渲染")
                 month.current = moment().format("YYYY-MM");//格式化当前月份
@@ -96,15 +145,11 @@ function Consume(){
                 // console.log('不是初始渲染')
               
             }
-            
             pageChange(page.current,size.current)
            
        },[page,size])
  
  
-
-
-
     // 获取日期范围值
     function getRangeValue(date,dateStringArray){
         // 非空判断
@@ -154,68 +199,143 @@ function Consume(){
             }
         })
     }
-    // 获取类别值
+    // 获取搜索类别值
     function typeChange(value,current){
- 
         if(value === undefined){
-            setConsumeType('')
+            consumeType.current = '';
         }else{
-            setConsumeType(value)
+            consumeType.current = value;
         }
     }
-    // 获取支出方式值
-    function paymentTypeChange(value){
-
-        if(value===undefined){
-            setPaymentType('')
+     // 获取支出记录类别值
+    function addTypeChange(value){
+        if(value === undefined){
+            addConsumeType.current = '';
         }else{
-            setPaymentType(value)
+            addConsumeType.current = value;
+        }
+    }
+    // 获取搜索支出方式值
+    function paymentTypeChange(value){
+        if(value===undefined){
+            paymentType.current = '';
+        }else{
+            paymentType.current = value;
+        }
+    }
+    // 获取支出记录支出方式值
+    function addPaymentTypeChange(value){
+        if(value === undefined){
+            addPaymentType.current = '';
+        }else{
+            addPaymentType.current = value;
         }
     }
     // 获取搜索输入框值
     function inputChange(e){
-        console.log(e.target.value)
-        setKeyword(e.target.value)
-    }
-    // 添加支出记录选择年月日事件
-    function getDateChange(){
-
+        keyword.current = e.target.value
     }
 
+  // 添加支出按钮事件
+    function handleAdd(){
+        // 置空表单数据
+        addConsumeType.current = '';
+        addPaymentType.current = '';
+        form.resetFields();
+        setConsumeTitle('添加支出记录');
+        setRowId('');
+        setIsModalVisible(true);
+    }
+    // 编辑支出记录按钮操作
+    function handleEdit(row){
+        // 将返回的时间转换为moment格式用于编辑显示在时间组件上
+        row.time = moment(row.time)
+        form.setFieldsValue(row)
+        setConsumeTitle('编辑支出记录')
+        setRowId(row.id)
+        setIsModalVisible(true);
+    }
     // 删除表格中的一行数据
-    function handleDelete(text,record,index){
-        console.log(text)
-        console.log(record)
-        console.log(index)
-        // 删除弹框
+    function handleDelete(row){
+        // 弹框
         confirm({
             title: '是否确认删除?',
+            okText: '确认',
+            okType: 'danger',
+            cancelText: '取消', 
+            // 点击确认触发
+            onOk() {
+                let par = {
+                    id:row.id
+                };
+                deleteTableRow(par).then((res)=>{
+                    if(res.data.success === true){
+                        message.success(res.data.message);
+                        buttonSearch();//重新掉接口刷新表格数据
+                    }
+                })
+            }
+           
+        });
+    }
+    // 批量删除表格行数据
+    function handleDeleteRow(){
+        if(selectedRowKeys.length === 0){
+            message.warning('请选择删除的数据');
+            return;
+        }
+        // 弹框
+        confirm({
+            title: '确认删除?',
             okText: '确认',
             okType: 'danger',
             cancelText: '取消',
             // 点击确认触发
             onOk() {
-                let par = {
-                    id:record.id
-                };
-                deleteTableRow(par).then((res)=>{
-                    console.log(res)
+                let param={
+                    idList:selectedRowKeys
+                }
+                deleteTableRowArray(param).then((res)=>{
                     if(res.data.success === true){
-                        message.success('删除成功');
-                        handleSearch()
+                        message.success(res.data.message);
+                        buttonSearch();//重新掉接口刷新表格数据
+                        setSelectedRowKeys([])
                     }
                 })
-            },
-            // 点击取消触发
-            onCancel() {
-                console.log('Cancel');
-            },
+            }
         });
     }
-    // 添加支出按钮事件
-    function handleAdd(){
-        setIsModalVisible(true);
+    // 批量导出支出列表
+    function handleExport(){
+        let params2 = {
+            idList:selectedRowKeys,
+            times:times.current,
+            month:month.current,
+            year:year.current,
+            typeId:consumeType.current,
+            keyword:keyword.current,
+            paymentId:paymentType.current,
+        }
+        exportTable(userInfo.id,params2).then((res)=>{  
+            var exportFileContent = document.getElementById('table_report').outerHTML;//获取表
+            var blob = new Blob([exportFileContent], { type: "text/plain;charset=utf-8" });//使用blob,解决中文乱码问题
+            blob = new Blob([String.fromCharCode(0xFEFF), blob], { type: blob.type });
+        
+       
+            var contentDisposition = res.headers['content-disposition'];//在响应headers中获取表格的文件名
+            var fileName=contentDisposition.substring(20);
+            var link = window.URL.createObjectURL(blob);//创建新的blob url
+            var a=document.createElement('a');//创建a元素
+            a.style.display='none';//设置a不可见
+            a.href = link;//下载的链接
+            a.download = fileName;//下载的文件名
+            document.body.appendChild(a);//添加a元素
+            a.click();//添加元素点击事件
+            document.body.removeChild(a);//移除a元素
+            window.URL.revokeObjectURL(link);//释放掉blob
+        })
     }
+
     // 添加支出记录弹窗信息确认操作
     function handleSubmit(){
     confirm({
@@ -226,31 +346,39 @@ function Consume(){
         // 确认按钮操作
         onOk() {
             form.validateFields().then(async (values) => {
+                // 将时间组件值转为字符串用于传值
+                let times = values.time.format('YYYY-MM-DD');
                 // 调用登陆Api，获取结果
                 let params = {
-                    typeId:values.consumeType,
-                    time:values.time,
+                    id:rowId,
+                    typeId:addConsumeType.current,
+                    time:times,
                     description:values.description,
-                    paymentId:values.paymentType,
+                    paymentId:addPaymentType.current,
                     amount:values.amount,
                     note:values.note
                 };
                 let res = await addTableRow(params);
                 if(res.data.success === true){
-                 
+                    buttonSearch();//重新掉接口刷新表格数据
+                    message.success(res.data.message);
+                    setIsModalVisible(false);
+                }else{
+                    setIsModalVisible(true);
                 }
             })
         },
       });
-      setIsModalVisible(true);
+     
     }
     // 添加支出记录弹窗信息取消操作
     function handleCancel(){
         setIsModalVisible(false);
-      }
+    }
 
-    // 根据条件搜索表格数据
+    // 根据筛选条件搜索表格数据
     function buttonSearch(){
+        // 每次翻页查询之后页码，条数重置
         page.current = 1;
         size.current = 10;
         handleSearch();
@@ -262,9 +390,9 @@ function Consume(){
             year:year.current,
             pageNum:page.current,
             pageSize:size.current,
-            typeId:consumeType,
-            paymentId:paymentType,
-            keyword:keyword
+            typeId:consumeType.current,
+            paymentId:paymentType.current,
+            keyword:keyword.current,
         }
         getConsumeList(param).then((res)=>{
             if(res.data.success === true){
@@ -281,7 +409,7 @@ function Consume(){
         <header className='searchFormHeader'>
             <Form  className="consumeWrap" layout="inline" name="Consume"  size="small"  >
                     <Form.Item  label="日期选择" >
-                        <RangePicker format='YYYY-MM-DD' onChange={getRangeValue}  disabledDate={
+                        <RangePicker  onChange={getRangeValue}  disabledDate={
                         (current) => {
                             // 选择今天及今天之前的日期
                             return current && current > moment().startOf('day');
@@ -296,12 +424,11 @@ function Consume(){
                     <Form.Item label="类别">
                         <Select style={{ width: 120 }} onChange={typeChange} allowClear={true}>
                                 {
-                                selectedTypeArray.map( (item,index,arr) => (
-                                
-                                    <Option key={item.id} value={item.id}>
-                                        {item.name}
-                                    </Option>
-                                ))
+                                    selectedTypeArray.map( (item,index,arr) => (
+                                        <Option key={item.id} value={item.id}>
+                                            {item.name}
+                                        </Option>
+                                    ))
                                 }
                         </Select>
                     </Form.Item>
@@ -317,7 +444,7 @@ function Consume(){
                                 }
                         </Select>
                     </Form.Item>
-                    <Form.Item  label="关键字" name="keycord" prefix={<UserOutlined className="site-form-item-icon"/>}>
+                    <Form.Item  label="关键字" name="keycord" >
                         <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                     </Form.Item>
                     <Form.Item  >
@@ -327,10 +454,17 @@ function Consume(){
            
         </header>
        <section>
-            <Button type="primary" className="addConsumeBtn" onClick={handleAdd}>添加新的支出记录</Button>
-            <Button type="ghost"   className="exportConsumeBtn">导出</Button>
-            <Button type="primary" className="deleteConsumeBtn" danger>删除</Button>
-            <Table  columns={columns} dataSource={tableData} rowKey="id"
+       <Tooltip title="添加一条支出记录，把你的每一笔消费都记下来吧" placement="top">
+            <Button type="primary" className="addConsumeBtn"  onClick={handleAdd} >添加</Button>
+        </Tooltip>
+        <Tooltip title="把符合以上搜索条件的（或已勾选的）记录导出成一个Excel表格文件" placement="top">
+            <Button type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
+        </Tooltip>
+            <Tooltip title="删除你勾选的所有记录，不要随便点哦，删除就没啦" placement="top">
+                <Button type="danger"  className="deleteConsumeBtn" onClick={handleDeleteRow} >删除</Button>
+            </Tooltip>
+            {/* onRow={ record => ({onClick: () => selectRow(record) }) } */}
+            <Table id='table_report' rowSelection={rowSelection} columns={columns} dataSource={tableData} rowKey="id" 
                 pagination={
                     {   showSizeChanger:true,
                         pageSizeOptions:['10','20'],  
@@ -344,12 +478,12 @@ function Consume(){
                 }
             />
 
-            {/* 添加支出记录弹窗 */}
-            <Modal title="添加支出记录" forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="提交" cancelText="取消" >
+            {/* 添加或编辑支出记录弹窗 */}
+            <Modal title={consumeTitle} forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="提交" cancelText="取消" >
               <section >
                       <Form  className="formWrap  infoFormWrap" name="consume"  form={form}  labelCol={{span:4}}  size="middle"  autoComplete="off" >
-                          <Form.Item  label="支出类别" name="consumeType" prefix={<UserOutlined className="site-form-item-icon"/>}  >
-                            <Select style={{ width: 120 }} onChange={typeChange} placeholder="请选择" allowClear >
+                          <Form.Item  label="支出类别" name="typeId"   >
+                            <Select style={{ width: 120 }} onChange={addTypeChange} placeholder="请选择" allowClear >
                                 {
                                     selectedTypeArray.map( (item,index,arr) => (
                                     
@@ -360,15 +494,15 @@ function Consume(){
                                     }
                             </Select>
                           </Form.Item>
-                          <Form.Item  label="支出时间" name="time" prefix={<UserOutlined className="site-form-item-icon"/>}   >
-                            <DatePicker  format='YYYY-MM-DD'  onChange={getDateChange} />
+                          <Form.Item  label="支出时间" name="time"    >
+                            <DatePicker   />
                           </Form.Item>
                   
-                          <Form.Item label="详情" name="description" prefix={<LockOutlined className="site-form-item-icon"/>} >
+                          <Form.Item label="详情" name="description"  >
                               <Input  placeholder="购买了什么，或者去哪玩了"    />
                           </Form.Item>
-                          <Form.Item label="付款方式" name="paymentType"  prefix={<LockOutlined className="site-form-item-icon"/>} > 
-                            <Select  style={{ width: 120 }}  onChange={paymentTypeChange} placeholder="请选择" allowClear>
+                          <Form.Item label="付款方式" name="paymentId" > 
+                            <Select  style={{ width: 120 }}  onChange={addPaymentTypeChange} placeholder="请选择" allowClear>
                                     {
                                     paymentTypeArray.map( (item,index,arr) => (
                                     
@@ -379,10 +513,10 @@ function Consume(){
                                     }
                             </Select>
                           </Form.Item>
-                          <Form.Item label="金额" name="amount" prefix={<LockOutlined className="site-form-item-icon"/>} >
+                          <Form.Item label="金额" name="amount" >
                               <Input  placeholder="越精确越好，可以写小数"    />
                           </Form.Item>
-                          <Form.Item label="补充描述" name="note" prefix={<LockOutlined className="site-form-item-icon"/>} >
+                          <Form.Item label="补充描述" name="note"  >
                               <Input  type="textarea" placeholder="请输入补充描述，记录一段往事供将来回忆"    />
                           </Form.Item>
                       </Form>

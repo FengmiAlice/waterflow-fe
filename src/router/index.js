@@ -11,10 +11,10 @@ const routes = [
     * @param {boolean} noLogin // 路由页面是否需要登录访问
     * @param {boolean} hideMenu // 是否在侧边栏中隐藏该路由菜单
     */
-    // {
-    //     path: '/index',
-    //     redirect: '/index/user',
-    // },
+    {
+        path: '/index',
+        redirect: '/index/user',
+    },
     {
         path:'/index',
         element: <AppLayout />,
@@ -72,15 +72,15 @@ const routes = [
            },
         ]
     },
-    // {
-    //     path:'/userInfo',
-    //     meta:{
-    //         title:"个人信息页",
-    //         hideMenu: true,
-    //         noLogin:true,
-    //     },
-    //     component: () => import( '../views/user/UserInfo'),
-    // },
+    {
+        path:'/userInfo',
+        meta:{
+            title:"个人信息页",
+            hideMenu: true,
+            noLogin:true,
+        },
+        component: () => import( '../views/user/UserInfo'),
+    },
     {
         path:'/signIn',
         meta:{
