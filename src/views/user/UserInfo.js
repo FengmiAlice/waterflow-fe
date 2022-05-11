@@ -71,7 +71,7 @@ function UserInfo(){
         <div className="v-signUp-index" >   
                 <h4 className="title">个人信息</h4>
             <section >
-                <Form  className="formWrap  infoFormWrap" name="login"  form={form}   size="large"  autoComplete="off" >
+                <Form  className="infoFormWrap" name="infoForm"  form={form}   size="large"  autoComplete="off" >
                     <Form.Item  label="账号" name="username" prefix={<UserOutlined className="site-form-item-icon"/>}  >
                         <Input  placeholder="请输入账号"   disabled/>
                     </Form.Item>

@@ -8,7 +8,7 @@ import logo from '../../assets/img/logo.svg';
 import '../../assets/style/App.css';
 import { updateUserInfo } from '../../api/login';
 import { Form,Input,Menu, Dropdown,Modal } from 'antd';//Button
-import { UserOutlined, LockOutlined,ExclamationCircleOutlined,DownOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined,DownOutlined } from '@ant-design/icons';
 const {confirm} = Modal;
  
 
@@ -91,17 +91,17 @@ function HeadBar () {
                 </Menu>
               }
             >
-              <div>{userInfo.name || ''}<DownOutlined className="iconArrowDown"/></div>
+              <div>{userInfo.name || ''} <DownOutlined className="iconArrowDown"/></div>
             </Dropdown>
           </div>
             {/* 个人信息弹窗 */}
             <Modal title="个人信息" forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
               <section >
-                      <Form  className="formWrap  infoFormWrap" name="login"  form={form}  labelCol={{span:4}}  size="large"  autoComplete="off" >
-                          <Form.Item  label="账号" name="username" prefix={<UserOutlined className="site-form-item-icon"/>}  >
+                      <Form  className="infoFormWrap" name="infoForm"  form={form}  labelCol={{span:4}}  size="large"  autoComplete="off" >
+                          <Form.Item  label="账号" name="username"   >
                               <Input  placeholder="请输入账号"   disabled/>
                           </Form.Item>
-                          <Form.Item  label="昵称" name="name" prefix={<UserOutlined className="site-form-item-icon"/>}  
+                          <Form.Item  label="昵称" name="name"   
                               rules={[
                                   { 
                                       pattern: /^[\u4e00-\u9fa5]|[a-zA-Z]/, 
@@ -112,7 +112,7 @@ function HeadBar () {
                               <Input  placeholder="请输入昵称"   />
                           </Form.Item>
                   
-                          <Form.Item label="手机号" name="phone" prefix={<LockOutlined className="site-form-item-icon"/>} 
+                          <Form.Item label="手机号" name="phone" 
                               rules={[ 
                                   {
                                       pattern:/^1[345678]\d{9}$/,
@@ -122,7 +122,7 @@ function HeadBar () {
                               
                               <Input  placeholder="请输入手机号，用于找回密码，选填"    />
                           </Form.Item>
-                          <Form.Item label="邮箱" name="email"  prefix={<LockOutlined className="site-form-item-icon"/>} 
+                          <Form.Item label="邮箱" name="email" 
                               rules={[   
                                   {
                                       pattern:/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
@@ -132,9 +132,6 @@ function HeadBar () {
                                   
                               <Input  type="text" placeholder="请输入邮箱，用于找回密码，选填"  />
                           </Form.Item>
-                          {/* <Form.Item  >
-                              <Button type="primary" className="userInfoBtn" onClick={handleSubmit}>提交</Button>
-                          </Form.Item> */}
                       </Form>
                   </section>
             </Modal>

@@ -32,5 +32,8 @@ export function deleteTableRowArray(data){
 export function exportTable(pars,data){
     return http('post','/proxy/doc/export/consume?userId='+pars,data)
 }
-
+// 新增和编辑添加新类别
+export function addType(data){
+    return http('post','/proxy/type/add',data)
+}
 

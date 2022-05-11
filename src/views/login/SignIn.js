@@ -87,21 +87,21 @@ function SignIn(){
             <section className="signInSection">
                 <h4 className="title">个人财务管家系统--流水集</h4>
                 <Form  className="formWrap" name="login"  form={form}  size="large"  autoComplete="on"  >
-                    <Form.Item  label="账号" name="username"  prefix={<UserOutlined className="site-form-item-icon"/>}  
+                    <Form.Item   name="username"  
                         rules={[
                                     {required:true,message:'请输入账号'},
                                     
                                 ]}
                         >
-                        <Input type="text" placeholder="请输入账号" />
+                        <Input prefix={<UserOutlined className="prefix-icon" />} type="text" placeholder="请输入账号"   />
                     </Form.Item>
-                    <Form.Item label="密码" name="password"  prefix={<LockOutlined className="site-form-item-icon"/>} 
+                    <Form.Item  name="password" 
                         rules={[
                                     {required:true,message:'请输入密码'},
                                     
                                 ]}
                         >
-                        <Input type="password" placeholder="请输入密码"    onKeyDown={(e)=>onkeydown(e)}  />
+                        <Input prefix={<LockOutlined className="prefix-icon" />} type="password" placeholder="请输入密码"  onKeyDown={(e)=>onkeydown(e)}  />
                     </Form.Item>
                     <Form.Item  >
                         <div className="moreWrap">

@@ -1,7 +1,7 @@
 
 import React  from 'react';
 import {Form,Input,Button} from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined,PhoneOutlined ,MailOutlined,SmileOutlined,   } from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
 import { doSignUp } from '../../api/login';
 function SignUp(){
@@ -52,8 +52,8 @@ function SignUp(){
               
             <section className='signUpSection'>
             <h4 className="title">账号注册</h4>
-                <Form  className="formWrap" name="login"  form={form} labelCol={{span:4}}  size="large"  autoComplete="off"  >
-                    <Form.Item  label="账号" name="username" prefix={<UserOutlined className="site-form-item-icon"/>}  
+                <Form  className="formWrap" name="register"  form={form} labelCol={{span:4}}  size="large"  autoComplete="off"  >
+                    <Form.Item  name="username"  
                         rules={[
                             {
                                 required:true,
@@ -64,43 +64,43 @@ function SignUp(){
                                 message: "用户名可以是字母或者中文"
                             }
                         ]}>
-                        <Input  placeholder="请输入账号"/>
+                        <Input  prefix={<UserOutlined className="prefix-icon" /> }  placeholder="请输入账号"/>
                     </Form.Item>
-                    <Form.Item  label="昵称" name="name" prefix={<UserOutlined className="site-form-item-icon"/>}  
+                    <Form.Item  name="name"   
                         rules={[
                             { 
                                 pattern: /^[\u4e00-\u9fa5]|[a-zA-Z]/, 
                                 message: "昵称可以是字母或者中文"
                             }
                         ]} >
-                        <Input  placeholder="请输入昵称"/>
+                        <Input prefix={<SmileOutlined className="prefix-icon" />} placeholder="请输入昵称"/>
                     </Form.Item>
-                    <Form.Item label="密码" name="password" prefix={<LockOutlined className="site-form-item-icon"/>} 
+                    <Form.Item name="password" 
                         rules={[
                             {
                                 required:true, 
                                 message:'请输入密码'
                             }       
                         ]}>
-                        <Input type="password" placeholder="请输入密码"    />
+                        <Input prefix={<LockOutlined className="prefix-icon" />}  type="password" placeholder="请输入密码"    />
                     </Form.Item>
-                    <Form.Item label="手机号" name="phone" prefix={<LockOutlined className="site-form-item-icon"/>} 
+                    <Form.Item  name="phone" 
                         rules={[ 
                             {
                                  pattern:/^1[345678]\d{9}$/,
                                  message: "请输入正确的11位手机号"
                             }
                         ]}>
-                        <Input  placeholder="请输入手机号，用于找回密码，选填"    />
+                        <Input  prefix={<PhoneOutlined className="prefix-icon" />}  placeholder="请输入手机号，用于找回密码，选填"    />
                     </Form.Item>
-                    <Form.Item label="邮箱" name="email"  prefix={<LockOutlined className="site-form-item-icon"/>} 
+                    <Form.Item  name="email"  
                         rules={[   
                             {
                                 pattern:/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
                                 message: "请输入正确的邮箱格式"
                             }
                         ]}>
-                        <Input placeholder="请输入邮箱，用于找回密码，选填"    />
+                        <Input prefix={<MailOutlined className="prefix-icon" />} placeholder="请输入邮箱，用于找回密码，选填"    />
                     </Form.Item>
                     <Form.Item  >
                         <Button type="primary" className="registerBtn" onClick={handleSubmit}>提交</Button>

@@ -150,45 +150,6 @@
   align-items: center;
   position: relative;
 }
-.signInSection, .signUpSection{
-    width: 400px;
-    background: #fff;
-    border-radius: 5px;
-    /* position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%); */
-}
-.signInSection .title,  .signUpSection .title{
-  font-size: 22px;
-  text-align: center;
-  padding:20px 0 ;
-  letter-spacing: 1px;
-}
-.signInSection .formWrap, .signUpSection .formWrap {
-  width: 350px;
-  margin: 0 auto;
-}
-.formWrap .moreWrap {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
- .loginBtn, .registerBtn{
-  width: 100%;
-  border-radius: 10px;
-}
-
-.infoFormWrap .userInfoBtn{
-  width:100%;
-  border-radius: 10px;
-  margin:10px 0;
-}
-.infoFormWrap .backBtn{
-  width:100%;
-  border-radius: 10px;
-  margin:10px 0;
-}
 
 .toggleIcon {
   height: 40px;
@@ -206,7 +167,49 @@
 .toggleIcon:hover {
   background: rgba(0, 0, 0, 0.02);
 }
+/* 登录、注册样式 */
+.signInSection, .signUpSection{
+  width: 400px;
+  background: #fff;
+  border-radius: 5px;
+  /* position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%); */
+}
+.signInSection .title,  .signUpSection .title{
+font-size: 22px;
+text-align: center;
+padding:20px 0 ;
+letter-spacing: 1px;
+}
+.signInSection .formWrap, .signUpSection .formWrap {
+width: 350px;
+margin: 0 auto;
+}
+.formWrap .moreWrap {
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.loginBtn, .registerBtn{
+width: 100%;
+border-radius: 10px;
+}
 
+.infoFormWrap .userInfoBtn{
+width:100%;
+border-radius: 10px;
+margin:10px 0;
+}
+.infoFormWrap .backBtn{
+width:100%;
+border-radius: 10px;
+margin:10px 0;
+}
+.prefix-icon{
+  margin-right:8px;
+}
 /* 支出页面样式 */
 .searchFormHeader{
   margin:20px 0;
@@ -217,3 +220,4 @@
   margin-right:10px;
   /* border-radius:10px!important; */
 }
+

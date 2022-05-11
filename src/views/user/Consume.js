@@ -2,101 +2,107 @@ import React, {useCallback, useEffect,useState,useRef} from 'react';
 import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Table,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
-import { getConsumeList,getConsumeTypeList, getPaymentTypeList,addTableRow,deleteTableRow,deleteTableRowArray,exportTable } from '../../api/user';
+import { getConsumeList,getConsumeTypeList, getPaymentTypeList,addTableRow,deleteTableRow,deleteTableRowArray,exportTable,addType} from '../../api/user';
 import {ExclamationCircleOutlined} from '@ant-design/icons';//EditOutlined,DeleteOutlined,PlusOutlined,VerticalAlignBottomOutlined,SearchOutlined,
 import '../../assets/style/App.css';
 const {  RangePicker } = DatePicker; 
 const { Option } = Select;
 const {confirm} = Modal;
+const {TextArea} = Input;
 
 function Consume(){
-        // 列表的column项配置
-        const columns = [
-            {
-                title: '支出日期',
-                key:'time',
-                dataIndex: 'time',
-            },
-            {
-                title: '支出类别',
-                key:'typeId',
-                dataIndex: 'typeId',
-                render: record => 
-                (
-                <>
+    // 列表的column项配置
+    const columns = [
+        {
+            title: '支出日期',
+            key:'time',
+            dataIndex: 'time',
+        },
+        {
+            title: '支出类别',
+            key:'typeId',
+            dataIndex: 'typeId',
+            render: record => 
+            (
+            <>
+                {
+                    selectedTypeArray.map( item =>
                     {
-                        selectedTypeArray.map( item =>
-                        {
-                        
-                            if(item.id === record) {
-                                return (
-                                    <Space  key={item.id}>
-                                        {item.name}
-                                    </Space>
-                                )
-                            }
-                            return null;
-                        })
-                    }
-                </>
-                )
-            },
-            {
-                title: '支出内容',
-                key:'description',
-                dataIndex: 'description',
-            },
-            {
-                title: '金额',
-                key:'amount',
-                dataIndex: 'amount',
-            },
-            {
-                title: '付款方式',
-                key:'paymentId',
-                dataIndex: 'paymentId',
-                render: record => 
-                (
-                <>
-                    {
-                        paymentTypeArray.map(item=>{
-                            if(item.id === record) {
-                                return (
-                                    <Space  key={item.id}>
+                    
+                        if(item.id === record) {
+                            return (
+                                <Space  key={item.id}>
                                     {item.name}
-                                  </Space>
-                                )
-                            }
-                            return null;
-                        })
-                    }
-                </>
-                )
-            },
-            {
-                title: '操作',
-                dataIndex: 'operation',
-                render: (text, record,index) =>
-                    tableData.length >= 1 ? (
-                    <Space size="middle">
-                        <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
-                        <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
-                      
-                    </Space>
-                  ) : null,
-            }
-        ];
-
-        const { userStore } = useStore()
-        const { userInfo } = userStore;
+                                </Space>
+                            )
+                        }
+                        return null;
+                    })
+                }
+            </>
+            )
+        },
+        {
+            title: '支出内容',
+            key:'description',
+            dataIndex: 'description',
+        },
+        {
+            title: '金额',
+            key:'amount',
+            dataIndex: 'amount',
+        },
+        {
+            title: '付款方式',
+            key:'paymentId',
+            dataIndex: 'paymentId',
+            render: record => 
+            (
+            <>
+                {
+                    paymentTypeArray.map(item=>{
+                        if(item.id === record) {
+                            return (
+                                <Space  key={item.id}>
+                                {item.name}
+                                </Space>
+                            )
+                        }
+                        return null;
+                    })
+                }
+            </>
+            )
+        },
+        {
+            title: '操作',
+            dataIndex: 'operation',
+            render: (text, record,index) =>
+                tableData.length >= 1 ? (
+                <Space size="middle">
+                    <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
+                    <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
+                    
+                </Space>
+                ) : null,
+        }
+    ];
+    // 获取store中的用户信息
+    const { userStore } = useStore()
+    const { userInfo } = userStore;
     const [initFlag,setInitFlag] = useState(false);//初始渲染标识
     const [total, setTotal] = useState(0); // 设置总页数
     const [tableData, setTableData] = useState([]);// 设置表格数据
     const [selectedTypeArray,setSelectedTypeArray] = useState([]);//设置支出类别列表
     const [paymentTypeArray,setPaymentTypeArray] = useState([]);//设置支付方式列表
-    // 使用useForm创建form实例
+    // 使用useForm创建新增支出记录form实例
     const [form] = Form.useForm();
+    // 使用useForm创建新增支出类别form实例
+    const [typeForm] = Form.useForm();
+
     const [isModalVisible, setIsModalVisible] = useState(false)//设置弹窗显示或隐藏
+    const [isTypeVisible,setTypeVisible] = useState(false);//设置新类别弹窗
+
     const [consumeTitle,setConsumeTitle] =useState('');//设置添加编辑弹框title值
     const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
     const[selectedRowKeys,setSelectedRowKeys] = useState([]);//表格全选
@@ -235,6 +241,34 @@ function Consume(){
     function inputChange(e){
         keyword.current = e.target.value
     }
+    // 添加新类别按钮事件
+    function addNewType(){
+        typeForm.resetFields();
+        setTypeVisible(true);
+    }
+    // 添加类别弹窗提交按钮事件
+    function handleTypeSubmit(){
+        typeForm.validateFields().then(async (values) => {
+            let params = {
+                type:2,
+                name:values.typeName,
+                description:values.typeDescription,
+              
+            };
+            let res = await addType(params);
+            if(res.data.success === true){
+                getTypeList();//重新掉接口刷新类别列表数据
+                message.success("添加新类别成功");
+                setTypeVisible(false);
+            }else{
+                setTypeVisible(true);
+            }
+        })
+    }
+    // 添加新类别弹窗取消按钮事件
+    function handleTypeCancel(){
+        setTypeVisible(false);
+    }
 
   // 添加支出按钮事件
     function handleAdd(){
@@ -250,7 +284,9 @@ function Consume(){
     function handleEdit(row){
         // 将返回的时间转换为moment格式用于编辑显示在时间组件上
         row.time = moment(row.time)
-        form.setFieldsValue(row)
+        addConsumeType.current = row.typeId;
+        addPaymentType.current = row.paymentId;
+        form.setFieldsValue(row) 
         setConsumeTitle('编辑支出记录')
         setRowId(row.id)
         setIsModalVisible(true);
@@ -347,8 +383,11 @@ function Consume(){
         onOk() {
             form.validateFields().then(async (values) => {
                 // 将时间组件值转为字符串用于传值
-                let times = values.time.format('YYYY-MM-DD');
-                // 调用登陆Api，获取结果
+                let times;
+                if(values.time !== undefined){
+                    times = values.time.format('YYYY-MM-DD');
+                }
+                
                 let params = {
                     id:rowId,
                     typeId:addConsumeType.current,
@@ -444,7 +483,7 @@ function Consume(){
                                 }
                         </Select>
                     </Form.Item>
-                    <Form.Item  label="关键字" name="keycord" >
+                    <Form.Item  label="关键字" >
                         <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                     </Form.Item>
                     <Form.Item  >
@@ -454,12 +493,12 @@ function Consume(){
            
         </header>
        <section>
-       <Tooltip title="添加一条支出记录，把你的每一笔消费都记下来吧" placement="top">
-            <Button type="primary" className="addConsumeBtn"  onClick={handleAdd} >添加</Button>
-        </Tooltip>
-        <Tooltip title="把符合以上搜索条件的（或已勾选的）记录导出成一个Excel表格文件" placement="top">
-            <Button type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
-        </Tooltip>
+            <Tooltip title="添加一条支出记录，把你的每一笔消费都记下来吧" placement="top">
+                <Button type="primary" className="addConsumeBtn"  onClick={handleAdd} >添加</Button>
+            </Tooltip>
+            <Tooltip title="把符合以上搜索条件的（或已勾选的）记录导出成一个Excel表格文件" placement="top">
+                <Button type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
+            </Tooltip>
             <Tooltip title="删除你勾选的所有记录，不要随便点哦，删除就没啦" placement="top">
                 <Button type="danger"  className="deleteConsumeBtn" onClick={handleDeleteRow} >删除</Button>
             </Tooltip>
@@ -480,29 +519,46 @@ function Consume(){
 
             {/* 添加或编辑支出记录弹窗 */}
             <Modal title={consumeTitle} forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
-              <section >
-                      <Form  className="formWrap  infoFormWrap" name="consume"  form={form}  labelCol={{span:4}}  size="middle"  autoComplete="off" >
-                          <Form.Item  label="支出类别" name="typeId"   >
-                            <Select style={{ width: 120 }} onChange={addTypeChange} placeholder="请选择" allowClear >
-                                {
-                                    selectedTypeArray.map( (item,index,arr) => (
+                    <section >
+                       
+                      <Form   name="consumeForm"  form={form}  labelCol={{span:4}}  size="middle"  autoComplete="off" >
+                            
+                          <Form.Item  label="支出类别" name="typeId"  rules={[
+                                {required:true,message:'请选择支出类别'},
+                            
+                            ]} style={{position:'relative'}} >
+                                <Select style={{width:80+'%'}}  onChange={addTypeChange} placeholder="请选择" allowClear >
+                                    {
+                                        selectedTypeArray.map( (item,index,arr) => (
+                                        
+                                            <Option key={item.id} value={item.id}>
+                                                {item.name}
+                                            </Option>
+                                        ))
+                                        }
+                                </Select>
+                          </Form.Item>
+                          <Form.Item style={{position:'absolute',right:20,top:78}}><Button type="primary" onClick={addNewType} className="typeButton">新类别</Button></Form.Item>
+                          <Form.Item style={{clear:'both'}} label="支出时间" name="time"   
+                                rules={[
+                                    {required:true,message:'请选择支出时间'},
                                     
-                                        <Option key={item.id} value={item.id}>
-                                            {item.name}
-                                        </Option>
-                                    ))
-                                    }
-                            </Select>
+                                ]}  >
+                                <DatePicker  style={{ width: 100+'%' }} />
                           </Form.Item>
-                          <Form.Item  label="支出时间" name="time"    >
-                            <DatePicker   />
-                          </Form.Item>
-                  
-                          <Form.Item label="详情" name="description"  >
+                          <Form.Item label="详情" name="description"   
+                                rules={[
+                                    {required:true,message:'请输入详情'},
+                                    
+                                ]} >
                               <Input  placeholder="购买了什么，或者去哪玩了"    />
                           </Form.Item>
-                          <Form.Item label="付款方式" name="paymentId" > 
-                            <Select  style={{ width: 120 }}  onChange={addPaymentTypeChange} placeholder="请选择" allowClear>
+                          <Form.Item label="付款方式" name="paymentId"   
+                                rules={[
+                                    {required:true,message:'请选择付款方式'},
+                                    
+                                ]}> 
+                            <Select   onChange={addPaymentTypeChange} placeholder="请选择" allowClear>
                                     {
                                     paymentTypeArray.map( (item,index,arr) => (
                                     
@@ -513,14 +569,38 @@ function Consume(){
                                     }
                             </Select>
                           </Form.Item>
-                          <Form.Item label="金额" name="amount" >
-                              <Input  placeholder="越精确越好，可以写小数"    />
+                          <Form.Item label="金额" name="amount" 
+                            rules={[
+                                {required:true,message:'请输入金额'},
+                            
+                            ]} >
+                              <Input type="number" placeholder="越精确越好，可以写小数"    />
                           </Form.Item>
-                          <Form.Item label="补充描述" name="note"  >
-                              <Input  type="textarea" placeholder="请输入补充描述，记录一段往事供将来回忆"    />
+                          <Form.Item label="补充描述" name="note" 
+                            rules={[
+                                {required:true,message:'请输入补充描述'},
+                            
+                            ]} >
+                              <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
                           </Form.Item>
                       </Form>
-                  </section>
+                    </section>
+            </Modal>
+            {/* 添加类别弹窗 */}
+            <Modal title='添加类型'  visible={isTypeVisible} onOk={handleTypeSubmit} onCancel={handleTypeCancel} okText="确认" cancelText="取消" >
+                <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
+                    <Form.Item  label="名称" name="typeName"  
+                        rules={[
+                                    {required:true,message:'请输入名称'},
+                                    
+                        ]}
+                        >
+                        <Input type="text" />
+                    </Form.Item>
+                    <Form.Item  label="描述"  name="typeDescription"  >
+                        <TextArea row={1} />
+                    </Form.Item>
+                </Form>
             </Modal>
        </section>
     </div>
