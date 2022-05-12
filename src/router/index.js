@@ -13,7 +13,7 @@ const routes = [
     */
     {
         path: '/index',
-        redirect: '/index/user',
+        redirect: '/index/consume',
     },
     {
         path:'/index',
@@ -23,16 +23,7 @@ const routes = [
             icon: <HomeOutlined />,
         },
         children:[
-           {
-               path:'/index/user',
-               meta:{
-                title:"用户页",
-                icon:<UserOutlined />
-               },
-                component: () => import( '../views/user/User'),
-                //    element:<User />
-           },
-           {
+            {
                 path:'/index/consume',
                 meta:{
                     title:'支出',
@@ -40,7 +31,16 @@ const routes = [
                 },
                 component: () => import('../views/user/Consume'),
                 // element:<About />
-           },
+            },
+            {
+                    path:'/index/income',
+                    meta:{
+                        title:'收入',
+                        icon:<UserOutlined />
+                    },
+                    component: () => import('../views/user/Income'),
+                
+            },
         ]
     },
     {
@@ -72,15 +72,15 @@ const routes = [
            },
         ]
     },
-    {
-        path:'/userInfo',
-        meta:{
-            title:"个人信息页",
-            hideMenu: true,
-            noLogin:true,
-        },
-        component: () => import( '../views/user/UserInfo'),
-    },
+    // {
+    //     path:'/userInfo',
+    //     meta:{
+    //         title:"个人信息页",
+    //         hideMenu: true,
+    //         noLogin:true,
+    //     },
+    //     component: () => import( '../views/user/UserInfo'),
+    // },
     {
         path:'/signIn',
         meta:{

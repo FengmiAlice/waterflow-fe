@@ -47,7 +47,7 @@ function UserInfo(){
     // 返回上一页
     function handleBack(){
          // 跳转到主页页面
-         navigate('/index/user');
+         navigate('/index/consume');
     }
     // const formItemLayout = {
     //     labelCol: {

@@ -73,7 +73,7 @@ function SignIn(){
                         } 
                     })
                     // 跳转到主页面
-                    navigate('/index/user');  
+                    navigate('/index/consume');  
                 }
              });
         })

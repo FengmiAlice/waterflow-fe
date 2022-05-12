@@ -31,7 +31,7 @@ function AppLayout () {
       const url = `/${pathSnippets.slice(0, index + 1).join('/')}`
       return url;
     })
-    // console.log(urlArray)//["/index", "/index/user"]
+
     const extraBreadcrumbItems = urlArray.map((v,index)=>{  
       return(
         <Breadcrumb.Item key={v}>

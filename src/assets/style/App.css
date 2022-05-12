@@ -211,6 +211,9 @@ margin:10px 0;
   margin-right:8px;
 }
 /* 支出页面样式 */
+.consumeTable{
+  margin-top:20px;
+}
 .searchFormHeader{
   margin:20px 0;
   box-sizing: border-box;
@@ -219,5 +222,11 @@ margin:10px 0;
 .addConsumeBtn, .exportConsumeBtn{
   margin-right:10px;
   /* border-radius:10px!important; */
+}
+.totalStyle{
+  color: red;
+  font-size:18px;
+  display: inline-block;
+  margin-left:6px;
 }
 
