@@ -1,17 +1,18 @@
 import React, {useCallback, useEffect,useState,useRef} from 'react';
 import { useStore } from '../../hooks/storeHook';
-import { DatePicker,Form,Button,Input,Table,Select,Space,message,Modal,Tooltip,Statistic } from 'antd';
+import { DatePicker,Form,Button,Input,Table,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
 import { getConsumeList,getConsumeTypeList, getPaymentTypeList,addTableRow,deleteTableRow,deleteTableRowArray,exportConsumeTable,addType} from '../../api/user';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import '../../assets/style/App.css';
+
+
 const {  RangePicker } = DatePicker; 
 const { Option } = Select;
 const {confirm} = Modal;
 const {TextArea} = Input;
 
 function Consume(){
-    // 列表的column项配置
     const columns = [
         {
             title: '支出日期',
@@ -423,6 +424,7 @@ function Consume(){
         handleSearch();
     }
     function handleSearch(){
+        
         let param={
             times:times.current,
             month:month.current,
@@ -510,7 +512,7 @@ function Consume(){
             <Table id='consume_report' className='consumeTable' rowSelection={rowSelection} columns={columns} dataSource={tableData} rowKey="id" 
                 pagination={
                     {   showSizeChanger:true,
-                        pageSizeOptions:['10','20'],  
+                        pageSizeOptions:['10','20','50','100'],  
                         pageSize:size.current,
                         current:page.current,
                         total:total,
@@ -520,6 +522,7 @@ function Consume(){
                     }
                 }
             />
+           
 
             {/* 添加或编辑支出记录弹窗 */}
             <Modal title={consumeTitle} forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >

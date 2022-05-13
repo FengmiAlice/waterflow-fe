@@ -1,6 +1,6 @@
 /**
  *  @Description: 主组件
- * @param {array} routes 全局路由同意配置数组
+ * @param {array} routes 全局路由统一配置数组
  * @param {function} onRouteBefore 全局路由前置钩子
  * @param {object} loading 组件加载状态
  */

@@ -37,7 +37,6 @@ export function addType(data){
     return http('post','/proxy/type/add',data)
 }
 
-
 // 收入页面获取收入列表信息
 export function getIncomeList(params){
     return http('get','/proxy/income/list',params)
@@ -46,7 +45,6 @@ export function getIncomeList(params){
 export function exportIncomeTable(pars,data){
     return http('post','/proxy/doc/export/income?userId='+pars,data)
 }
-
 // 收入页面添加表格数据
 export function addIncomeTableRow(data){
     return http('post','/proxy/income/saveIncomeDetails',data)

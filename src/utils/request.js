@@ -7,7 +7,7 @@
     const { userStore } = store;
     // 当前正在请求的数量
     var requestCount = 0;
-    // 显示spin
+    // 发送请求显示loading
     function showSpin(){
         if(requestCount === 0){
             var dom=document.createElement('div');
@@ -17,7 +17,7 @@
         }
         requestCount++;
     }
-    // 隐藏spin
+    // 请求失败隐藏loading
     function hideSpin(){
         requestCount--;
         if(requestCount === 0){
