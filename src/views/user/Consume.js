@@ -131,8 +131,8 @@ function Consume(){
        const addPaymentType= useRef('');//设置新增支出记录支付方式值
       
 
-
           // 点击分页按钮触发方法
+       
         const pageChange = useCallback((currentPage,currentSize)=>{
             page.current = currentPage;
             size.current = currentSize;
@@ -154,7 +154,7 @@ function Consume(){
             }
             pageChange(page.current,size.current)
            
-       },[page,size])
+       },[page,size,initFlag,pageChange])
  
  
     // 获取日期范围值
