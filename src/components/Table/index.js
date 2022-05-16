@@ -8,20 +8,37 @@
  * 
 */
 
-import React, { useEffect, useReducer, useCallback,useState } from 'react'
+import React, { useEffect, useReducer, useCallback,useState,useRef,forwardRef,useImperativeHandle} from 'react'
 import { Table } from 'antd';
- 
-const useAsyncTable = props => {
 
+ 
+const useAsyncTable = (props) => {
+ 
     /*
     要传递的参数
     queryAction:获取列表数据api
     params:请求附加参数
     baseProps: antd基础props,
     owncolumns:表格列数据配置
-    initMethod:初始化
+    initMethod:初始化,
+    selectedTableRowKeys:全选选中的数据
     */
-    const {owncolumns,queryAction, params, baseProps,initMethod } = props;
+    const { owncolumns,queryAction,params, baseProps,initMethod,getRowKeys,getId,setTotalAmount } = props;
+    const [selectedRowKeys,setSelectedRowKeys] = useState([]);//表格全选
+    
+
+    // 列表选择配置
+    const rowSelection = {
+        selectedRowKeys,
+        onChange:onSelectChange
+    }
+    // 选择项选中后发生的变化
+    function onSelectChange(selectedRowKeys){
+        setSelectedRowKeys(selectedRowKeys)
+        // 函数组件父子组件之间传值
+        getRowKeys(selectedRowKeys)
+    
+    }
 
     // 分页数据
     const paginationInitial = {
@@ -35,7 +52,7 @@ const useAsyncTable = props => {
     // table组件全量数据
     const initialState = {
         pagination: paginationInitial,
-        dataSource: []
+        dataSource: [],
     }
     // 使用redux useReduxer管理 action操作如何修改state
     const reducer = (state, action) => {
@@ -53,6 +70,7 @@ const useAsyncTable = props => {
     const [initFlag,setInitFlag] = useState(false);//初始渲染标识
     // 改变页码事件
     function handleTableChange(payload) {
+       
         if (payload) {
             const current  = payload.current;
             const pageSize = payload.pageSize;
@@ -80,7 +98,11 @@ const useAsyncTable = props => {
     useEffect(() => {
         if(!initFlag ){
             // console.log("初始渲染111")
-            initMethod()
+            initMethod();
+            const tableId = document.getElementById('consume_report')
+            console.log(tableId)
+            // 传递table id
+            getId(tableId)
            
             setInitFlag(true)
         }else{
@@ -88,16 +110,16 @@ const useAsyncTable = props => {
             
         
         }
+    
         fetchDataWarp()
        
     }, [fetchDataWarp])
 
     // 获取列表数据
     async function fetchData() {
-        console.log(111)
         // 分页字段名称转换
         const { current: pageNum ,pageSize} = state.pagination
-        console.log(params)
+        // console.log(params)
         let res = await queryAction({ ...params, pageNum, pageSize  }).catch(err => {
           
             return {}
@@ -106,6 +128,8 @@ const useAsyncTable = props => {
         if (res.data.success === true) {
             const list = res.data.page.list;
             const  totalcounts = res.data.page.total;
+            setTotalAmount(res.data.extraData.totalAmount);
+
             dispatch({
                 type: 'SET_PAGINATION',
                 payload: {
@@ -127,6 +151,9 @@ const useAsyncTable = props => {
 
     return (
         <Table
+            id='consume_report'
+       
+            rowSelection={rowSelection}
             columns={owncolumns}
             pagination={state.pagination}
             dataSource={state.dataSource}
@@ -135,4 +162,5 @@ const useAsyncTable = props => {
         />
     )
 }
+
 export default useAsyncTable;

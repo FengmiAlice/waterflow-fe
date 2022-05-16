@@ -1,8 +1,9 @@
 import React, { useEffect,useState,useRef} from 'react';
 import ArgTable from '../../components/Table';
+import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
-import { getConsumeList,getConsumeTypeList, getPaymentTypeList,deleteTableRow,addTableRow} from '../../api/user';
+import { getConsumeList,getConsumeTypeList, getPaymentTypeList,deleteTableRow,addTableRow,deleteTableRowArray,exportConsumeTable} from '../../api/user';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import '../../assets/style/App.css';
 
@@ -104,19 +105,24 @@ function TestOne(props){
                 paymentId:'',
                 keyword:'',
         }
-        const [searchData,setSearchData] = useState(initSearchData);
-
+        const [searchData,setSearchData] = useState(initSearchData);//设置初始传参列表
         const [selectedTypeArray,setSelectedTypeArray] = useState([]);//设置支出类别列表
         const [paymentTypeArray,setPaymentTypeArray] = useState([]);//设置支付方式列表
         const [isModalVisible, setIsModalVisible] = useState(false)//设置弹窗显示或隐藏
-
+     
         // const [isTypeVisible,setTypeVisible] = useState(false);//设置新类别弹窗
         const [consumeTitle,setConsumeTitle] =useState('');//设置添加编辑弹框title值
         const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
+  
+
         // 使用useForm创建新增支出记录form实例
         const [form] = Form.useForm();
         // 使用useForm创建新增支出类别form实例
         // const [typeForm] = Form.useForm();
+          // 获取store中的用户信息
+        const { userStore } = useStore()
+        const { userInfo } = userStore;
+
 
        const month = useRef();//设置月份
        const year = useRef();//设置年份
@@ -126,6 +132,25 @@ function TestOne(props){
        const keyword = useRef('');//设置搜索关键字值
        const addConsumeType= useRef('');//设置新增支出记录类别值
        const addPaymentType= useRef('');//设置新增支出记录支付方式值
+       const rowKeys = useRef(null);//设置全选选择的数据
+       const tableId= useRef('');//获取table id
+       const totalAmount = useRef();//设置表格总花费
+        // 获取总花费
+        function setMount(k){   
+            console.log(k)
+            totalAmount.current = k;
+
+        }
+        //    获取选中的数据
+        function handleKeys(val){
+            rowKeys.current = val;
+        }
+        // 获取表格id
+        function getIds(value){
+            console.log(value.id)
+            tableId.current = value.id
+            console.log(tableId.current)
+        }
         // 获取日期范围值
         function getRangeValue(date,dateStringArray){
             // 非空判断
@@ -309,6 +334,65 @@ function TestOne(props){
         function handleCancel(){
             setIsModalVisible(false);
         }
+         // 批量删除表格行数据
+        function handleDeleteRow(){
+            if(rowKeys.current === null || rowKeys.current === undefined){
+                message.warning('请选择删除的数据');
+                return;
+            }
+            // 弹框
+            confirm({
+                title: '确认删除?',
+                okText: '确认',
+                okType: 'danger',
+                cancelText: '取消',
+                // 点击确认触发
+                onOk() {
+                    let param={
+                        idList:rowKeys.current
+                    }
+                    deleteTableRowArray(param).then((res)=>{
+                        if(res.data.success === true){
+                            message.success(res.data.message);
+                            buttonSearch();//重新掉接口刷新表格数据
+                            rowKeys.current = null;
+                        }
+                    })
+                }
+            });
+        }
+            // 批量导出支出列表
+        function handleExport(){
+            let params2 = {
+                idList:rowKeys.current,
+                times:times.current,
+                month:month.current,
+                year:year.current,
+                typeId:consumeType.current,
+                keyword:keyword.current,
+                paymentId:paymentType.current,
+            }
+            exportConsumeTable(userInfo.id,params2).then((res)=>{  
+                var exportFileContent = document.getElementById( tableId.current).outerHTML;//获取表
+                var blob = new Blob([exportFileContent], { type: "text/plain;charset=utf-8" });//使用blob,解决中文乱码问题
+                blob = new Blob([String.fromCharCode(0xFEFF), blob], { type: blob.type });
+            
+        
+                var contentDisposition = res.headers['content-disposition'];//在响应headers中获取表格的文件名
+                var fileName=contentDisposition.substring(20);
+                var link = window.URL.createObjectURL(blob);//创建新的blob url
+                var a=document.createElement('a');//创建a元素
+                a.style.display='none';//设置a不可见
+                a.href = link;//下载的链接
+                a.download = fileName;//下载的文件名
+                document.body.appendChild(a);//添加a元素
+                a.click();//添加元素点击事件
+                document.body.removeChild(a);//移除a元素
+                window.URL.revokeObjectURL(link);//释放掉blob
+            })
+        }
+
+
 
         // 根据筛选条件搜索表格数据
         function buttonSearch(){
@@ -378,12 +462,22 @@ function TestOne(props){
             <Tooltip title="添加一条支出记录，把你的每一笔消费都记下来吧" placement="top">
                 <Button type="primary" className="addConsumeBtn"  onClick={handleAdd} >添加</Button>
             </Tooltip>
+            <Tooltip title="删除你勾选的所有记录，不要随便点哦，删除就没啦" placement="top">
+                <Button type="danger"  className="deleteConsumeBtn" onClick={handleDeleteRow} >删除 </Button>
+            </Tooltip>
+            <Tooltip title="把符合以上搜索条件的（或已勾选的）记录导出成一个Excel表格文件" placement="top">
+                <Button type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
+            </Tooltip>
+            <span  className='totalStyle'>总计 {totalAmount.current}￥</span>
             <ArgTable  
+                        getId={getIds}
                         owncolumns = {columns1()}
                         queryAction={getConsumeList}
                         baseProps={{ rowKey: record => record.id }}
                         params = {searchData} 
+                        getRowKeys={handleKeys}
                         initMethod={initFunc}
+                        setTotalAmount = {setMount}
                     />
             </section>
                   

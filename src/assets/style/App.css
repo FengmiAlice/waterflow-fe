@@ -219,7 +219,7 @@ margin:10px 0;
   box-sizing: border-box;
   padding:5px;
 }
-.addConsumeBtn, .exportConsumeBtn{
+.addConsumeBtn, .exportConsumeBtn, .deleteConsumeBtn{
   margin-right:10px;
   /* border-radius:10px!important; */
 }
