@@ -109,11 +109,9 @@ function TestOne(props){
         const [selectedTypeArray,setSelectedTypeArray] = useState([]);//设置支出类别列表
         const [paymentTypeArray,setPaymentTypeArray] = useState([]);//设置支付方式列表
         const [isModalVisible, setIsModalVisible] = useState(false)//设置弹窗显示或隐藏
-     
-        // const [isTypeVisible,setTypeVisible] = useState(false);//设置新类别弹窗
         const [consumeTitle,setConsumeTitle] =useState('');//设置添加编辑弹框title值
         const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
-  
+        const [totalAmount,setTotalAmounts] = useState(0);//设置表格总花费
 
         // 使用useForm创建新增支出记录form实例
         const [form] = Form.useForm();
@@ -134,12 +132,11 @@ function TestOne(props){
        const addPaymentType= useRef('');//设置新增支出记录支付方式值
        const rowKeys = useRef(null);//设置全选选择的数据
        const tableId= useRef('');//获取table id
-       const totalAmount = useRef();//设置表格总花费
+       const tableRef=useRef(null);
+
         // 获取总花费
         function setMount(k){   
-            console.log(k)
-            totalAmount.current = k;
-
+            setTotalAmounts(k)
         }
         //    获取选中的数据
         function handleKeys(val){
@@ -147,9 +144,7 @@ function TestOne(props){
         }
         // 获取表格id
         function getIds(value){
-            console.log(value.id)
             tableId.current = value.id
-            console.log(tableId.current)
         }
         // 获取日期范围值
         function getRangeValue(date,dateStringArray){
@@ -229,7 +224,7 @@ function TestOne(props){
                 month.current = moment().format("YYYY-MM");//格式化当前月份
                 getTypeList();
                 getPaymentList();
-            
+         
         },[])
            // 获取支出记录类别值
         function addTypeChange(value){
@@ -392,14 +387,16 @@ function TestOne(props){
             })
         }
 
-
+    
 
         // 根据筛选条件搜索表格数据
         function buttonSearch(){
             // 每次翻页查询之后页码，条数重置
-            // page.current = 1;
-            // size.current = 10;
-            // handleSearch();
+            console.log(tableRef.current)
+            if(tableRef.current){
+                tableRef.current.resetPage()
+            }
+
             setSearchData({
                 times:times.current,
                 month:month.current,
@@ -408,6 +405,7 @@ function TestOne(props){
                 paymentId:paymentType.current,
                 keyword:keyword.current,
             })
+
         }
     
     return(
@@ -468,8 +466,9 @@ function TestOne(props){
             <Tooltip title="把符合以上搜索条件的（或已勾选的）记录导出成一个Excel表格文件" placement="top">
                 <Button type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
             </Tooltip>
-            <span  className='totalStyle'>总计 {totalAmount.current}￥</span>
+            <span  className='totalStyle'>总计 {totalAmount}￥</span>
             <ArgTable  
+                        ref={tableRef}
                         getId={getIds}
                         owncolumns = {columns1()}
                         queryAction={getConsumeList}
@@ -478,6 +477,7 @@ function TestOne(props){
                         getRowKeys={handleKeys}
                         initMethod={initFunc}
                         setTotalAmount = {setMount}
+                     
                     />
             </section>
                   

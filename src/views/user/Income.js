@@ -1,6 +1,7 @@
-import React, {useCallback, useEffect,useState,useRef} from 'react';
+import React, {useEffect,useState,useRef} from 'react';
+import ArgTable from '../../components/Table';
 import { useStore } from '../../hooks/storeHook';
-import { DatePicker,Form,Button,Input,Table,Select,Space,message,Modal,Tooltip } from 'antd';
+import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
 import { getIncomeList,getConsumeTypeList, getPaymentTypeList,addIncomeTableRow,deleteIncomeTableRow,exportIncomeTable,addIncomeType} from '../../api/user';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
@@ -11,55 +12,28 @@ const {TextArea} = Input;
 
 function Income(){
      // 列表的column项配置
-     const columns = [
-        {
-            title: '收入日期',
-            key:'time',
-            dataIndex: 'time',
-        },
-        {
-            title: '收入类别',
-            key:'typeId',
-            dataIndex: 'typeId',
-            render: (text,record) =>{
-                if(text === null || text === undefined){
-                    return '无'
-                }else{
-                    return selectedTypeArray.map( item =>{
-                        if(item.id === record.typeId) {
-                            return (
-                                <Space  key={item.id}>
-                                    {item.name}
-                                </Space>
-                            )
-                        }
-                        return null;
-                    })
+     const columns = ()=>{
+        return [
+            {
+                title: '收入日期',
+                key:'time',
+                dataIndex: 'time',
+                render:(text,record)=>{
+                    if(text === null || text === undefined){
+                        return '无'
+                    }
                 }
-            } 
-           
-        },
-        {
-            title: '收入内容',
-            key:'description',
-            dataIndex: 'description',
-        },
-        {
-            title: '金额',
-            key:'amount',
-            dataIndex: 'amount',
-        },
-        {
-            title: '付款方式',
-            key:'paymentId',
-            dataIndex: 'paymentId',
-            render: (text,record) => 
-                {                   
-                    if( text === null || text === undefined){
+            },
+            {
+                title: '收入类别',
+                key:'typeId',
+                dataIndex: 'typeId',
+                render: (text,record) =>{
+                    if(text === null || text === undefined){
                         return '无'
                     }else{
-                        return paymentTypeArray.map(item=>{                       
-                            if(item.id === record.paymentId) {
+                        return selectedTypeArray.map( item =>{
+                            if(item.id === record.typeId) {
                                 return (
                                     <Space  key={item.id}>
                                         {item.name}
@@ -69,83 +43,136 @@ function Income(){
                             return null;
                         })
                     }
-                }      
-        },
-        {
-            title: '操作',
-            dataIndex: 'operation',
-            render: (text, record,index) =>
-                tableData.length >= 1 ? (
-                <Space size="middle">
-                    <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
-                    <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
-                    
-                </Space>
-                ) : null,
-        }
-    ];
-
-    const [initFlag,setInitFlag] = useState(false);//初始渲染标识
-    const [total, setTotal] = useState(0); // 设置总页数
-    const [tableData, setTableData] = useState([]);// 设置表格数据
+                } 
+            
+            },
+            {
+                title: '收入内容',
+                key:'description',
+                dataIndex: 'description',
+                render:(text,record)=>{
+                    if(text === null || text === undefined){
+                        return '无'
+                    }
+                }
+            },
+            {
+                title: '金额',
+                key:'amount',
+                dataIndex: 'amount',
+                render:(text,record)=>{
+                    if(text === null || text === undefined){
+                        return '无'
+                    }
+                }
+            },
+            {
+                title: '付款方式',
+                key:'paymentId',
+                dataIndex: 'paymentId',
+                render: (text,record) => 
+                    {                   
+                        if( text === null || text === undefined){
+                            return '无'
+                        }else{
+                            return paymentTypeArray.map(item=>{                       
+                                if(item.id === record.paymentId) {
+                                    return (
+                                        <Space  key={item.id}>
+                                            {item.name}
+                                        </Space>
+                                    )
+                                }
+                                return null;
+                            })
+                        }
+                    }      
+            },
+            {
+                title: '操作',
+                dataIndex: 'operation',
+                render: (text, record,index) =>{
+                    return (
+                        <Space size="middle">
+                            <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
+                            <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
+                            
+                        </Space>
+                        ) 
+                }
+                
+            }
+        ];
+    }
+    let currentYear =  moment().format("YYYY");
+    let initSearchData = {
+            month:'',
+            year:currentYear,
+            typeId:'',
+            keyword:'',
+    }
+    const [searchData,setSearchData] = useState(initSearchData);//设置初始传参列表
     const [selectedTypeArray,setSelectedTypeArray] = useState([]);//设置获取收入类别列表
     const [paymentTypeArray,setPaymentTypeArray] = useState([]);//设置获取收入支付方式列表
-    const [selectedRowKeys,setSelectedRowKeys] = useState([]);//表格全选
-   
-    const [form] = Form.useForm();//创建添加和编辑收入记录form实例
-    const [typeForm] = Form.useForm();//创建收入记录新类别form实例
-
     const [rowId, setRowId] = useState('');//设置新增或删除需要传递的行id
     const [incomeTitle, setIncomeTitle] = useState('');//设置新增收入弹窗标题
     const [isModalVisible, setIsModalVisible] = useState(false);//设置新增和编辑收入记录弹窗
     const [isTypeVisible, setIsTypeVisible] = useState(false);//设置收入新类别弹窗
-    const [totalAmount,setTotalAmount] = useState(0);//表格统计的总花费
-     // 列表选择配置
-     const rowSelection = {
-        selectedRowKeys,
-        onChange:onSelectChange
-    }
-    // 选择项选中后发生的变化
-    function onSelectChange(selectedRowKeys){
-        setSelectedRowKeys(selectedRowKeys)
-    }
+    const [totalAmount,setTotalAmounts] = useState(0);//设置表格总花费
+    const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
+
 
      // 获取store中的用户信息
      const { userStore } = useStore()
      const { userInfo } = userStore;
+    const [form] = Form.useForm();//创建添加和编辑收入记录form实例
+    const [typeForm] = Form.useForm();//创建收入记录新类别form实例
 
-    const page = useRef(1);// 设置当前页码
-    const size = useRef(10);// 设置每页条数
+
     const month=useRef('');//设置月份值
     const year = useRef('');//设置年份值
     const consumeType = useRef('');//设置搜索类别值
     const keyword = useRef('');//设置搜索输入框值
     const addConsumeType = useRef('');//设置新增收入记录类别值
     const addPaymentType= useRef('');//设置新增收入记录支付方式值
+    const tableId= useRef('income_report');//获取收入列表table id
+    const tableRef=useRef(null);//设置表格的ref
+
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行,传一个空数组，只执行一次）
     useEffect(()=>{
-        if(!initFlag ){
-            // console.log("初始渲染")
-            year.current = moment().format("YYYY");//格式化当前年份
-            getTypeList();
-            getPaymentList();
-
-            setInitFlag(true)
-        }else{
-            // console.log('不是初始渲染')
-          
-        }
-        pageChange(page.current,size.current)
+        // if(!initFlag ){
+        //     // console.log("初始渲染")
+        //     setInitFlag(true)
+        // }else{
+        //     // console.log('不是初始渲染')
+        // }
+        // pageChange(page.current,size.current)
+        year.current = moment().format("YYYY");//格式化当前年份
+        getTypeList();
+        getPaymentList();
        
-    },[page,size])
-
-    // 点击分页按钮触发方法
-    const pageChange = useCallback((currentPage,currentSize)=>{
-        page.current = currentPage;
-        size.current = currentSize;
-        handleSearch();
     },[])
 
+    // 点击分页按钮触发方法
+    // const pageChange = useCallback((currentPage,currentSize)=>{
+    //     page.current = currentPage;
+    //     size.current = currentSize;
+    //     handleSearch();
+    // },[])
+
+    // 设置表格总花费方法
+    function setMount(k){   
+        setTotalAmounts(k);
+    }
+    // 设置表格选择的数据
+    function handleKeys(val){
+        setRowKeys(val)
+    }
+    // 设置查询条件初始化
+    function initFunc(){
+        // console.log('父组件执行初始化')
+        
+    }
     // 获取搜索月份日期值
     function getMonthChange(date,dateString){
            // 非空判断
@@ -210,7 +237,7 @@ function Income(){
     // 批量导出支出列表
     function handleExport(){
         let params2 = {
-            idList:selectedRowKeys,
+            idList:rowKeys,
             month:month.current,
             year:year.current,
             typeId:consumeType.current,
@@ -218,7 +245,7 @@ function Income(){
 
         }
         exportIncomeTable(userInfo.id,params2).then((res)=>{  
-            var exportFileContent = document.getElementById('income_report').outerHTML;//获取表
+            var exportFileContent = document.getElementById(tableId.current).outerHTML;//获取表
             var blob = new Blob([exportFileContent], { type: "text/plain;charset=utf-8" });//使用blob,解决中文乱码问题
             blob = new Blob([String.fromCharCode(0xFEFF), blob], { type: blob.type });
         
@@ -353,29 +380,36 @@ function Income(){
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
-        page.current = 1;
-        size.current = 10;
-        handleSearch();
-    }
-    function handleSearch(){
-        let param={
+        // 每次翻页查询之后页码，条数重置
+        if(tableRef.current){
+            tableRef.current.resetPage()
+        }
+        setSearchData({
             month:month.current,
             year:year.current,
-            pageNum:page.current,
-            pageSize:size.current,
             typeId:consumeType.current,
             keyword:keyword.current,
-        }
-        getIncomeList(param).then((res)=>{
-            if(res.data.success === true){
-                let result = res.data.page;
-                let table=[...result.list];
-                setTotal(result.total)
-                setTableData([...table])
-                setTotalAmount(res.data.extraData.totalAmount);
-            }
         })
     }
+    // function handleSearch(){
+    //     let param={
+    //         month:month.current,
+    //         year:year.current,
+    //         pageNum:page.current,
+    //         pageSize:size.current,
+    //         typeId:consumeType.current,
+    //         keyword:keyword.current,
+    //     }
+    //     getIncomeList(param).then((res)=>{
+    //         if(res.data.success === true){
+    //             let result = res.data.page;
+    //             let table=[...result.list];
+    //             setTotal(result.total)
+    //             setTableData([...table])
+    //             setTotalAmount(res.data.extraData.totalAmount);
+    //         }
+    //     })
+    // }
 
     return(
     <div>
@@ -414,7 +448,19 @@ function Income(){
                     <Button type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
                 </Tooltip>
                 <span className='totalStyle'>总计 {totalAmount}￥ </span>
-                <Table id="income_report" rowSelection={rowSelection} columns={columns} dataSource={tableData} rowKey="id" 
+                <ArgTable 
+                    ref={tableRef}
+                    tableType={'income'}
+                
+                    owncolumns = {columns()}
+                    queryAction={getIncomeList}
+                    baseProps={{ rowKey: record => record.id }}
+                    params = {searchData} 
+                    getRowKeys={handleKeys}
+                    initMethod={initFunc}
+                    setTotalAmount = {setMount}
+                />            
+                {/* <Table id="income_report" rowSelection={rowSelection} columns={columns} dataSource={tableData} rowKey="id" 
                     pagination={
                         {   showSizeChanger:true,
                             pageSizeOptions:['10','20'],  
@@ -426,7 +472,7 @@ function Income(){
                         
                         }
                     }
-                />
+                /> */}
 
                  {/* 添加或编辑收入记录弹窗 */}
             <Modal title={incomeTitle} forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >

@@ -3,7 +3,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import RouterWaiter from './components/RouteGuard/index';
-import {  BrowserRouter as Router} from 'react-router-dom';
+import { BrowserRouter as Router} from 'react-router-dom';
 import { getUserInfo } from './api/login';
 import { useStore } from './hooks/storeHook'
 

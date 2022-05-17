@@ -8,24 +8,30 @@
  * 
 */
 
-import React, { useEffect, useReducer, useCallback,useState,useRef,forwardRef,useImperativeHandle} from 'react'
+import React, { useEffect, useReducer, useCallback,useState,forwardRef, useImperativeHandle} from 'react'
 import { Table } from 'antd';
-
- 
-const useAsyncTable = (props) => {
- 
+// ref转发
+const useAsyncTable = forwardRef( (props,ref) => {
     /*
-    要传递的参数
+    props的一些参数
     queryAction:获取列表数据api
     params:请求附加参数
     baseProps: antd基础props,
-    owncolumns:表格列数据配置
-    initMethod:初始化,
-    selectedTableRowKeys:全选选中的数据
+    owncolumns:表格列数据配置方法
+    initMethod:初始化列表参数方法,
+    getRowKeys:全选选中的数据方法
+    getId:传递table ID方法
+    setTotalAmount:统计表格总花费金额方法
     */
-    const { owncolumns,queryAction,params, baseProps,initMethod,getRowKeys,getId,setTotalAmount } = props;
+    const { owncolumns,queryAction,params, baseProps,initMethod,getRowKeys,setTotalAmount,tableType,} = props;
+    const [initFlag,setInitFlag] = useState(false);//初始渲染标识
     const [selectedRowKeys,setSelectedRowKeys] = useState([]);//表格全选
-    
+    const [tableId,setTableId] = useState('');//设置表格动态id
+
+    // 使用ref时，useImperativeHandle 暴露给父组件实例值和方法
+    useImperativeHandle(ref, () => ({
+        resetPage
+    }))
 
     // 列表选择配置
     const rowSelection = {
@@ -35,9 +41,8 @@ const useAsyncTable = (props) => {
     // 选择项选中后发生的变化
     function onSelectChange(selectedRowKeys){
         setSelectedRowKeys(selectedRowKeys)
-        // 函数组件父子组件之间传值
+        // 函数组件传值给父组件
         getRowKeys(selectedRowKeys)
-    
     }
 
     // 分页数据
@@ -49,13 +54,15 @@ const useAsyncTable = (props) => {
         pageSizeOptions:['10','20','50','100'],
         showTotal:(total)=>{return `共${total}条数据`}, 
     }
+   
     // table组件全量数据
     const initialState = {
         pagination: paginationInitial,
         dataSource: [],
     }
-    // 使用redux useReduxer管理 action操作如何修改state
-    const reducer = (state, action) => {
+ 
+    // 使用redux useReducer管理 action操作如何修改state
+     const reducer = (state, action) => {
         const { payload } = action
         switch (action.type) {
             case 'SET_PAGINATION':
@@ -67,15 +74,15 @@ const useAsyncTable = (props) => {
         }
     }
     const [state, dispatch] = useReducer(reducer, initialState)
-    const [initFlag,setInitFlag] = useState(false);//初始渲染标识
+
+   
     // 改变页码事件
     function handleTableChange(payload) {
-       
         if (payload) {
             const current  = payload.current;
             const pageSize = payload.pageSize;
-            const total = payload.total;
-    
+            const total    = payload.total;
+
             dispatch({
                 type: 'SET_PAGINATION',
                 payload: {
@@ -87,9 +94,17 @@ const useAsyncTable = (props) => {
                     }
                 }
             })
+
+            
         }
     }
-    // useCallback包装请求，缓存依赖，优化组件性能
+    // 每次查询条件之后页数页码重置初始值
+    const resetPage =()=>{
+        state.pagination.current=1;
+        state.pagination.pageSize = 10;
+    }
+
+    // useCallback缓存请求，减少不必要的渲染，优化组件性能
     const fetchDataWarp = useCallback(
         fetchData,
         [params, state.pagination.current,state.pagination.pageSize]
@@ -99,18 +114,24 @@ const useAsyncTable = (props) => {
         if(!initFlag ){
             // console.log("初始渲染111")
             initMethod();
-            const tableId = document.getElementById('consume_report')
-            console.log(tableId)
-            // 传递table id
-            getId(tableId)
+            // 设置不同表格id名
+            if(tableType === 'consume'){
+                setTableId('consume_report')
+            }
+            if(tableType === 'income'){
+                setTableId('income_report')
+            }
+
+
+            // const tableIds = document.getElementById(tableId)
+            // // 传递给父组件table id
+            // getId(tableIds)
            
             setInitFlag(true)
         }else{
             // console.log('不是初始渲染1111')
-            
-        
         }
-    
+       
         fetchDataWarp()
        
     }, [fetchDataWarp])
@@ -118,8 +139,7 @@ const useAsyncTable = (props) => {
     // 获取列表数据
     async function fetchData() {
         // 分页字段名称转换
-        const { current: pageNum ,pageSize} = state.pagination
-        // console.log(params)
+        const { current: pageNum ,pageSize} = state.pagination;
         let res = await queryAction({ ...params, pageNum, pageSize  }).catch(err => {
           
             return {}
@@ -129,7 +149,7 @@ const useAsyncTable = (props) => {
             const list = res.data.page.list;
             const  totalcounts = res.data.page.total;
             setTotalAmount(res.data.extraData.totalAmount);
-
+            // 回填pagination里的参数数据
             dispatch({
                 type: 'SET_PAGINATION',
                 payload: {
@@ -147,12 +167,9 @@ const useAsyncTable = (props) => {
         }
     }
 
-  
-
     return (
         <Table
-            id='consume_report'
-       
+            id={tableId}
             rowSelection={rowSelection}
             columns={owncolumns}
             pagination={state.pagination}
@@ -161,6 +178,6 @@ const useAsyncTable = (props) => {
             {...baseProps}
         />
     )
-}
+})
 
 export default useAsyncTable;
