@@ -150,13 +150,7 @@ function Consume(){
     function handleKeys(val){
         setRowKeys(val)
     }
-    // 获取表格id
-    // function getIds(value){
-    //     console.log(value.id)
-     
-    //     tableId.current = value.id;
-    //     console.log(tableId.current)
-    // }
+    
     // 设置查询条件初始化
     function initFunc(){
         // console.log('父组件执行初始化')
@@ -500,7 +494,7 @@ function Consume(){
                 <Button type="danger"  className="deleteConsumeBtn" onClick={handleDeleteRow} >删除 </Button>
             </Tooltip>
             <span className='totalStyle'>总计 {totalAmount}￥ </span>
-            {/* getId={getIds} */}
+
             <ArgTable 
                 ref={tableRef}
                 tableType={'consume'}            
