@@ -1,10 +1,10 @@
 import React, { useEffect,useState,useRef} from 'react';
 import ArgTable from '../../components/Table';
+import  AsyncModal from '../../components/Modal';
 import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
 import { getConsumeList,getConsumeTypeList, getPaymentTypeList,deleteTableRow,addTableRow,deleteTableRowArray,exportConsumeTable} from '../../api/user';
-import {ExclamationCircleOutlined} from '@ant-design/icons';
 import '../../assets/style/App.css';
 
 const {  RangePicker } = DatePicker; 
@@ -251,7 +251,7 @@ function TestOne(props){
             form.resetFields();
             setConsumeTitle('添加支出记录');
             setRowId('');
-            setIsModalVisible(true);
+            operDialogFunc(true);
         }
          // 编辑支出记录按钮操作
         function handleEdit(row){
@@ -262,7 +262,7 @@ function TestOne(props){
             form.setFieldsValue(row) 
             setConsumeTitle('编辑支出记录')
             setRowId(row.id)
-            setIsModalVisible(true);
+            operDialogFunc(true);
         }
         // 删除表格中的一行数据
         function handleDelete(row){
@@ -289,46 +289,73 @@ function TestOne(props){
         }
         // 添加支出记录弹窗信息确认操作
         function handleSubmit(){
-            confirm({
-                title: '确认提交?',
-                icon: <ExclamationCircleOutlined />,
-                okText:"确认",
-                cancelText:"取消",
-                // 确认按钮操作
-                onOk() {
-                    form.validateFields().then(async (values) => {
-                        // 将时间组件值转为字符串用于传值
-                        let times;
-                        if(values.time !== undefined){
-                            times = values.time.format('YYYY-MM-DD');
-                        }
+            // confirm({
+            //     title: '确认提交?',
+            //     icon: <ExclamationCircleOutlined />,
+            //     okText:"确认",
+            //     cancelText:"取消",
+            //     // 确认按钮操作
+            //     onOk() {
+            //         form.validateFields().then(async (values) => {
+            //             // 将时间组件值转为字符串用于传值
+            //             let times;
+            //             if(values.time !== undefined){
+            //                 times = values.time.format('YYYY-MM-DD');
+            //             }
                         
-                        let params = {
-                            id:rowId,
-                            typeId:addConsumeType.current,
-                            time:times,
-                            description:values.description,
-                            paymentId:addPaymentType.current,
-                            amount:values.amount,
-                            note:values.note
-                        };
-                        let res = await addTableRow(params);
-                        if(res.data.success === true){
-                            buttonSearch();//重新掉接口刷新表格数据
-                            message.success(res.data.message);
-                            setIsModalVisible(false);
-                        }else{
-                            setIsModalVisible(true);
-                        }
-                    })
-                },
-            });
+            //             let params = {
+            //                 id:rowId,
+            //                 typeId:addConsumeType.current,
+            //                 time:times,
+            //                 description:values.description,
+            //                 paymentId:addPaymentType.current,
+            //                 amount:values.amount,
+            //                 note:values.note
+            //             };
+            //             let res = await addTableRow(params);
+            //             if(res.data.success === true){
+            //                 buttonSearch();//重新掉接口刷新表格数据
+            //                 message.success(res.data.message);
+            //                 setIsModalVisible(false);
+            //             }else{
+            //                 setIsModalVisible(true);
+            //             }
+            //         })
+            //     },
+            // });
+            form.validateFields().then(async (values) => {
+                // 将时间组件值转为字符串用于传值
+                let times;
+                if(values.time !== undefined){
+                    times = values.time.format('YYYY-MM-DD');
+                }
+                
+                let params = {
+                    id:rowId,
+                    typeId:addConsumeType.current,
+                    time:times,
+                    description:values.description,
+                    paymentId:addPaymentType.current,
+                    amount:values.amount,
+                    note:values.note
+                };
+                let res = await addTableRow(params);
+                if(res.data.success === true){
+                    buttonSearch();//重新掉接口刷新表格数据
+                    message.success(res.data.message);
+                    operDialogFunc(false);
+                }else{
+                    operDialogFunc(true);
+                }
+            })
          
         }
-        // 添加支出记录弹窗信息取消操作
-        function handleCancel(){
-            setIsModalVisible(false);
+       
+        // 设置新增编辑支出弹窗事件
+        const operDialogFunc = (flag)=>{
+          setIsModalVisible(flag);
         }
+            
          // 批量删除表格行数据
         function handleDeleteRow(){
             if(rowKeys.current === null || rowKeys.current === undefined){
@@ -482,7 +509,7 @@ function TestOne(props){
             </section>
                   
             {/* 添加或编辑支出记录弹窗 */}
-            <Modal title={consumeTitle} forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
+            <AsyncModal title={consumeTitle} vis={isModalVisible}  handleOperate={handleSubmit} operDialogFunc={operDialogFunc} >
                 <section >
                     <Form   name="consumeForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off" >
                         <Form.Item  label="支出类别" name="typeId"  rules={[
@@ -547,7 +574,73 @@ function TestOne(props){
                         </Form.Item>
                     </Form>
                 </section>
-            </Modal>
+                </AsyncModal>
+            {/* <Modal title={consumeTitle} forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
+                <section >
+                    <Form   name="consumeForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off" >
+                        <Form.Item  label="支出类别" name="typeId"  rules={[
+                                {required:true,message:'请选择支出类别'},
+                            
+                            ]} style={{position:'relative'}} >
+                                <Select style={{width:80+'%'}}  onChange={addTypeChange} placeholder="请选择" allowClear >
+                                    {
+                                        selectedTypeArray.map( (item,index,arr) => (
+                                        
+                                            <Option key={item.id} value={item.id}>
+                                                {item.name}
+                                            </Option>
+                                        ))
+                                        }
+                                </Select>
+                        </Form.Item>
+                        
+                        <Form.Item style={{clear:'both'}} label="支出时间" name="time"   
+                                rules={[
+                                    {required:true,message:'请选择支出时间'},
+                                    
+                                ]}  >
+                                <DatePicker  style={{ width: 100+'%' }} />
+                        </Form.Item>
+                        <Form.Item label="详情" name="description"   
+                                rules={[
+                                    {required:true,message:'请输入详情'},
+                                    
+                                ]} >
+                            <Input  placeholder="购买了什么，或者去哪玩了"    />
+                        </Form.Item>
+                        <Form.Item label="付款方式" name="paymentId"   
+                                rules={[
+                                    {required:true,message:'请选择付款方式'},
+                                    
+                                ]}> 
+                            <Select   onChange={addPaymentTypeChange} placeholder="请选择" allowClear>
+                                    {
+                                    paymentTypeArray.map( (item,index,arr) => (
+                                    
+                                        <Option key={item.id} value={item.id}>
+                                            {item.name}
+                                        </Option>
+                                    ))
+                                    }
+                            </Select>
+                        </Form.Item>
+                        <Form.Item label="金额(圆整)" name="amount" 
+                            rules={[
+                                {required:true,message:'请输入金额'},
+                            
+                            ]} >
+                            <Input type="number" placeholder="越精确越好，可以写小数"    />
+                        </Form.Item>
+                        <Form.Item label="补充描述" name="note" 
+                            rules={[
+                                {required:true,message:'请输入补充描述'},
+                            
+                            ]} >
+                            <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
+                        </Form.Item>
+                    </Form>
+                </section>
+            </Modal> */}
         </div>
     )
 }
