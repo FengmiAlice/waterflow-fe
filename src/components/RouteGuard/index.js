@@ -16,6 +16,7 @@ function RouterWaiter( {routes,onRouteBefore,loading} ){
     // console.log(fn)//组件工具函数
     // 将自定义的路由配置数组转换为react-router官方需要的路由数组
     const reactRoutes = fn.transformRoutes();
+    // console.log(reactRoutes)
     // 然后通过useRoutes引用
     const elements = useRoutes(reactRoutes);
     return elements;

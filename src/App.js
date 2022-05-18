@@ -22,6 +22,8 @@ function App(){
       useEffect(()=> {
             // 判断路由是否可渲染
             const path = getRoutePath();
+            // console.log(path) 
+
             if(['/signIn'].includes(path)){
                   setIsRender(true);
             }else{

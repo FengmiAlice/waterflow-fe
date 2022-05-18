@@ -12,9 +12,13 @@ const routes = [
     * @param {boolean} hideMenu // 是否在侧边栏中隐藏该路由菜单
     */
     {
-        path: '/index',
+        path:'/',
         redirect: '/index/consume',
     },
+    // {
+    //     path: '/index',
+    //     redirect: '/index/consume',
+    // },
     {
         path:'/index',
         element: <AppLayout />,
