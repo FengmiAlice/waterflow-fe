@@ -1,5 +1,5 @@
 /**
- *  @Description: store状态管理context
+ *  @Description: store状态管理context隔代传递props数据
 */
 import React from 'react'
 import store from '../store'

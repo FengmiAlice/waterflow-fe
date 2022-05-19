@@ -113,9 +113,11 @@ function Consume(){
     // 使用useForm创建新增支出类别form实例
     const [typeForm] = Form.useForm();
 
-    const [isModalVisible, setIsModalVisible] = useState(false)//设置弹窗显示或隐藏
+    const [isModalVisible, setIsModalVisible] = useState(false)//设置添加编辑支出类弹窗
     const [isTypeVisible,setTypeVisible] = useState(false);//设置新类别弹窗
-    const [consumeTitle,setConsumeTitle] =useState('');//设置添加编辑弹框title值
+    const [consumeTitle,setConsumeTitle] = useState('');//设置添加编辑弹框title值
+    const [isModalType,setIsModalType] = useState('');//设置弹窗类别输出type类型
+
     const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
     const [totalAmount,setTotalAmounts] = useState(0);//设置表格总花费
     const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
@@ -136,7 +138,6 @@ function Consume(){
 
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
        useEffect(()=>{
-                // console.log("初始渲染")
                 month.current = moment().format("YYYY-MM");//格式化当前月份
                 getTypeList();
                 getPaymentList();
@@ -245,6 +246,8 @@ function Consume(){
     // 添加新类别按钮事件
     function addNewType(){
         operTypeFunc(true);
+
+        setIsModalType('special')
         typeForm.resetFields();
        
     }
@@ -276,8 +279,10 @@ function Consume(){
         addPaymentType.current = '';
         form.resetFields();
         setConsumeTitle('添加支出记录');
+        setIsModalType('common')
         setRowId('');
         operDialogFunc(true);
+        
     }
 
     // 编辑支出记录按钮操作
@@ -290,6 +295,7 @@ function Consume(){
         setConsumeTitle('编辑支出记录')
         setRowId(row.id)
         operDialogFunc(true);
+       
     }
 
     // 删除表格中的一行数据
@@ -408,6 +414,7 @@ function Consume(){
     // 设置新增编辑支出弹窗事件
     const operDialogFunc = (flag)=>{
         setIsModalVisible(flag);
+       
     }
      // 设置新增类别弹窗事件
     const operTypeFunc = (flag)=>{
@@ -506,7 +513,7 @@ function Consume(){
             />                           
 
             {/* 添加或编辑支出记录弹窗 */}
-            <AsyncModal title={consumeTitle} vis={isModalVisible} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
+            <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
                 <section >
                     <Form   name="consumeForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off" >
                         <Form.Item  label="支出类别" name="typeId"  rules={[
@@ -574,7 +581,7 @@ function Consume(){
             </AsyncModal>
             
             {/* 添加类别弹窗 */}
-            <AsyncModal title='添加类型'  visible={isTypeVisible} operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
+            <AsyncModal title='添加类型' modalType={isModalType} vis={isTypeVisible}  operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
             <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
                     <Form.Item  label="名称" name="typeName"  
                         rules={[
@@ -589,21 +596,6 @@ function Consume(){
                     </Form.Item>
                 </Form>      
             </AsyncModal>
-            {/* <Modal title='添加类型'  visible={isTypeVisible} onOk={handleTypeSubmit} onCancel={handleTypeCancel} okText="确认" cancelText="取消" >
-                <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
-                    <Form.Item  label="名称" name="typeName"  
-                        rules={[
-                                    {required:true,message:'请输入名称'},
-                                    
-                        ]}
-                        >
-                        <Input type="text" />
-                    </Form.Item>
-                    <Form.Item  label="描述"  name="typeDescription"  >
-                        <TextArea row={1} />
-                    </Form.Item>
-                </Form>
-            </Modal> */}
        </section>
     </div>
     )
