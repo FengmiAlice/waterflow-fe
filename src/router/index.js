@@ -15,10 +15,6 @@ const routes = [
         path:'/',
         redirect: '/index/consume',
     },
-    // {
-    //     path: '/index',
-    //     redirect: '/index/consume',
-    // },
     {
         path:'/index',
         element: <AppLayout />,
@@ -37,45 +33,54 @@ const routes = [
                 // element:<About />
             },
             {
-                    path:'/index/income',
-                    meta:{
-                        title:'收入',
-                        icon:<UserOutlined />
-                    },
-                    component: () => import('../views/user/Income'),
+                path:'/index/income',
+                meta:{
+                    title:'收入',
+                    icon:<UserOutlined />
+                },
+                component: () => import('../views/user/Income'),
                 
+            },
+            {
+                path:'/index/report',
+                meta:{
+                    title:'报告',
+                    icon:<UserOutlined />
+                },
+                component: () => import('../views/user/Report'),
+            
             },
         ]
     },
-    {
-        path:'/test',
-        element: <AppLayout />,
-        meta:{
-            title:"测试页",
-            icon: <HomeOutlined />,
+    // {
+    //     path:'/test',
+    //     element: <AppLayout />,
+    //     meta:{
+    //         title:"测试页",
+    //         icon: <HomeOutlined />,
           
-        },
-        children:[
-           {
-               path:'/test/testOne',
-               meta:{
-                title:"测试1",
-                icon:<UserOutlined />
-               },
-               component: () => import('../views/test/TestOne'),
-            //    element:<TestOne />
-           },
-           {
-               path:'/test/testTwo',
-               meta:{
-                title:'测试2',
-                icon:<UserOutlined />
-               },
-               component: () => import('../views/test/TestTwo'),
-            //    element:<TestTwo />
-           },
-        ]
-    },
+    //     },
+    //     children:[
+    //        {
+    //            path:'/test/testOne',
+    //            meta:{
+    //             title:"测试1",
+    //             icon:<UserOutlined />
+    //            },
+    //            component: () => import('../views/test/TestOne'),
+    //         //    element:<TestOne />
+    //        },
+    //        {
+    //            path:'/test/testTwo',
+    //            meta:{
+    //             title:'测试2',
+    //             icon:<UserOutlined />
+    //            },
+    //            component: () => import('../views/test/TestTwo'),
+    //        },
+    //     ]
+    // },
+
     // {
     //     path:'/userInfo',
     //     meta:{
