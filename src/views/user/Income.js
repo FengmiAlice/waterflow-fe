@@ -1,10 +1,11 @@
 import React, {useEffect,useState,useRef} from 'react';
 import ArgTable from '../../components/Table';
+import AsyncModal from '../../components/Modal';
 import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
 import { getIncomeList,getConsumeTypeList, getPaymentTypeList,addIncomeTableRow,deleteIncomeTableRow,exportIncomeTable,addIncomeType} from '../../api/user';
-import {ExclamationCircleOutlined} from '@ant-design/icons';
+
 import '../../assets/style/App.css';
 const { Option } = Select;
 const {confirm} = Modal;
@@ -18,11 +19,7 @@ function Income(){
                 title: '收入日期',
                 key:'time',
                 dataIndex: 'time',
-                render:(text,record)=>{
-                    if(text === null || text === undefined){
-                        return '无'
-                    }
-                }
+               
             },
             {
                 title: '收入类别',
@@ -50,21 +47,11 @@ function Income(){
                 title: '收入内容',
                 key:'description',
                 dataIndex: 'description',
-                render:(text,record)=>{
-                    if(text === null || text === undefined){
-                        return '无'
-                    }
-                }
             },
             {
                 title: '金额',
                 key:'amount',
                 dataIndex: 'amount',
-                render:(text,record)=>{
-                    if(text === null || text === undefined){
-                        return '无'
-                    }
-                }
             },
             {
                 title: '付款方式',
@@ -115,8 +102,11 @@ function Income(){
     const [selectedTypeArray,setSelectedTypeArray] = useState([]);//设置获取收入类别列表
     const [paymentTypeArray,setPaymentTypeArray] = useState([]);//设置获取收入支付方式列表
     const [rowId, setRowId] = useState('');//设置新增或删除需要传递的行id
+
     const [incomeTitle, setIncomeTitle] = useState('');//设置新增收入弹窗标题
+    const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
     const [isModalVisible, setIsModalVisible] = useState(false);//设置新增和编辑收入记录弹窗
+
     const [isTypeVisible, setIsTypeVisible] = useState(false);//设置收入新类别弹窗
     const [totalAmount,setTotalAmounts] = useState(0);//设置表格总花费
     const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
@@ -269,8 +259,9 @@ function Income(){
         addPaymentType.current = '';
         form.resetFields();
         setIncomeTitle('添加收入记录');
+        setIsModalType('common');
         setRowId('');
-        setIsModalVisible(true);
+        operDialogFunc(true);
     }
     // 编辑支出记录按钮操作
     function handleEdit(row){
@@ -278,10 +269,11 @@ function Income(){
         row.time = moment(row.time)
         addConsumeType.current = row.typeId;
         addPaymentType.current = row.paymentId;
-        form.setFieldsValue(row) 
-        setIncomeTitle('编辑收入记录')
-        setRowId(row.id)
-        setIsModalVisible(true);
+        form.setFieldsValue(row); 
+        setIncomeTitle('编辑收入记录');
+        setIsModalType('common');
+        setRowId(row.id);
+        operDialogFunc(true);
     }
     // 删除表格中的一行数据
     function handleDelete(row){
@@ -308,13 +300,7 @@ function Income(){
     }
     // 添加支出记录弹窗信息确认操作
     function handleSubmit(){
-        confirm({
-            title: '确认提交?',
-            icon: <ExclamationCircleOutlined />,
-            okText:"确认",
-            cancelText:"取消",
-            // 确认按钮操作
-            onOk() {
+       
                 form.validateFields().then(async (values) => {
                     // 将时间组件值转为字符串用于传值
                     let times;
@@ -335,23 +321,20 @@ function Income(){
                     if(res.data.success === true){
                         buttonSearch();//重新掉接口刷新表格数据
                         message.success(res.data.message);
-                        setIsModalVisible(false);
+                        operDialogFunc(false);
                     }else{
-                        setIsModalVisible(true);
+                        operDialogFunc(true);
                     }
                 })
-            },
-          });
+        
          
         }
-    // 添加支出记录弹窗信息取消操作
-    function handleCancel(){
-        setIsModalVisible(false);
-    }
+
     // 添加新类别按钮事件
     function addNewType(){
+        operTypeFunc(true);
+        setIsModalType('special');
         typeForm.resetFields();
-        setIsTypeVisible(true);
     }
     // 添加新类别弹窗提交按钮事件
     function handleTypeSubmit(){
@@ -366,17 +349,21 @@ function Income(){
             if(res.data.success === true){
                 getTypeList();//重新掉接口刷新类别列表数据
                 message.success("添加新类别成功");
-                setIsTypeVisible(false);
+                operTypeFunc(false);
             }else{
-                setIsTypeVisible(true);
+                operTypeFunc(true);
             }
         })
     }
-    // 添加新类别弹窗取消按钮事件
-    function handleTypeCancel(){
-        setIsTypeVisible(false);
-    }
 
+    // 设置新增编辑支出弹窗显示隐藏事件
+    const operDialogFunc = (flag)=>{
+        setIsModalVisible(flag);
+    }
+    // 设置新增类别弹窗显示隐藏事件
+    const operTypeFunc = (flag)=>{
+        setIsTypeVisible(flag)
+    }
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
@@ -475,8 +462,8 @@ function Income(){
                 /> */}
 
                  {/* 添加或编辑收入记录弹窗 */}
-            <Modal title={incomeTitle} forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
-                    <section >
+                 <AsyncModal title={incomeTitle}  modalType={isModalType} vis={isModalVisible} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
+                 <section >
                       <Form   name="incomeForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off" >
                           <Form.Item  label="收入类别" name="typeId"  rules={[
                                 {required:true,message:'请选择支出类别'},
@@ -536,24 +523,25 @@ function Income(){
                           </Form.Item>
                       </Form>
                     </section>
-            </Modal>
+                 </AsyncModal>
 
               {/* 新增和编辑收入页面添加类别弹窗 */}
-              <Modal title='添加类型'  visible={isTypeVisible} onOk={handleTypeSubmit} onCancel={handleTypeCancel} okText="确认" cancelText="取消" >
-                <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
-                    <Form.Item  label="名称" name="name"  
-                        rules={[
-                            {required:true,message:'请输入名称'},
-                                    
-                        ]}
-                        >
-                        <Input type="text" />
-                    </Form.Item>
-                    <Form.Item  label="描述"  name="description"  >
-                        <TextArea row={1} />
-                    </Form.Item>
-                </Form>
-            </Modal>
+              <AsyncModal  title='添加类型' modalType={isModalType} vis={isTypeVisible}  operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
+                    <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
+                        <Form.Item  label="名称" name="name"  
+                            rules={[
+                                {required:true,message:'请输入名称'},
+                                        
+                            ]}
+                            >
+                            <Input type="text" />
+                        </Form.Item>
+                        <Form.Item  label="描述"  name="description"  >
+                            <TextArea row={1} />
+                        </Form.Item>
+                    </Form>
+              </AsyncModal>
+           
         </section>
     </div>
     )

@@ -34,6 +34,8 @@ const useAsyncModal = (props)=>{
     }
 
     useEffect(()=>{
+            // console.log(vis)
+            // console.log(modalType)
             // 设置普通的弹窗显示隐藏
             if(modalType === 'common'){
                 setIsVisble(vis)
@@ -42,7 +44,7 @@ const useAsyncModal = (props)=>{
             if(modalType === 'special'){
                 setIsVisble(vis)
             } 
-    },[vis])
+    },[vis,modalType])
 
     return(
         <Modal title={title}  forceRender visible={isVisble} onOk={handleSubmit} onCancel={()=> operDialogFunc(false)} okText="确认" cancelText="取消" >

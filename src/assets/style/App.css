@@ -61,7 +61,7 @@
  
 .appMain {
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   padding: 15px;
 }
 /* 顶部菜单*/
@@ -230,12 +230,19 @@ margin:10px 0;
   margin-left:6px;
 }
 /* 报告页面样式 */
+.pieContainer{
+  display: flex;
+  padding:10px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  justify-content: flex-start;
+}
 .leftStatistics{
   width: 28%;
-  /* height: 200px; */
-  float: left;
-  margin: 40px 30px;
-  padding: 24px;
+  height: 200px;
+  margin: 80px 20px 0 0;
+  padding: 20px;
   box-sizing: border-box;
   overflow: hidden;
   border-radius: 6px;
@@ -245,4 +252,13 @@ margin:10px 0;
 }
 .titleCenter{
   text-align: center;
+}
+.rightStatistics {
+  display: flex;
+  justify-content: space-between;
+}
+.echartsPieItem{
+  width:300px;
+  height:340px;
+  float: left;
 }

@@ -1,6 +1,6 @@
 import React, {useEffect,useState,useRef} from 'react';
 import ArgTable from '../../components/Table';
-import AsyncModal from '../../components/Modal'
+import AsyncModal from '../../components/Modal';
 import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
@@ -85,7 +85,6 @@ function Consume(){
                         <Space size="middle">
                             <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
                             <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
-                            
                         </Space>
                     )
                 }    
@@ -116,7 +115,7 @@ function Consume(){
     const [isModalVisible, setIsModalVisible] = useState(false)//设置添加编辑支出类弹窗
     const [isTypeVisible,setTypeVisible] = useState(false);//设置新类别弹窗
     const [consumeTitle,setConsumeTitle] = useState('');//设置添加编辑弹框title值
-    const [isModalType,setIsModalType] = useState('');//设置弹窗类别输出type类型
+    const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
 
     const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
     const [totalAmount,setTotalAmounts] = useState(0);//设置表格总花费
@@ -246,8 +245,7 @@ function Consume(){
     // 添加新类别按钮事件
     function addNewType(){
         operTypeFunc(true);
-
-        setIsModalType('special')
+        setIsModalType('special');
         typeForm.resetFields();
        
     }
@@ -279,10 +277,9 @@ function Consume(){
         addPaymentType.current = '';
         form.resetFields();
         setConsumeTitle('添加支出记录');
-        setIsModalType('common')
+        setIsModalType('common');
         setRowId('');
-        operDialogFunc(true);
-        
+        operDialogFunc(true);  
     }
 
     // 编辑支出记录按钮操作
@@ -292,10 +289,10 @@ function Consume(){
         addConsumeType.current = row.typeId;
         addPaymentType.current = row.paymentId;
         form.setFieldsValue(row) 
-        setConsumeTitle('编辑支出记录')
-        setRowId(row.id)
+        setConsumeTitle('编辑支出记录');
+        setIsModalType('common');
+        setRowId(row.id);
         operDialogFunc(true);
-       
     }
 
     // 删除表格中的一行数据
@@ -405,18 +402,18 @@ function Consume(){
                 message.success(res.data.message);
                 operDialogFunc(false);
             }else{
-                
                 operDialogFunc(true)
             }
         })
     }
 
-    // 设置新增编辑支出弹窗事件
+    // 设置新增编辑支出弹窗显示隐藏事件
     const operDialogFunc = (flag)=>{
+      
         setIsModalVisible(flag);
        
     }
-     // 设置新增类别弹窗事件
+     // 设置新增类别弹窗显示隐藏事件
     const operTypeFunc = (flag)=>{
         setTypeVisible(flag)
     }
