@@ -18,3 +18,8 @@ export function getConsumePieType(params){
 export function getIncome(params){
     return http('get','/proxy/report/statistics/pieChart/incomeTypeAmount',params)
 }
+// 获取报告页面最近半年收支情况柱状图数据
+
+export function getConsumeIncomeLately(){
+    return http('get','/proxy/report/statistics/typeBar/consumeIncomeLately')
+}

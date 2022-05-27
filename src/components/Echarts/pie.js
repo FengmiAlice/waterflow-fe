@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import * as echarts from 'echarts'
 /**
- *  @description：封装全局通用echarts组件
+ *  @description：封装全局通用echarts 饼图组件
  *  @param {string} id 图表dom元素
  *  @param {string} title 图表标题
  *  @param {array} sourceData 图表数据
@@ -10,9 +10,9 @@ import * as echarts from 'echarts'
 const usePieEcharts = (props)=>{
     const {id,title,sourceData} = props;
     useEffect(()=>{
-        // 各类开支占比图
+
         drawMultiplePie();
-        console.log(sourceData)
+
     })
     function drawMultiplePie() {
         var myPieCharts = echarts.init(document.getElementById(id));

@@ -3,7 +3,8 @@
 import React, {useEffect,useState,useRef} from 'react';
 import { DatePicker,Form,Button,Statistic  } from 'antd';
 import ArgPieEcharts from '../../components/Echarts/pie';
-import {getOverview,getConsumePie,getConsumePieType,getIncome} from '../../api/report';
+import ArgBarEcharts from '../../components/Echarts/bar'
+import {getOverview,getConsumePie,getConsumePieType,getIncome,getConsumeIncomeLately} from '../../api/report';
 import '../../assets/style/App.css';
 
 function Report(){
@@ -13,10 +14,17 @@ function Report(){
     const [consumeAcount,setConsumeAcount] = useState(0);
     const [incomeAcount,setIncomeAcount] =useState(0);
     const [wealthAcount,setWealthAcount] =useState(0);
-    // 设置获取各类开支占比饼图数据
-    const [pieData,setPieData] = useState([]);
-    const [pieTypeData,setPieTypeData] =useState([]);
-    const [incomeData,setIncomeData] =useState([]);
+  
+    const [pieData,setPieData] = useState([]);  // 设置获取各类开支占比饼图数据
+    const [pieTypeData,setPieTypeData] =useState([]); // 设置获取各类支付方式占比饼图数据
+    const [incomeData,setIncomeData] =useState([]);  // 设置获取各类收入占比饼图数据
+
+    const [barTitle,setBarTitle] = useState('');//柱状图title
+    const [barXData,setBarXData] = useState([]);//柱状图x轴数据
+    const [barData,setBarData] = useState([]);//柱状图series数据
+    const [lenData,setLenData] = useState([]);//柱状图legend数据
+
+
     //  获取月份日期值
      function getMonthChange(date,dateString){
          console.log(date)
@@ -40,7 +48,6 @@ function Report(){
             year:year.current,
         }
         getConsumePie(params).then((res)=>{
-            // console.log(res)
             setPieData(res.data)
           
         })
@@ -52,7 +59,6 @@ function Report(){
             year:year.current,
         }
         getConsumePieType(params).then((res)=>{
-            // console.log(res)
             setPieTypeData(res.data)
           
         })
@@ -64,12 +70,33 @@ function Report(){
             year:year.current,
         }
         getIncome(params).then((res)=>{
-            // console.log(res)
             setIncomeData(res.data)
           
         })
     }
     
+      // 获取最近半年收支情况数据
+      function getLaterlyBarData(){
+        getConsumeIncomeLately().then((res)=>{
+            setBarTitle(res.data.title);
+            setLenData(res.data.nameArray);
+            setBarXData(res.data.xdataArray);
+          
+            let seriesArray = [];
+            let nameArray = res.data.nameArray;
+            let yDataArray= res.data.ydataArray;
+            for (var index = 0; index < nameArray.length; index ++) {
+                var seriesData = {
+                    type: 'bar',
+                    name: nameArray[index],
+                    data: yDataArray[index]
+                };
+                seriesArray.push(seriesData);
+            }
+            setBarData(seriesArray)
+          
+        })
+    }
     //搜索按钮事件
     function buttonSearch(){
         let params={
@@ -86,7 +113,8 @@ function Report(){
 
         getConsumePieData();
         getConsumePieTypeData();
-        getIncomeData()
+        getIncomeData();
+        getLaterlyBarData();
     }
 
     return(
@@ -128,10 +156,13 @@ function Report(){
                     <div className='echartsPieItem'>
                          <ArgPieEcharts id="incomePie" title="各类收入占比图" sourceData={incomeData} />
                     </div>
-                  
                 </div>
             </div>
-           
+           <div className='barContainer'>
+                <div className='echartsBarItem'>
+                    <ArgBarEcharts id="IncomeLatelyBar" title={barTitle} xData={barXData} seriesData={barData} legendData={lenData} /> 
+                </div>
+           </div>
        
         </section>
     </div>
