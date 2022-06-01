@@ -19,7 +19,14 @@ export function getIncome(params){
     return http('get','/proxy/report/statistics/pieChart/incomeTypeAmount',params)
 }
 // 获取报告页面最近半年收支情况柱状图数据
-
 export function getConsumeIncomeLately(){
     return http('get','/proxy/report/statistics/typeBar/consumeIncomeLately')
+}
+// 获取报告页面最近三个月支出柱状图数据
+export function getThreeConsumeLately(){
+    return http('get','/proxy/report/statistics/typeBar/consumeLately')
+}
+// 获取报告页面支出收入余额折线图数据
+export function getLineConsumeData(data){
+    return http('post','/proxy/report/statistics/multiData',data)
 }

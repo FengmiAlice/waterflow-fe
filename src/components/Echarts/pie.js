@@ -10,17 +10,14 @@ import * as echarts from 'echarts'
 const usePieEcharts = (props)=>{
     const {id,title,sourceData} = props;
     useEffect(()=>{
-
         drawMultiplePie();
-
     })
     function drawMultiplePie() {
-        var myPieCharts = echarts.init(document.getElementById(id));
-        var multipleOption = {
+        let myPieCharts = echarts.init(document.getElementById(id));
+        let multipleOptions = {
             title: {
                 text: title,
                 left: "center",
- 
             },
             legend: {
                 orient: "horizontal",
@@ -58,7 +55,7 @@ const usePieEcharts = (props)=>{
                 }
             ]
         };
-        myPieCharts.setOption(multipleOption);
+        myPieCharts.setOption(multipleOptions);
     }
     return (
         <div id={id} title={title} style={{width:100+'%',height:100+'%'}}>

@@ -238,6 +238,13 @@ margin:10px 0;
   overflow: hidden;
   justify-content: flex-start;
 }
+.lineContiner{
+  margin-top:20px;
+  padding:10px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
 .leftStatistics{
   width: 28%;
   height: 200px;
@@ -266,4 +273,8 @@ margin:10px 0;
   width:600px;
   height:340px;
   float: left;
+}
+.echartsLineItem{
+  width:600px;
+  height:340px;
 }
