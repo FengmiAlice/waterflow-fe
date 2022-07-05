@@ -36,6 +36,8 @@ function Report(){
     const [lineData, setLineData] = useState([]);//支出收入折线图表数据
     const [lineXData,setLineXData] =useState([]);//支出收入折线图x轴数据
     const [lineLenData,setLineLenData] = useState([]);//支出收入折线图例数据
+
+    const [lineForm] = Form.useForm();
     const startDate = useRef('');//开始日期
     const endDate = useRef('');//结束日期
     const statisticType = useRef('1');//统计粒度
@@ -55,69 +57,55 @@ function Report(){
         ];
     //  获取月份日期值
      function getMonthChange(date,dateString){
-         console.log(date)
-         console.log(dateString)
          month.current = dateString
      }
     //  获取年份日期值
     const getYearChange = (date,dateString)=>{
         year.current = dateString
     }
+
     // 获取折线图搜索开始日期
     const getStartDateChange=(date,dateString)=>{
-        console.log(date)
-        console.log(dateString)
+        let startVal = moment(date).valueOf();
+        let endVal= new Date(endDate.current).getTime();
+        if(startVal > endVal){
+            lineForm.setFieldsValue({startField:null});
+            startDate.current = "";
+            message.info('请选择小于结束日期的开始日期');
+            return; 
+        }
         startDate.current = dateString;
+    }
+     // 获取折线图搜索结束日期
+     const getEndDateChange=(date,dateString)=>{  
+        let startVal= new Date(startDate.current).getTime();
+        let endVal = moment(date).valueOf();
+       if(endVal < startVal){
+            lineForm.setFieldsValue({endField:null});
+            endDate.current = '';
+            message.info('请选择大于开始日期的结束日期');
+            return;
+       }
+        endDate.current = dateString;
        
     }
-
-     // 获取折线图搜索结束日期
-     const getEndDateChange=(date,dateString)=>{
-        endDate.current = dateString;
-      
-    }
  
-    // 设置折线图搜索开始日期禁用日期
-    const disableStartDate=(startValue)=>{
-        console.log(startValue.valueOf())
-        // 如果选的开始日期>结束日期，把开始日期置空
-        let endVal= new Date(endDate.current).getTime()
-        if(startValue.valueOf()>endVal){
-            startDate.current = '';
-            message.info('请选择小于结束日期的开始日期');
-            return;
-        }
-    }
-      // 设置折线图搜索结束日期禁用日期
-    const disableEndDate = (endValue)=>{
-
-    //   如果选择的结束日期小于开始日期，将结束日期置空
-    let startVal = new Date(startDate.current).getTime();
-    if(endValue.valueOf()<startVal){
-        endDate.current = '';
-        message.info('请选择大于开始日期的结束日期');
-        return;
-    }
-    }
+   
 
     // 获取统计粒度
     const countChange=(value)=>{
-      console.log(value)
         if(value === null || value === undefined){
             statisticType.current = '';
         }else{
             statisticType.current = value;
         }
-        console.log(statisticType.current)
     }
 
     useEffect(()=>{
         // 设置支出收入余额搜索参数默认值
-        let forwardYear=moment().subtract(1, 'year').format('YYYY-MM-DD');
-        console.log(forwardYear)
+        let forwardYear = moment().subtract(1, 'year').format('YYYY-MM-DD');
         startDate.current = forwardYear;
         endDate.current = moment().format("YYYY-MM-DD");//格式化当前日期
-
 
         buttonSearch();
         buttonLineSearch();
@@ -185,7 +173,6 @@ function Report(){
     // 获取最近三个月支出情况数据
     function getThreeConsumeData(){
         getThreeConsumeLately().then((res)=>{
-        //   console.log(res)
             let seriesArray = [];
             let title = res.data.title;
             let sereiesX = res.data.xdataArray;
@@ -248,8 +235,6 @@ function Report(){
             statisticType:statisticType.current
         }
         getLineConsumeData(params).then((res)=>{
-            console.log(res)
-           
             let seriesArray=[];
             let title = res.data.title;
             let seriesLineX = res.data.xdataArray;
@@ -321,12 +306,12 @@ function Report(){
                 </div>
            </div>
            <div className="lineContiner">
-                <Form  className="reportWrap" layout="inline" name="Report"  size="small"  >
-                        <Form.Item label="开始日期"  >
-                            <DatePicker format='YYYY-MM-DD'  defaultValue={moment().subtract(1, 'year')} disabledDate={disableStartDate} onChange={getStartDateChange} />
+                <Form  className="reportWrap" layout="inline" name="Report"  size="small" form={lineForm} >
+                        <Form.Item label="开始日期" name="startField" >
+                            <DatePicker format='YYYY-MM-DD'  defaultValue={moment().subtract(1, 'year')}  onChange={getStartDateChange} />
                         </Form.Item>
-                        <Form.Item label="结束日期" >
-                            <DatePicker format='YYYY-MM-DD'  defaultValue={moment()} disabledDate={disableEndDate} onChange={getEndDateChange} />
+                        <Form.Item label="结束日期" name="endField">
+                            <DatePicker format='YYYY-MM-DD'  defaultValue={moment()}  onChange={getEndDateChange} />
                         </Form.Item>
                         <Form.Item  >
                         <Form.Item label="统计粒度">
