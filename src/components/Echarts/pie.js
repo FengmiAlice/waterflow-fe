@@ -9,11 +9,21 @@ import * as echarts from 'echarts'
 */
 const usePieEcharts = (props)=>{
     const {id,title,sourceData} = props;
+
     useEffect(()=>{
         drawMultiplePie();
     })
+
     function drawMultiplePie() {
-        let myPieCharts = echarts.init(document.getElementById(id));
+        // let myPieCharts = echarts.init(document.getElementById(id));
+        // 获取DOM ID
+        let pieChartDom = document.getElementById(id);
+         // 获取实例
+         let pieChart = echarts.getInstanceByDom(pieChartDom);
+        //  如果不存在则创建
+        if(!pieChart){
+            pieChart = echarts.init(pieChartDom)
+        }
         let multipleOptions = {
             title: {
                 text: title,
@@ -55,8 +65,12 @@ const usePieEcharts = (props)=>{
                 }
             ]
         };
-        myPieCharts.setOption(multipleOptions);
+        pieChart.setOption(multipleOptions);
+        window.addEventListener('resize',()=>{
+            pieChart.resize()
+        })
     }
+
     return (
         <div id={id} title={title} style={{width:100+'%',height:100+'%'}}>
 

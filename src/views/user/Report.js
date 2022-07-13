@@ -248,7 +248,10 @@ function Report(){
                 let stackData={
                     name:nameArray[i],
                     type: 'line',
-                    data:yDataArray[i]
+                    data:yDataArray[i],
+                    areaStyle: {
+            
+                    },
                 }
                 seriesArray.push(stackData)
             }

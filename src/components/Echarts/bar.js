@@ -12,12 +12,23 @@ import * as echarts from 'echarts'
 */
 const useBarEcharts = (props)=>{
     const {id,title,legendData,xData,seriesData,barType} = props;
+
     useEffect(()=>{
         drawMultipleBar();
     })
+
     function drawMultipleBar() {
         // console.log(barType)
-        let myBarCharts = echarts.init(document.getElementById(id));
+        // let myBarChartDom = echarts.init(document.getElementById(id));
+
+        // 获取DOM id
+        let barChartDom = document.getElementById(id);
+        // 获取实例
+        let barChart = echarts.getInstanceByDom(barChartDom);
+        // 如果不存在则创建
+        if(!barChart){
+            barChart = echarts.init(barChartDom)
+        }
         // 如果是普通类型柱状图
         if(barType === 'single'){
             let multipleOption1 = {
@@ -77,7 +88,7 @@ const useBarEcharts = (props)=>{
                 //     }
                 // ]
             };
-            myBarCharts.setOption(multipleOption1);
+            barChart.setOption(multipleOption1);
         }
         // 如果是堆叠类型柱状图
         if(barType === 'stackMultiple'){
@@ -95,7 +106,7 @@ const useBarEcharts = (props)=>{
                 legend:{
                     show:false,
                     top:'bottom',
-                    data:legendData,
+                    // data:legendData,
                     // ['总计','基本生活支出','置装开支']
                 },
                 grid: {
@@ -149,9 +160,13 @@ const useBarEcharts = (props)=>{
                 //     },
                 // ]
             };
-            myBarCharts.setOption(multipleOption2);
+            barChart.setOption(multipleOption2);
+            window.addEventListener('resize',()=>{
+                barChart.resize()
+            })
         }
     }
+
     return (
         <div id={id} title={title} style={{width:100+'%',height:100+'%'}}>
 

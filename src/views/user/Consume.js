@@ -566,11 +566,7 @@ function Consume(){
                             ]} >
                             <Input type="number" placeholder="越精确越好，可以写小数"    />
                         </Form.Item>
-                        <Form.Item label="补充描述" name="note" 
-                            rules={[
-                                {required:true,message:'请输入补充描述'},
-                            
-                            ]} >
+                        <Form.Item label="补充描述" name="note" >
                             <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
                         </Form.Item>
                     </Form>

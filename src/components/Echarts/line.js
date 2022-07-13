@@ -12,11 +12,21 @@ import * as echarts from 'echarts'
 */
 const useLineEcharts = (props)=>{
     const {id,title,xData,legendData,seriesData} = props;
+
     useEffect(()=>{
         drawMultipleLine();
     })
+
     function drawMultipleLine() {
-        let lineCharts = echarts.init(document.getElementById(id));
+        // let lineCharts = echarts.init(document.getElementById(id));
+         // 获取DOM id
+        let lineChartDom = document.getElementById(id);
+        // 获取实例
+        let lineChart = echarts.getInstanceByDom(lineChartDom);
+        if(!lineChart){
+            lineChart = echarts.init(lineChartDom)
+        }
+        // 如果不存在则创建
         let lineOption = {
             title: {
                 text: title,
@@ -32,7 +42,7 @@ const useLineEcharts = (props)=>{
                 right:0,
                 show: true,
                 orient: "horizontal",
-                data:legendData,
+                // data:legendData,
             },
             tooltip: {
                 trigger: "axis",
@@ -53,6 +63,7 @@ const useLineEcharts = (props)=>{
             yAxis: {
                 type: "value",
             },
+           
             series:seriesData,
             //  [
             //     {
@@ -100,7 +111,10 @@ const useLineEcharts = (props)=>{
             // ],
         };
         // lineCharts.clear();
-        lineCharts.setOption(lineOption);
+        lineChart.setOption(lineOption);
+        window.addEventListener('resize',()=>{
+            lineChart.resize()
+        })
     }
 
     return(
