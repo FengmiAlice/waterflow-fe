@@ -98,6 +98,11 @@ function Income(){
             typeId:'',
             keyword:'',
     }
+
+    
+    const incomeFooter = useState(true);//设置是否显示新增和编辑收入记录弹窗底部按钮
+    const incomeTypeFooter = useState(true);//设置是否显示收入新类别弹窗底部按钮
+
     const [searchData,setSearchData] = useState(initSearchData);//设置初始传参列表
     const [selectedTypeArray,setSelectedTypeArray] = useState([]);//设置获取收入类别列表
     const [paymentTypeArray,setPaymentTypeArray] = useState([]);//设置获取收入支付方式列表
@@ -362,14 +367,14 @@ function Income(){
     }
     // 设置新增类别弹窗显示隐藏事件
     const operTypeFunc = (flag)=>{
-        setIsTypeVisible(flag)
+        setIsTypeVisible(flag);
     }
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
         // 每次翻页查询之后页码，条数重置
         if(tableRef.current){
-            tableRef.current.resetPage()
+            tableRef.current.resetPage();
         }
         setSearchData({
             month:month.current,
@@ -462,7 +467,7 @@ function Income(){
                 /> */}
 
                  {/* 添加或编辑收入记录弹窗 */}
-                 <AsyncModal title={incomeTitle}  modalType={isModalType} vis={isModalVisible} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
+                 <AsyncModal title={incomeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={incomeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
                  <section >
                       <Form   name="incomeForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off" >
                           <Form.Item  label="收入类别" name="typeId"  rules={[
@@ -526,7 +531,7 @@ function Income(){
                  </AsyncModal>
 
               {/* 新增和编辑收入页面添加类别弹窗 */}
-              <AsyncModal  title='添加类型' modalType={isModalType} vis={isTypeVisible}  operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
+              <AsyncModal  title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={incomeTypeFooter}  operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
                     <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
                         <Form.Item  label="名称" name="name"  
                             rules={[

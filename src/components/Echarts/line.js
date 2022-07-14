@@ -11,7 +11,7 @@ import * as echarts from 'echarts'
  * 
 */
 const useLineEcharts = (props)=>{
-    const {id,title,xData,legendData,seriesData} = props;
+    const {id,title,xData,seriesData} = props;//legendData
 
     useEffect(()=>{
         drawMultipleLine();

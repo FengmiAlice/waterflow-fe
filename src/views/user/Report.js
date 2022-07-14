@@ -2,6 +2,7 @@
 
 import React, {useEffect,useState,useRef} from 'react';
 import { DatePicker,Form,Button,Statistic,Select, message  } from 'antd';
+import AsyncModal from '../../components/Modal';
 import ArgPieEcharts from '../../components/Echarts/pie';
 import ArgBarEcharts from '../../components/Echarts/bar';
 import ArgLineEcharts from '../../components/Echarts/line';
@@ -14,6 +15,14 @@ function Report(){
      // 搜索条件的一些参数获取
     const month = useRef();//设置月份
     const year = useRef();//设置年份  
+
+    // const reportFooter = useState(false);
+    const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
+    const [reportVisible,setReportVisble] = useState(false);//设置详细报告弹窗false
+    const [reportTitle,setReportTitle] = useState('');//设置详细报告弹窗title
+    const [reportText,setReportText] = useState('');//设置详细报告弹窗text
+
+
     const [consumeAcount,setConsumeAcount] = useState(0);
     const [incomeAcount,setIncomeAcount] =useState(0);
     const [wealthAcount,setWealthAcount] =useState(0);
@@ -221,6 +230,8 @@ function Report(){
                 setConsumeAcount(res.data.obj.totalConsume);
                 setIncomeAcount(res.data.obj.totalIncome);
                 setWealthAcount(res.data.obj.totalWealth);
+                setReportTitle(res.data.obj.report.title);
+                setReportText(res.data.obj.report.text);
             }
         })
         getConsumePieData();
@@ -258,6 +269,15 @@ function Report(){
             setLineData(seriesArray);
         })
     }
+    // 点击查看详细报告按钮事件
+    function detailReport(){
+        setIsModalType('special');
+        operFunc(true)
+    }
+    // 设置详细报告弹窗是否显示
+    const operFunc = (flag)=>{
+        setReportVisble(flag)
+    }
 
     return(
     <div>
@@ -269,12 +289,11 @@ function Report(){
                     <Form.Item label="年份选择" >
                         <DatePicker format='YYYY'    picker="year"  onChange={getYearChange} />
                     </Form.Item>
-                   
                     <Form.Item  >
                         <Button type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
                     </Form.Item>
                     <Form.Item  >
-                        <Button type="primary" className="searchBtn" > 详细报告</Button>
+                        <Button type="primary" className="searchBtn" onClick={detailReport}> 详细报告</Button>
                     </Form.Item>
             </Form>
            
@@ -309,16 +328,20 @@ function Report(){
                 </div>
            </div>
            <div className="lineContiner">
-                <Form  className="reportWrap" layout="inline" name="Report"  size="small" form={lineForm} >
+                <Form  className="reportWrap" layout="inline" name="Report"  size="small" form={lineForm}  
+                //设置初始值
+                initialValues={{'startField':moment().subtract(1, 'year'),'endField':moment(),'countNum':statisticType.current}}>
                         <Form.Item label="开始日期" name="startField" >
-                            <DatePicker format='YYYY-MM-DD'  defaultValue={moment().subtract(1, 'year')}  onChange={getStartDateChange} />
+                            <DatePicker format='YYYY-MM-DD'   onChange={getStartDateChange} />
+                            {/* defaultValue={moment().subtract(1, 'year')} */}
                         </Form.Item>
                         <Form.Item label="结束日期" name="endField">
-                            <DatePicker format='YYYY-MM-DD'  defaultValue={moment()}  onChange={getEndDateChange} />
+                            <DatePicker format='YYYY-MM-DD'  onChange={getEndDateChange} />
+                            {/* defaultValue={moment()}  */}
                         </Form.Item>
                         <Form.Item  >
-                        <Form.Item label="统计粒度">
-                            <Select style={{ width: 120 }} defaultValue={statisticType.current} onChange={countChange} allowClear={true}>
+                        <Form.Item label="统计粒度" name="countNum">
+                            <Select style={{ width: 120 }}  onChange={countChange} allowClear={true}>
                                     {
                                         selectedTypeArray.map( (item,index,arr) => (
                                             <Option key={item.key} value={item.key}>
@@ -327,6 +350,7 @@ function Report(){
                                         ))
                                     }
                             </Select>
+                            {/* defaultValue={statisticType.current} */}
                         </Form.Item>
                         </Form.Item>
                         <Form.Item  >
@@ -341,6 +365,20 @@ function Report(){
            </div>
        
         </section>
+        <AsyncModal   className="reportDialog" title={reportTitle}  vis={reportVisible}  modalType={isModalType} isClosable={false}  isFooter={null}  operDialogFunc={operFunc}>
+            <p>{reportText}</p>
+        </AsyncModal>
+
+        {/* <Modal
+            className="reportDialog"
+            title={reportTitle}
+            visible={reportVisible}
+            onCancel={handleClose}
+            closable = {false}
+            footer={null}
+        >
+            <p>{reportText}</p>
+        </Modal> */}
     </div>
     )
 }

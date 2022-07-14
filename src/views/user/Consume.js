@@ -112,6 +112,9 @@ function Consume(){
     // 使用useForm创建新增支出类别form实例
     const [typeForm] = Form.useForm();
 
+    
+    const consumeFooter = useState(true);//设置添加编辑支出类弹窗是否显示底部按钮
+    const typeFooter = useState(true);//设置新类别弹窗是否显示底部按钮
     const [isModalVisible, setIsModalVisible] = useState(false)//设置添加编辑支出类弹窗
     const [isTypeVisible,setTypeVisible] = useState(false);//设置新类别弹窗
     const [consumeTitle,setConsumeTitle] = useState('');//设置添加编辑弹框title值
@@ -510,7 +513,7 @@ function Consume(){
             />                           
 
             {/* 添加或编辑支出记录弹窗 */}
-            <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
+            <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
                 <section >
                     <Form   name="consumeForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off" >
                         <Form.Item  label="支出类别" name="typeId"  rules={[
@@ -574,8 +577,8 @@ function Consume(){
             </AsyncModal>
             
             {/* 添加类别弹窗 */}
-            <AsyncModal title='添加类型' modalType={isModalType} vis={isTypeVisible}  operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
-            <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
+            <AsyncModal title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
+                <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
                     <Form.Item  label="名称" name="typeName"  
                         rules={[
                                     {required:true,message:'请输入名称'},

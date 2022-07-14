@@ -11,7 +11,7 @@ import * as echarts from 'echarts'
  * 
 */
 const useBarEcharts = (props)=>{
-    const {id,title,legendData,xData,seriesData,barType} = props;
+    const {id,title,xData,seriesData,barType} = props;//legendData
 
     useEffect(()=>{
         drawMultipleBar();
@@ -68,7 +68,7 @@ const useBarEcharts = (props)=>{
                     orient: "horizontal",
                     top: 'bottom',
                     show:false,
-                    data:legendData,
+                    // data:legendData,
                     // ['一月','二月','三月','四月','五月','六月',]
                 },
                 xAxis: { type: 'category',data:xData },
