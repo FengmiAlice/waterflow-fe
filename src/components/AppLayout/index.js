@@ -7,7 +7,6 @@ import { Outlet,Link,useLocation} from 'react-router-dom';
 import HeadBar from './headBar';
 import SideBar from './sideBar';
 import { getRouteMetaMap } from '../../utils/appTools';
-// import { routes } from '../../router';
 import '../../assets/style/App.css';
 import 'antd/dist/antd.css';
 import {Layout,Breadcrumb} from 'antd';
@@ -15,10 +14,7 @@ const {  Content } = Layout;
 
 
 function AppLayout () {
-
-    /*
-    面包屑功能
-    */ 
+    /*面包屑功能 */ 
     //获取当前路由
     const location = useLocation();
     //map对象集合
@@ -41,22 +37,21 @@ function AppLayout () {
   })
   // console.log(extraBreadcrumbItems)//元素集合
   
-
-    
   return (
     <div className="c-PageLayout-index">
         <HeadBar />
       <div className="appMainWrap">
           <SideBar />
           
-            <Content className="appMain">
-              <div>            
-                  <Breadcrumb>
-                      {extraBreadcrumbItems}
-                  </Breadcrumb>
-              </div>
-                <Outlet />
-            </Content>
+              <Content className="appMain">
+                <div>            
+                    <Breadcrumb>
+                        {extraBreadcrumbItems}
+                    </Breadcrumb>
+                </div>
+                  <Outlet />
+              </Content>
+         
       </div>
     </div>
   )

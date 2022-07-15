@@ -30,7 +30,7 @@
         // baseURL:process.env.PUBLIC_URL,//设置公共url
         crossDomain:true,//设置是否允许跨域
         withCredentials:false,//设置跨域请求中是否需要使用凭证
-        timeout:5000,//设置超时时间
+        timeout:20000,//设置超时时间
     })
     function request (config) {  
         //todo 拓展 额外配置参数

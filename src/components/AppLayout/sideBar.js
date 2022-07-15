@@ -20,7 +20,7 @@ function SideBar () {
     const location = useLocation();//获取当前路由
     const { pathname }  = location;
     // const openKeys = [] // 用于根据当前路由默认展开子菜单
-    const menuList = getMenuList()
+    const menuList = getMenuList();
     // 左侧菜单渲染
     function getMenuList() {
         const getLists = (routeList=[], prePath='') => {
@@ -39,6 +39,7 @@ function SideBar () {
                 //     menuList = menuList.concat(getLists(v.children, '/'));
                 //     console.log(menuList)
                 // }
+                
                  if(v.path !== undefined){
                     // 如果有嵌套路由递归添加菜单
                     if (v.children) {
@@ -56,6 +57,7 @@ function SideBar () {
                             <Link to={v.path}>{v.meta.title}</Link>
                         </Menu.Item>
                         ))
+                     
                     }
                 } 
 
@@ -75,15 +77,22 @@ function SideBar () {
     //         return ( <MenuUnfoldOutlined  onClick={ ()=>setCollapsed(!collapsed) } /> )
     //     }
     // }
-   // 折叠菜单栏
+
+    // 折叠菜单栏
    function onToggle () {
         commonStore.setSideBarCollapsed(!sideBarCollapsed)
     }
+
     return(
         <div  className="c-PageLayout-sideBar">
             <Layout  className="sideBarLayout">
-                <Sider trigger={null} collapsible collapsed={sideBarCollapsed}  className="site-layout-background" >
-                    <Menu  theme="dark" mode="inline"  style={{height:'100%', borderRight:0}}  selectedKeys={[pathname]} >
+                <Sider trigger={null} collapsible collapsed={sideBarCollapsed}   style={{
+                    overflow: 'auto',
+                    height: '100vh',
+                
+                }}>
+                 
+                    <Menu  theme="dark" mode="inline"  selectedKeys={[pathname]}  style={{height:'100%', borderRight:0}}>
                         {menuList}
                     </Menu>
                 </Sider>
@@ -93,8 +102,7 @@ function SideBar () {
                     </div>
                 {/* {renderButton() }  
                 <Link to="/signIn">跳转到登录页</Link> */}
-            </Layout>  
-                                
+            </Layout>                    
         </div>         
     )
     

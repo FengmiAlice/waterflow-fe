@@ -126,19 +126,19 @@
  /* .ant-layout-sider{
    background:#fff!important;
  } */
- .c-PageLayout-sideBar {
-  /* height: 100%;
-  width:200px; */
-  /* overflow: auto; */
-}
+ /* .c-PageLayout-sideBar {
+  height: 100%;
+} */
 .c-PageLayout-sideBar ::-webkit-scrollbar {
   display: none;
 }
-.sideBarLayout {
-  min-height: 100%;
+.c-PageLayout-sideBar .sideBarLayout {
+  height: calc(100%);
+  min-height: 100vh;
   background-color: #001529;
   user-select: none;
   flex-direction:column;
+  position: relative;
 }
 .v-signIn-index, .v-signUp-index{
   height: 100vh;
@@ -152,21 +152,22 @@
 }
 
 .toggleIcon {
+  position: absolute;
+    bottom: 0;
+    left: 0;
+    background: rgba(255, 255, 255, 0.65);
   height: 40px;
-  width: 40px;
+  width:100%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  margin-left: 5px;
-  margin-right: 5px;
+
 }
 .toggleIcon > .anticon {
   font-size: 18px;
 }
-.toggleIcon:hover {
-  background: rgba(0, 0, 0, 0.02);
-}
+
 /* 登录、注册样式 */
 .signInSection, .signUpSection{
   width: 400px;
