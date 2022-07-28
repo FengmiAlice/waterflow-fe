@@ -141,6 +141,7 @@
 .v-signIn-index, .v-signUp-index{
   height: 100vh;
   background: url(../img/bg.jpeg) center top;
+  background-repeat: no-repeat;
   background-size: cover; 
   display: flex;
   flex-direction: column;

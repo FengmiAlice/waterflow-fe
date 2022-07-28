@@ -6,6 +6,7 @@
 /.pnp
 .pnp.js
 README.md
+yarn.lock
 
 
 
