@@ -3,27 +3,31 @@ const {
     fixBabelImports,
     addWebpackAlias,
     addWebpackPlugin,
-    addWebpackExternals
+    addWebpackExternals,
+    // setWebpackOptimizationSplitChunks
   } = require("customize-cra");
   const path = require("path");
   const ProgressBarPlugin = require("progress-bar-webpack-plugin");
   const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
   const CompressionWebpackPlugin = require("compression-webpack-plugin");
-  
+  const HtmlWebpackPlugin = require("html-webpack-plugin");
+  const CssMinimizerWebpackPlugin = require("css-minimizer-webpack-plugin");
   const isEnvProduction = process.env.NODE_ENV === "production";
   
   const addCompression = () => config => {
     if (isEnvProduction) {
-      config.plugins.push(
-        // gzip压缩
-        new CompressionWebpackPlugin({
-          test: /\.(css|js)$/,
-          // 只处理比1kb大的资源
-          threshold: 1024,
-          // 只处理压缩率低于90%的文件
-          minRatio: 0.9
-        })
-      );
+        config.plugins.push(
+          // gzip压缩
+          new CompressionWebpackPlugin({
+            test: /\.(css|js)$/,
+            // 只处理比1kb大的资源
+            threshold: 1024,
+            // 只处理压缩率低于90%的文件
+            minRatio: 0.9
+          }),
+          new HtmlWebpackPlugin({ template: './public/index.html' }),
+          new CssMinimizerWebpackPlugin()
+        )
     }
   
     return config;
@@ -53,6 +57,48 @@ const {
         camel2DashComponentName: false
       }
     ]),
+    // setWebpackOptimizationSplitChunks({
+    //   minChunks: 1,
+    //   minSize: 30000,
+    //   maxAsyncRequests: 5,
+    //   maxInitialRequests: 3,
+    //   automaticNameDelimiter: '~',
+    //   cacheGroups:{
+    //     vendors: { 
+    //       chunks:'all',
+    //       test: /[\\/]node_modules[\\/]/,
+    //       priority: 10,
+    //       name:'vendors'
+    //     },
+    //     react:{
+    //       chunks:'inital',
+    //       test: (module) => {
+    //         return /[\\/]react|react-dom|redux|mobx[\\/]/.test(module.context)
+    //       },
+    //       priority: 8,
+    //       reuseExistingChunk: true,
+    //       name: 'react',
+    //     },
+    //     moment:{
+    //       chunks: "all",
+    //       test: (module) => {
+    //         return /[\\/]moment[\\/]/.test(module.context);
+    //       },
+    //       priority: 8,
+    //       reuseExistingChunk: true,
+    //       name: "moment",
+    //     },
+    //     antd: {
+    //       chunks:'all',
+    //       test: (module) => {
+    //         return /[\\/]antd[\\/]/.test(module.context)
+    //       },
+    //       priority: 8,
+    //       reuseExistingChunk: true,
+    //       name: 'antd',
+    //     },
+    //   }
+    // }),
     // 移动端适配，px转rem 需要安装postcss-pxtorem
     // addPostcssPlugins([
     //  require("postcss-pxtorem")({

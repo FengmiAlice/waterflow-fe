@@ -138,6 +138,8 @@ function Consume(){
     const tableIds = useRef('consume_report');//获取支出列表table id
     const tableRef=useRef(null);//设置表格的ref
 
+    let curTime= moment().format("YYYY-MM-DD");
+    const consumeTime = useRef(curTime);//设置支出记录默认时间
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
        useEffect(()=>{
                 month.current = moment().format("YYYY-MM");//格式化当前月份
@@ -180,7 +182,10 @@ function Consume(){
     function getMonthChange(date,dateString){
         month.current = dateString; 
     }
- 
+    // 获取支出记录时间
+    function getTimeChange(date,dateString){
+        consumeTime.current = dateString;
+    }
     // 获取年份日期值
     function getYearChange(date,dateString){
         // 非空判断
@@ -385,15 +390,15 @@ function Consume(){
     function handleSubmit(){
         form.validateFields().then(async (values) => {
             // 将时间组件值转为字符串用于传值
-            let times;
-            if(values.time !== undefined){
-                times = values.time.format('YYYY-MM-DD');
-            }
+            // let times;
+            // if(values.time !== undefined){
+            //     times = values.time.format('YYYY-MM-DD');
+            // }
             
             let params = {
                 id:rowId,
                 typeId:addConsumeType.current,
-                time:times,
+                time:consumeTime.current,
                 description:values.description,
                 paymentId:addPaymentType.current,
                 amount:values.amount,
@@ -515,7 +520,7 @@ function Consume(){
             {/* 添加或编辑支出记录弹窗 */}
             <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
                 <section >
-                    <Form   name="consumeForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off" >
+                    <Form   name="consumeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                         <Form.Item  label="支出类别" name="typeId"  rules={[
                                 {required:true,message:'请选择支出类别'},
                             
@@ -532,12 +537,12 @@ function Consume(){
                                 </Select>
                         </Form.Item>
                         <Form.Item style={{position:'absolute',right:20,top:78}}><Button type="primary" onClick={addNewType} className="typeButton">新类别</Button></Form.Item>
-                        <Form.Item style={{clear:'both'}} label="支出时间" name="time"   
+                        <Form.Item style={{clear:'both'}} label="支出时间" name="time"  
                                 rules={[
                                     {required:true,message:'请选择支出时间'},
                                     
                                 ]}  >
-                                <DatePicker  style={{ width: 100+'%' }} />
+                                <DatePicker   format='YYYY-MM-DD' picker="day" style={{ width: 100+'%' }} onChange={getTimeChange}/>
                         </Form.Item>
                         <Form.Item label="详情" name="description"   
                                 rules={[

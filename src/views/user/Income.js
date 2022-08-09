@@ -132,7 +132,8 @@ function Income(){
     const addPaymentType= useRef('');//设置新增收入记录支付方式值
     const tableId= useRef('income_report');//获取收入列表table id
     const tableRef=useRef(null);//设置表格的ref
-
+    let curTime= moment().format("YYYY-MM-DD");
+    const incomeTime = useRef(curTime);//设置收入记录默认时间
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行,传一个空数组，只执行一次）
     useEffect(()=>{
         // if(!initFlag ){
@@ -173,6 +174,10 @@ function Income(){
            // 非空判断
         dateString =dateString || '';
         month.current = dateString; 
+    }
+    function getTimeChange(date,dateString){
+        console.log(dateString)
+        incomeTime.current = dateString;
     }
    // 获取年份日期值
    function getYearChange(date,dateString){
@@ -308,15 +313,15 @@ function Income(){
        
                 form.validateFields().then(async (values) => {
                     // 将时间组件值转为字符串用于传值
-                    let times;
-                    if(values.time !== undefined){
-                        times = values.time.format('YYYY-MM-DD');
-                    }
+                    // let times;
+                    // if(values.time !== undefined){
+                    //     times = values.time.format('YYYY-MM-DD');
+                    // }
                     
                     let params = {
                         id:rowId,
                         typeId:addConsumeType.current,
-                        time:times,
+                        time:incomeTime.current,
                         description:values.description,
                         paymentId:addPaymentType.current,
                         amount:values.amount,
@@ -469,7 +474,7 @@ function Income(){
                  {/* 添加或编辑收入记录弹窗 */}
                  <AsyncModal title={incomeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={incomeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
                  <section >
-                      <Form   name="incomeForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off" >
+                      <Form   name="incomeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                           <Form.Item  label="收入类别" name="typeId"  rules={[
                                 {required:true,message:'请选择支出类别'},
                             
@@ -491,7 +496,7 @@ function Income(){
                                     {required:true,message:'请选择收入时间'},
                                     
                                 ]}  >
-                                <DatePicker  style={{ width: 100+'%' }} />
+                                <DatePicker  format='YYYY-MM-DD' picker="day" onChange={getTimeChange} style={{ width: 100+'%' }} />
                           </Form.Item>
                           <Form.Item label="详情" name="description"   
                                 rules={[
