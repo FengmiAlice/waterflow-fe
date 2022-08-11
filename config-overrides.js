@@ -3,8 +3,7 @@ const {
     fixBabelImports,
     addWebpackAlias,
     addWebpackPlugin,
-    addWebpackExternals,
-    // setWebpackOptimizationSplitChunks
+    // addWebpackExternals,
   } = require("customize-cra");
   const path = require("path");
   const ProgressBarPlugin = require("progress-bar-webpack-plugin");
@@ -83,12 +82,12 @@ const {
       // 终端进度条显示
       new ProgressBarPlugin()
     ),
-    addWebpackExternals(
-        // 不做打包处理的，直接cdn引入
-        {
-        'echarts':'window.echarts'
-        }
-    ),
+    // addWebpackExternals(
+    //     // 不做打包处理的，直接cdn引入
+    //     {
+    //     'echarts':'window.echarts'
+    //     }
+    // ),
     addWebpackAlias({
       ["@"]: path.resolve(__dirname, "src"),
       
