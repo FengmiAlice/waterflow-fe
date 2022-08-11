@@ -57,48 +57,7 @@ const {
         camel2DashComponentName: false
       }
     ]),
-    // setWebpackOptimizationSplitChunks({
-    //   minChunks: 1,
-    //   minSize: 30000,
-    //   maxAsyncRequests: 5,
-    //   maxInitialRequests: 3,
-    //   automaticNameDelimiter: '~',
-    //   cacheGroups:{
-    //     vendors: { 
-    //       chunks:'all',
-    //       test: /[\\/]node_modules[\\/]/,
-    //       priority: 10,
-    //       name:'vendors'
-    //     },
-    //     react:{
-    //       chunks:'inital',
-    //       test: (module) => {
-    //         return /[\\/]react|react-dom|redux|mobx[\\/]/.test(module.context)
-    //       },
-    //       priority: 8,
-    //       reuseExistingChunk: true,
-    //       name: 'react',
-    //     },
-    //     moment:{
-    //       chunks: "all",
-    //       test: (module) => {
-    //         return /[\\/]moment[\\/]/.test(module.context);
-    //       },
-    //       priority: 8,
-    //       reuseExistingChunk: true,
-    //       name: "moment",
-    //     },
-    //     antd: {
-    //       chunks:'all',
-    //       test: (module) => {
-    //         return /[\\/]antd[\\/]/.test(module.context)
-    //       },
-    //       priority: 8,
-    //       reuseExistingChunk: true,
-    //       name: 'antd',
-    //     },
-    //   }
-    // }),
+  
     // 移动端适配，px转rem 需要安装postcss-pxtorem
     // addPostcssPlugins([
     //  require("postcss-pxtorem")({
