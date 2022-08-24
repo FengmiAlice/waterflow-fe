@@ -139,10 +139,11 @@
   position: relative;
 }
 .v-signIn-index, .v-signUp-index{
-  height: 100vh;
+  min-height: 100vh;
   background: url(../img/banner.jpg) center top;
   background-repeat: no-repeat;
-  background-size: cover; 
+  /* background-size: cover;  */
+  background-size: 100% 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
