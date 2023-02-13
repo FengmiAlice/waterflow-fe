@@ -54,6 +54,8 @@ function Consume(){
                 title: '金额',
                 key:'amount',
                 dataIndex: 'amount',
+                sorter:true
+                
             },
             {
                 title: '付款方式',

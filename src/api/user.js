@@ -1,5 +1,5 @@
 import  http  from '../utils/http';
-
+/********************支出模块*********************************/
 // 支出页面获取支出列表信息
 export function getConsumeList(params){
     return http('get','/api1/consume/list',params)
@@ -36,7 +36,7 @@ export function exportConsumeTable(pars,data){
 export function addType(data){
     return http('post','/api1/type/add',data)
 }
-
+/******************收入模块***********************************/
 // 收入页面获取收入列表信息
 export function getIncomeList(params){
     return http('get','/api1/income/list',params)
@@ -56,4 +56,22 @@ export function deleteIncomeTableRow(data){
 // 收入页面新增和编辑添加新类别
 export function addIncomeType(data){
     return http('post','/api1/type/add',data)
+}
+/**************账户模块************************/
+
+// 账户页面获取账户统计信息
+export function getStatistics(params){
+    return http('get','/api1/account/statistic',params)
+}
+// 账户页面获取账户列表信息
+export function getAccountList(params){
+    return http('get','/api1/account/list',params)
+}
+// 删除账户
+export function deleteAccountById(params){
+    return http('get','/api1/account/delete',params)
+}
+// 新增账户
+export function addAccounts(params){
+    return http('get','/api1/account/save',params)
 }

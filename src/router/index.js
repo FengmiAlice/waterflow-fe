@@ -42,13 +42,21 @@ const routes = [
                 
             },
             {
+                path:'/index/account',
+                meta:{
+                    title:'账户',
+                    icon:<UserOutlined />
+                },
+                component: () => import('../views/user/Account'),
+                
+            },
+            {
                 path:'/index/report',
                 meta:{
                     title:'报告',
                     icon:<UserOutlined />
                 },
                 component: () => import('../views/user/Report'),
-            
             },
         ]
     },

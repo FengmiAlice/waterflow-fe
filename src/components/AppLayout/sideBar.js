@@ -2,7 +2,7 @@
 import React from 'react'; 
 import {routes}  from '../../router';
 import {Link,useLocation} from 'react-router-dom';
-import { useStore, observer } from '../../hooks/storeHook';
+import { useStore, observer} from '../../hooks/storeHook';
 import 'antd/dist/antd.css';
 import '../../assets/style/App.css';
 import {Layout, Menu} from 'antd';
@@ -18,8 +18,8 @@ function SideBar () {
     const { commonStore } = useStore();
     const { sideBarCollapsed } = commonStore;
     const location = useLocation();//获取当前路由
-    const { pathname }  = location;
-    // const openKeys = [] // 用于根据当前路由默认展开子菜单
+    // console.log(location)
+    const  {pathname}   = location;
     const menuList = getMenuList();
     // 左侧菜单渲染
     function getMenuList() {
@@ -59,6 +59,7 @@ function SideBar () {
                         ))
                      
                     }
+               
                 } 
 
             })
@@ -79,7 +80,7 @@ function SideBar () {
     // }
 
     // 折叠菜单栏
-   function onToggle () {
+    function onToggle () {
         commonStore.setSideBarCollapsed(!sideBarCollapsed)
     }
 
@@ -92,7 +93,7 @@ function SideBar () {
                 
                 }}>
                  
-                    <Menu  theme="dark" mode="inline"  selectedKeys={[pathname]}  style={{height:'100%', borderRight:0}}>
+                    <Menu  theme="dark" mode="inline"  selectedKeys={[pathname]} defaultOpenKeys={['/index']} style={{height:'100%', borderRight:0}}>
                         {menuList}
                     </Menu>
                 </Sider>

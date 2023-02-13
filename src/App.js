@@ -40,9 +40,9 @@ function App(){
      
 
       return(
-            <Router>
-                  { isRender ? (<RouterWaiter routes={routes} onRouteBefore={onRouteBefore} />) : null }
-            </Router>
+                  <Router>
+                        { isRender ? (<RouterWaiter routes={routes} onRouteBefore={onRouteBefore} />) : null }
+                  </Router>
       )
 }
 export default  App;

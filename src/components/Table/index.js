@@ -121,6 +121,9 @@ const useAsyncTable = forwardRef( (props,ref) => {
             if(tableType === 'income'){
                 setTableId('income_report')
             }
+            if(tableType === 'account'){
+                setTableId('account_report')
+            }
 
 
             // const tableIds = document.getElementById(tableId)
@@ -148,7 +151,10 @@ const useAsyncTable = forwardRef( (props,ref) => {
         if (res.data.success === true) {
             const list = res.data.page.list;
             const  totalcounts = res.data.page.total;
-            setTotalAmount(res.data.extraData.totalAmount);
+            if(tableType === 'consume' || tableType === 'income'){
+                setTotalAmount(res.data.extraData.totalAmount);
+            }
+           
             // 回填pagination里的参数数据
             dispatch({
                 type: 'SET_PAGINATION',
