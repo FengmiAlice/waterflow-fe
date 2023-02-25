@@ -4,7 +4,7 @@ import AsyncModal from '../../components/Modal';
 // import { useStore } from '../../hooks/storeHook';
 import { Form,Button,Input,Select,Space,message,Modal} from 'antd';
 // import moment from 'moment';
-import { getStatistics,getAccountList,deleteAccountById,getConsumeTypeList,addAccounts} from '../../api/user';
+import { getStatistics,getAccountList,deleteAccountById,addAccounts} from '../../api/user';
 import '../../assets/style/App.css';
 
 
@@ -30,25 +30,6 @@ function Account(){
                 title:'类型',
                 key:'types',
                 dataIndex:'types',
-                // render: record => 
-                // (
-                // <>
-                //     {
-                //         selectedTypeArray.map( item =>
-                //         {
-                        
-                //             if(item.id === record) {
-                //                 return (
-                //                     <Space  key={item.id}>
-                //                         {item.name}
-                //                     </Space>
-                //                 )
-                //             }
-                //             return null;
-                //         })
-                //     }
-                // </>
-                // )
             },
            
             {
@@ -81,7 +62,14 @@ function Account(){
             keyword:'',
     }
     const [searchData,setSearchData] = useState(initSearchData);//设置初始传参列表
-    const [selectedTypeArray,setSelectedTypeArray] = useState([]);//设置账户类别列表
+    //设置账户类别列表
+    const selectedTypeArray=[
+        {name:'全部',value:'null'},
+        {name:'储蓄',value:1},
+        {name:'理财',value:2},
+        {name:'债务',value:3},
+        {name:'其他',value:-1},
+    ]
     // const [paymentTypeArray,setPaymentTypeArray] = useState([]);//设置支付方式列表
     // 使用useForm创建新增支出记录form实例
     const [form] = Form.useForm();
@@ -125,7 +113,7 @@ function Account(){
        useEffect(()=>{
                 // month.current = moment().format("YYYY-MM");//格式化当前月份
                 getStatisticData();
-                getTypeList();
+                // getTypeList();
                 // getPaymentList();
        },[])
  
@@ -153,44 +141,15 @@ function Account(){
             }
         })
     }
-    // 获取类别列表
-    function getTypeList(){
-        let param={
-            type:1
-        }
-        getConsumeTypeList(param).then((res)=>{
-            if(res.data.success === true){
-                setSelectedTypeArray(res.data.page.list)
-             
-            }
-        })
-    }
-    // 获取支出方式列表
-    // function getPaymentList(){
-    //     getPaymentTypeList().then( (res) => {
-    //         if(res.data.success === true){
-    //             setPaymentTypeArray(res.data.page.list)
-             
-    //         }
-    //     })
-    // }
-    // 获取搜索类别值
+   
+    // 获取搜索账户类别值
     function typeChange(value,current){
-        if(value === undefined){
-            accountType.current = '';
-        }else{
-            accountType.current = value;
-        }
+        accountType.current = value;
     }
-     // 获取支出记录类别值
-    function addAccountTypeChange(value){
-        if(value === undefined){
-            addAccountType.current = '';
-        }else{
-            addAccountType.current = value;
-        }
+     // 获取账户类别值
+    function addTypeChange(){
+        addAccountType.current = 1;
     }
-
 
     // 获取搜索输入框值
     function inputChange(e){
@@ -228,7 +187,7 @@ function Account(){
     // 添加账户按钮事件
     function handleAdd(){
         // 置空表单数据
-        addAccountType.current = '';
+        // addAccountType.current = '';
         // addPaymentType.current = '';
         form.resetFields();
         setAccountTitle('新增账户');
@@ -236,8 +195,6 @@ function Account(){
         setRowId('');
         operDialogFunc(true);  
     }
-
-
 
     // 删除表格中的一行数据
     function handleDelete(row){
@@ -347,10 +304,10 @@ function Account(){
         <header className='searchFormHeader'>
             <Form  className="consumeWrap" layout="inline" name="Consume"  size="small"  >
                     <Form.Item label="类别">
-                        <Select style={{ width: 120 }} onChange={typeChange} allowClear={true}>
+                        <Select style={{ width: 120 }} defaultValue="null" onChange={typeChange} allowClear={true}>
                                 {
-                                    selectedTypeArray.map( (item,index,arr) => (
-                                        <Option key={item.id} value={item.id}>
+                                    selectedTypeArray.map( (item) => (
+                                        <Option key={item.value} value={item.value}>
                                             {item.name}
                                         </Option>
                                     ))
@@ -368,7 +325,7 @@ function Account(){
        <section>
            
             <Button type="primary" className="addConsumeBtn"  onClick={handleAdd} >新增账户</Button>
-            <Button type="primary" className="addConsumeBtn"  onClick >转账</Button>
+            <Button type="primary" className="addConsumeBtn"   >转账</Button>
             {/* <Tooltip title="把符合以上搜索条件的（或已勾选的）记录导出成一个Excel表格文件" placement="top">
                 <Button type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
             </Tooltip> */}
@@ -407,15 +364,10 @@ function Account(){
                                 {required:true,message:'请选择账户类型'},
                             
                             ]} style={{position:'relative'}} >
-                                <Select style={{width:80+'%'}}  onChange={addAccountTypeChange} placeholder="请选择" allowClear >
-                                    {
-                                        selectedTypeArray.map( (item,index,arr) => (
-                                        
-                                            <Option key={item.id} value={item.id}>
-                                                {item.name}
-                                            </Option>
-                                        ))
-                                        }
+                                <Select style={{width:80+'%'}} defaultValue="1" onChange={addTypeChange} placeholder="请选择" allowClear >
+                                    <Option key="1" value="1">
+                                     储蓄
+                                    </Option>
                                 </Select>
                         </Form.Item>
                         <Form.Item label="补充描述" name="note" >
