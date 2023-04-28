@@ -5,13 +5,11 @@ import React, {  useEffect, useState } from 'react';
 import { useStore, observer } from '../../hooks/storeHook';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/img/logo.svg';
-import '../../assets/style/App.css';
 import { updateUserInfo } from '../../api/login';
 import { Form,Input,Menu, Dropdown,Modal } from 'antd';//Button
 import { ExclamationCircleOutlined,DownOutlined } from '@ant-design/icons';
 const {confirm} = Modal;
  
-
 function HeadBar () {
       const { userStore } = useStore()
       const { userInfo } = userStore;

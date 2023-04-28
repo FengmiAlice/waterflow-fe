@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './assets/style/index.css';
 import App from './App';
 import StoreContext from './contexts/storeContext'
-
 import store from './store';
 import * as serviceWorker from './serviceWorker';
+import 'antd/dist/antd.css';
+import './assets/style/index.css';
+import './assets/style/App.css';
 
 ReactDOM.render(
   <StoreContext.Provider value={store}>

@@ -4,6 +4,7 @@ import {Form,Input,Button} from 'antd';
 import { UserOutlined, LockOutlined,PhoneOutlined ,MailOutlined,SmileOutlined,   } from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
 import { doSignUp } from '../../api/login';
+
 function SignUp(){
     const [form] = Form.useForm();
     const navigate = useNavigate();

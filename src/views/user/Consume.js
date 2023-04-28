@@ -5,9 +5,6 @@ import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
 import { getConsumeList,getConsumeTypeList, getPaymentTypeList,addTableRow,deleteTableRow,deleteTableRowArray,exportConsumeTable,addType} from '../../api/user';
-import '../../assets/style/App.css';
-
-
 const {  RangePicker } = DatePicker; 
 const { Option } = Select;
 const {confirm} = Modal;

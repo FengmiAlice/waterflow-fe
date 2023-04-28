@@ -1,14 +1,8 @@
 import React, {useEffect,useState,useRef} from 'react';
 import ArgTable from '../../components/Table';
 import AsyncModal from '../../components/Modal';
-// import { useStore } from '../../hooks/storeHook';
 import { Form,Button,Input,Select,Space,message,Modal} from 'antd';
-// import moment from 'moment';
 import { getStatistics,getAccountList,deleteAccountById,addAccounts} from '../../api/user';
-import '../../assets/style/App.css';
-
-
-// const {  RangePicker } = DatePicker; 
 const { Option } = Select;
 const {confirm} = Modal;
 const {TextArea} = Input;

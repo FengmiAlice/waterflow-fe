@@ -5,8 +5,6 @@ import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
 import { getIncomeList,getConsumeTypeList, getPaymentTypeList,addIncomeTableRow,deleteIncomeTableRow,exportIncomeTable,addIncomeType} from '../../api/user';
-
-import '../../assets/style/App.css';
 const { Option } = Select;
 const {confirm} = Modal;
 const {TextArea} = Input;

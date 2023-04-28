@@ -1,13 +1,12 @@
 
 
-import React, {useEffect,useState,useRef} from 'react';
+import React, {useEffect,useState,useRef, useCallback} from 'react';
 import { DatePicker,Form,Button,Statistic,Select, message  } from 'antd';
 import AsyncModal from '../../components/Modal';
 import ArgPieEcharts from '../../components/Echarts/pie';
 import ArgBarEcharts from '../../components/Echarts/bar';
 import ArgLineEcharts from '../../components/Echarts/line';
 import {getOverview,getConsumePie,getConsumePieType,getIncome,getConsumeIncomeLately,getThreeConsumeLately,getLineConsumeData} from '../../api/report';
-import '../../assets/style/App.css';
 import moment from 'moment';
 const { Option } = Select;
 
@@ -99,8 +98,6 @@ function Report(){
        
     }
  
-   
-
     // 获取统计粒度
     const countChange=(value)=>{
         if(value === null || value === undefined){
@@ -109,6 +106,26 @@ function Report(){
             statisticType.current = value;
         }
     }
+    //各类收入开支饼图柱状图搜索按钮事件
+    const buttonSearch = useCallback(
+        (params={
+            month:month.current,
+            year:year.current,
+        })=>{
+       
+        getOverview(params).then((res)=>{
+            if(res.data.success === true){
+                setConsumeAcount(res.data.obj.totalConsume);
+                setIncomeAcount(res.data.obj.totalIncome);
+                setWealthAcount(res.data.obj.totalWealth);
+                setReportTitle(res.data.obj.report.title);
+                setReportText(res.data.obj.report.text);
+            }
+        })
+        getConsumePieData();
+        getConsumePieTypeData();
+        getIncomeData();
+    },[])
 
     useEffect(()=>{
         // 设置支出收入余额搜索参数默认值
@@ -121,7 +138,7 @@ function Report(){
         getLaterlyBarData();
         getThreeConsumeData();
       
-    },[])
+    },[buttonSearch])
     
     // 获取各类开支占比图数据
     function getConsumePieData(){
@@ -219,25 +236,7 @@ function Report(){
             setMultipleBarData(seriesArray);
         })
     }
-    //各类收入开支饼图柱状图搜索按钮事件
-    function buttonSearch(){
-        let params={
-            month:month.current,
-            year:year.current,
-        }
-        getOverview(params).then((res)=>{
-            if(res.data.success === true){
-                setConsumeAcount(res.data.obj.totalConsume);
-                setIncomeAcount(res.data.obj.totalIncome);
-                setWealthAcount(res.data.obj.totalWealth);
-                setReportTitle(res.data.obj.report.title);
-                setReportText(res.data.obj.report.text);
-            }
-        })
-        getConsumePieData();
-        getConsumePieTypeData();
-        getIncomeData();
-    }
+
     // 支出收入余额折线图搜索按钮
     function buttonLineSearch(){
         let params={

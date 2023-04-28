@@ -4,18 +4,12 @@
 import React, { useEffect, useState } from 'react';
 import RouterWaiter from './components/RouteGuard/index';
 import { BrowserRouter as Router} from 'react-router-dom';
-
 import { getUserInfo } from './api/login';
 import { useStore } from './hooks/storeHook'
-
-import './assets/style/App.css';
 import  { routes, onRouteBefore}  from './router';
 import { getRoutePath } from './utils/appTools';
 
 function App(){
-//       const elements = useRoutes(routes)
-//      return elements;
-
       const store = useStore();
       const { userStore } = store;
       const [isRender, setIsRender] = useState(false);
@@ -38,7 +32,6 @@ function App(){
             }
       },[userStore]);
      
-
       return(
                   <Router>
                         { isRender ? (<RouterWaiter routes={routes} onRouteBefore={onRouteBefore} />) : null }
