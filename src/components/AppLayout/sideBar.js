@@ -27,17 +27,10 @@ function SideBar () {
             routeList.forEach((v) => {
                 // console.log(v)
                 v.meta = v.meta || {};
-               
                 // 排除没有权限访问的路由
                 if (v.redirect || v.path === '*' || v.meta.hideMenu) {
-                    // console.log("is hide.")
                     return;
-                }
-                // if (v.path === '/') {
-                //     menuList = menuList.concat(getLists(v.children, '/'));
-                //     console.log(menuList)
-                // }
-                
+                }                
                  if(v.path !== undefined){
                     // 如果有嵌套路由递归添加菜单
                     if (v.children) {
@@ -46,7 +39,6 @@ function SideBar () {
                             {getLists(v.children)}
                         </SubMenu>
                         ))
-                      
                     } 
                     // 无嵌套路由,添加菜单结束
                     else {
@@ -86,7 +78,7 @@ function SideBar () {
         <div  className="c-PageLayout-sideBar">
             <Layout  className="sideBarLayout">
                 <Sider trigger={null} collapsible collapsed={sideBarCollapsed}>
-                    <Menu  theme="dark" mode="inline"  selectedKeys={[pathname]} defaultOpenKeys={['/index/consume']} >
+                    <Menu  theme="dark" mode="inline"  selectedKeys={[pathname]} defaultOpenKeys={['/index']} >
                         {menuList}
                     </Menu>
                 </Sider>
