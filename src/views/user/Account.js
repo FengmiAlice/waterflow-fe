@@ -38,8 +38,12 @@ function Account(){
                 render: (text, record,index) =>{
                     return(
                         <Space size="middle">
-                   
-                            <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
+                            <div className='largeBtnBox'>
+                                <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
+                            </div>
+                            <div className="miniBtnBox">
+                                <Button size="small" type="text" danger onClick={ ()=> handleDelete(record)}>删除</Button>
+                            </div> 
                         </Space>
                     )
                 }    
@@ -312,14 +316,14 @@ function Account(){
                         <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                     </Form.Item>
                     <Form.Item  >
-                        <Button type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
+                        <Button size="small" type="primary" onClick={buttonSearch} > 搜索</Button>
                     </Form.Item>
             </Form>
         </header>
        <section>
            
-            <Button type="primary" className="addConsumeBtn"  onClick={handleAdd} >新增账户</Button>
-            <Button type="primary" className="addConsumeBtn"   >转账</Button>
+            <Button type="primary" size="small" className="addConsumeBtn"  onClick={handleAdd} >新增账户</Button>
+            <Button type="primary" size="small" className="addConsumeBtn"   >转账</Button>
             {/* <Tooltip title="把符合以上搜索条件的（或已勾选的）记录导出成一个Excel表格文件" placement="top">
                 <Button type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
             </Tooltip> */}

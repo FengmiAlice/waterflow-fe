@@ -43,34 +43,39 @@
 }
 /* layout布局样式 */
 .c-PageLayout-index {
-  width: 100%;
+  /* width: 100%;
   height: 100%;
-  display: flex;
+  display: flex; */
+  /* box-sizing: content-box; */
 }
 .appMainWrap {
-  width:100%;
+  /* width:100%;
   height: 100%;
   flex: 1;
   position: relative;
-  /* padding-top: 50px; */
+  display: flex; */
   margin-top:60px;
-  display: flex;
 }
  
 .appMain {
-  height: 100%;
-  /* overflow: hidden; */
+  /* height: 100%;
+  overflow: hidden; */
+  min-height:calc(100vh - 50px);
   padding: 15px;
 }
+
 /* 顶部菜单*/
 .c-PageLayout-headBar {
+  width: 100%;
   height: 50px;
   display: flex;
   justify-content: space-between;
   box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+  background-color: #fff;
   position: fixed;
   top: 0;
-  width: 100%;
+  z-index: 100;
+
 }
 .headLeft {
   display: flex;
@@ -124,9 +129,14 @@
  /* .ant-layout-sider{
    background:#fff!important;
  } */
- /* .c-PageLayout-sideBar {
+
+ .c-PageLayout-sideBar {
   height: 100%;
+}
+/* .sideBarCol{
+  min-height:calc(100vh - 50px)
 } */
+
 .c-PageLayout-sideBar ::-webkit-scrollbar {
   display: none;
 }
@@ -140,39 +150,49 @@
 }
 .v-signIn-index, .v-signUp-index{
   min-height: 100vh;
-  background: url(../img/banner.jpg) center top;
+  background: url(../img/banner.jpg) center center;
   background-repeat: no-repeat;
-  /* background-size: cover;  */
-  background-size: 100% 100%;
+  background-size: cover; 
+  background-attachment: fixed;
+  /* background-size: 100% 100%; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: relative;
+  padding: 0 5px
 }
 
 .toggleIcon {
   position: absolute;
-    bottom: 0;
-    left: 0;
-    background: rgba(255, 255, 255, 0.65);
+  bottom: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.65);
   height: 40px;
   width:100%;
-  display: flex;
+  text-align: center;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
   cursor: pointer;
-
 }
+
 .toggleIcon > .anticon {
   font-size: 18px;
 }
-
+.ant-table-wrapper{
+  margin-top:20px;
+}
+.reportDialog .ant-modal-title{
+  font-size:20px;
+}
 /* 登录、注册样式 */
 .signInSection, .signUpSection{
   width: 400px;
   background: #fff;
   border-radius: 5px;
+  padding:0 10px;
+  box-sizing: border-box;
   /* position: absolute;
   top: 50%;
   left: 50%;
@@ -223,6 +243,9 @@ margin:10px 0;
 .addConsumeBtn, .exportConsumeBtn, .deleteConsumeBtn{
   margin-right:10px;
   /* border-radius:10px!important; */
+}
+.consumeTypeButton,.incomeTypeButton{
+  margin-left:6px;
 }
 .totalStyle{
   color: red;
@@ -282,7 +305,12 @@ margin:10px 0;
   height:340px;
   margin-top: 20px;
 }
-
-.reportDialog .ant-modal-title{
-  font-size:20px;
+.reportSearchBtn{
+  margin-right:6px;
 }
+.reportSearchLineBtn{
+  margin-left:6px;
+}
+
+
+

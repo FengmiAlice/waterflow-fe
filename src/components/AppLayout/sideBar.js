@@ -85,13 +85,8 @@ function SideBar () {
     return(
         <div  className="c-PageLayout-sideBar">
             <Layout  className="sideBarLayout">
-                <Sider trigger={null} collapsible collapsed={sideBarCollapsed}   style={{
-                    overflow: 'auto',
-                    height: '100vh',
-                
-                }}>
-                 
-                    <Menu  theme="dark" mode="inline"  selectedKeys={[pathname]} defaultOpenKeys={['/index']} style={{height:'100%', borderRight:0}}>
+                <Sider trigger={null} collapsible collapsed={sideBarCollapsed}>
+                    <Menu  theme="dark" mode="inline"  selectedKeys={[pathname]} defaultOpenKeys={['/index/consume']} >
                         {menuList}
                     </Menu>
                 </Sider>

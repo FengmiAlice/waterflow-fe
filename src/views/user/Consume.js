@@ -2,7 +2,7 @@ import React, {useEffect,useState,useRef} from 'react';
 import ArgTable from '../../components/Table';
 import AsyncModal from '../../components/Modal';
 import { useStore } from '../../hooks/storeHook';
-import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
+import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip} from 'antd';
 import moment from 'moment';
 import { getConsumeList,getConsumeTypeList, getPaymentTypeList,addTableRow,deleteTableRow,deleteTableRowArray,exportConsumeTable,addType} from '../../api/user';
 const {  RangePicker } = DatePicker; 
@@ -81,9 +81,15 @@ function Consume(){
                 dataIndex: 'operation',
                 render: (text, record,index) =>{
                     return(
-                        <Space size="middle">
-                            <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
-                            <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
+                        <Space size="middle" >
+                            <div className='largeBtnBox'>
+                                <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
+                                <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
+                            </div>
+                            <div className="miniBtnBox">
+                                <Button size="small" type="text" className='miniPrimaryBtn' onClick={ ()=> handleEdit(record)}>编辑</Button>
+                                <Button size="small" type="text" danger onClick={ ()=> handleDelete(record)}>删除</Button>
+                            </div>
                         </Space>
                     )
                 }    
@@ -487,46 +493,80 @@ function Consume(){
                         <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                     </Form.Item>
                     <Form.Item  >
-                        <Button type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
+                        <Button size="small" type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
                     </Form.Item>
             </Form>
-           
         </header>
-       <section>
-            <Tooltip title="添加一条支出记录，把你的每一笔消费都记下来吧" placement="top">
-                <Button type="primary" className="addConsumeBtn"  onClick={handleAdd} >添加</Button>
-            </Tooltip>
-            <Tooltip title="把符合以上搜索条件的（或已勾选的）记录导出成一个Excel表格文件" placement="top">
-                <Button type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
-            </Tooltip>
-            <Tooltip title="删除你勾选的所有记录，不要随便点哦，删除就没啦" placement="top">
-                <Button type="danger"  className="deleteConsumeBtn" onClick={handleDeleteRow} >删除 </Button>
-            </Tooltip>
-            <span className='totalStyle'>总计 {totalAmount}￥ </span>
+        <section>
+                <Tooltip title="添加一条支出记录，把你的每一笔消费都记下来吧" placement="top">
+                    <Button size="small" type="primary" className="addConsumeBtn"  onClick={handleAdd} >添加</Button>
+                </Tooltip>
+                <Tooltip title="把符合以上搜索条件的（或已勾选的）记录导出成一个Excel表格文件" placement="top">
+                    <Button size="small" type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
+                </Tooltip>
+                <Tooltip title="删除你勾选的所有记录，不要随便点哦，删除就没啦" placement="top">
+                    <Button size="small" type="danger"  className="deleteConsumeBtn" onClick={handleDeleteRow} >删除 </Button>
+                </Tooltip>
+                <span className='totalStyle'>总计 {totalAmount}￥ </span>
 
-            <ArgTable 
-                ref={tableRef}
-                tableType={'consume'}            
-                owncolumns = {columns()}
-                queryAction={getConsumeList}
-                baseProps={{ rowKey: record => record.id }}
-                params = {searchData} 
-                getRowKeys={handleKeys}
-                initMethod={initFunc}
-                setTotalAmount = {setMount}
-            />                           
+                <ArgTable 
+                    ref={tableRef}
+                    tableType={'consume'}            
+                    owncolumns = {columns()}
+                    queryAction={getConsumeList}
+                    baseProps={{ rowKey: record => record.id }}
+                    params = {searchData} 
+                    getRowKeys={handleKeys}
+                    initMethod={initFunc}
+                    setTotalAmount = {setMount}
+                />                           
 
-            {/* 添加或编辑支出记录弹窗 */}
-            <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
-                <section >
-                    <Form   name="consumeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
-                        <Form.Item  label="支出类别" name="typeId"  rules={[
-                                {required:true,message:'请选择支出类别'},
-                            
-                            ]} style={{position:'relative'}} >
-                                <Select style={{width:80+'%'}}  onChange={addTypeChange} placeholder="请选择" allowClear >
-                                    {
-                                        selectedTypeArray.map( (item,index,arr) => (
+                {/* 添加或编辑支出记录弹窗 */}
+                <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
+                    <section >
+                        <Form   name="consumeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
+                            <Form.Item  label="支出类别" name="typeId"  rules={[
+                                    {required:true,message:'请选择支出类别'},
+                                
+                                ]} style={{position:'relative'}} >
+                                    <Select className='consumeTypeSelect'  onChange={addTypeChange} placeholder="请选择" allowClear >
+                                        {/* style={{width:80+'%'}} */}
+                                        {
+                                            selectedTypeArray.map( (item,index,arr) => (
+                                            
+                                                <Option key={item.id} value={item.id}>
+                                                    {item.name}
+                                                </Option>
+                                            ))
+                                            }
+                                    </Select>
+                                    <Button  type="primary" onClick={addNewType} className="consumeTypeButton">新类别</Button>
+                            </Form.Item>
+                            {/* <Form.Item style={{position:'absolute',right:20,top:78}}>
+                                <Button size="small" type="primary" onClick={addNewType} >新类别</Button>
+                            </Form.Item> */}
+                            <Form.Item style={{clear:'both'}} label="支出时间" name="time"  
+                                    rules={[
+                                        {required:true,message:'请选择支出时间'},
+                                        
+                                    ]}  >
+                                    <DatePicker   format='YYYY-MM-DD' picker="day" style={{ width: 100+'%' }} onChange={getTimeChange}/>
+                            </Form.Item>
+                            <Form.Item label="详情" name="description"   
+                                    rules={[
+                                        {required:true,message:'请输入详情'},
+                                        
+                                    ]} >
+                                <Input  placeholder="购买了什么，或者去哪玩了"    />
+                            </Form.Item>
+                            <Form.Item label="付款方式" name="paymentId"   
+                                    rules={[
+                                        {required:true,message:'请选择付款方式'},
+                                        
+                                    ]}> 
+                                <Select   onChange={addPaymentTypeChange} placeholder="请选择" allowClear>
+                                        {
+                                        paymentTypeArray.map( (item,index,arr) => (
                                         
                                             <Option key={item.id} value={item.id}>
                                                 {item.name}
@@ -534,69 +574,38 @@ function Consume(){
                                         ))
                                         }
                                 </Select>
-                        </Form.Item>
-                        <Form.Item style={{position:'absolute',right:20,top:78}}><Button type="primary" onClick={addNewType} className="typeButton">新类别</Button></Form.Item>
-                        <Form.Item style={{clear:'both'}} label="支出时间" name="time"  
+                            </Form.Item>
+                            <Form.Item label="金额(圆整)" name="amount" 
                                 rules={[
-                                    {required:true,message:'请选择支出时间'},
-                                    
-                                ]}  >
-                                <DatePicker   format='YYYY-MM-DD' picker="day" style={{ width: 100+'%' }} onChange={getTimeChange}/>
-                        </Form.Item>
-                        <Form.Item label="详情" name="description"   
-                                rules={[
-                                    {required:true,message:'请输入详情'},
-                                    
+                                    {required:true,message:'请输入金额'},
+                                
                                 ]} >
-                            <Input  placeholder="购买了什么，或者去哪玩了"    />
-                        </Form.Item>
-                        <Form.Item label="付款方式" name="paymentId"   
-                                rules={[
-                                    {required:true,message:'请选择付款方式'},
-                                    
-                                ]}> 
-                            <Select   onChange={addPaymentTypeChange} placeholder="请选择" allowClear>
-                                    {
-                                    paymentTypeArray.map( (item,index,arr) => (
-                                    
-                                        <Option key={item.id} value={item.id}>
-                                            {item.name}
-                                        </Option>
-                                    ))
-                                    }
-                            </Select>
-                        </Form.Item>
-                        <Form.Item label="金额(圆整)" name="amount" 
+                                <Input type="number" placeholder="越精确越好，可以写小数"    />
+                            </Form.Item>
+                            <Form.Item label="补充描述" name="note" >
+                                <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
+                            </Form.Item>
+                        </Form>
+                    </section>
+                </AsyncModal>
+                
+                {/* 添加类别弹窗 */}
+                <AsyncModal title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
+                    <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
+                        <Form.Item  label="名称" name="typeName"  
                             rules={[
-                                {required:true,message:'请输入金额'},
-                            
-                            ]} >
-                            <Input type="number" placeholder="越精确越好，可以写小数"    />
+                                        {required:true,message:'请输入名称'},
+                                        
+                            ]}
+                            >
+                            <Input type="text" />
                         </Form.Item>
-                        <Form.Item label="补充描述" name="note" >
-                            <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
+                        <Form.Item  label="描述"  name="typeDescription"  >
+                            <TextArea row={1} />
                         </Form.Item>
-                    </Form>
-                </section>
-            </AsyncModal>
-            
-            {/* 添加类别弹窗 */}
-            <AsyncModal title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
-                <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
-                    <Form.Item  label="名称" name="typeName"  
-                        rules={[
-                                    {required:true,message:'请输入名称'},
-                                    
-                        ]}
-                        >
-                        <Input type="text" />
-                    </Form.Item>
-                    <Form.Item  label="描述"  name="typeDescription"  >
-                        <TextArea row={1} />
-                    </Form.Item>
-                </Form>      
-            </AsyncModal>
-       </section>
+                    </Form>      
+                </AsyncModal>
+        </section>
     </div>
     )
 }

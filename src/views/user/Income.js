@@ -79,8 +79,14 @@ function Income(){
                 render: (text, record,index) =>{
                     return (
                         <Space size="middle">
-                            <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
-                            <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
+                              <div className='largeBtnBox'>
+                                <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
+                                <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
+                              </div>
+                              <div className="miniBtnBox">
+                                <Button size="small" type="text" className='miniPrimaryBtn' onClick={ ()=> handleEdit(record)}>编辑</Button>
+                                <Button size="small" type="text"  danger onClick={ ()=> handleDelete(record)}>删除</Button>
+                              </div>
                             
                         </Space>
                         ) 
@@ -431,16 +437,16 @@ function Income(){
                         <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                     </Form.Item>
                     <Form.Item  >
-                        <Button type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
+                        <Button size="small" type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
                     </Form.Item>
             </Form>
         </header>
         <section>
                 <Tooltip title="添加一条收入记录，把你的每一笔收入都记下来吧" placement="top">
-                    <Button type="primary" className="addConsumeBtn"  onClick={handleAdd} >添加</Button>
+                    <Button size="small" type="primary" className="addConsumeBtn"  onClick={handleAdd} >添加</Button>
                 </Tooltip>
                 <Tooltip title="把符合以上搜索条件的（或已勾选的）记录导出成一个Excel表格文件" placement="top">
-                    <Button type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
+                    <Button size="small" type="ghost"   className="exportConsumeBtn"  onClick={handleExport}>导出</Button>
                 </Tooltip>
                 <span className='totalStyle'>总计 {totalAmount}￥ </span>
                 <ArgTable 
@@ -477,7 +483,8 @@ function Income(){
                                 {required:true,message:'请选择支出类别'},
                             
                             ]} style={{position:'relative'}} >
-                                <Select style={{width:80+'%'}}  onChange={addTypeChange} placeholder="请选择" allowClear >
+                                <Select  className='incomeTypeSelect' onChange={addTypeChange} placeholder="请选择" allowClear >
+                                {/* style={{width:80+'%'}} */}
                                     {
                                         selectedTypeArray.map( (item,index,arr) => (
                                         
@@ -487,8 +494,11 @@ function Income(){
                                         ))
                                         }
                                 </Select>
+                                <Button  type="primary" onClick={addNewType} className="incomeTypeButton">新类别</Button>
                           </Form.Item>
-                          <Form.Item style={{position:'absolute',right:20,top:78}}><Button type="primary" onClick={addNewType} className="typeButton">新类别</Button></Form.Item>
+                          {/* <Form.Item style={{position:'absolute',right:20,top:78}}>
+                          <Button size="small" type="primary" onClick={addNewType} className="typeButton">新类别</Button>
+                          </Form.Item> */}
                           <Form.Item style={{clear:'both'}} label="收入时间" name="time"   
                                 rules={[
                                     {required:true,message:'请选择收入时间'},

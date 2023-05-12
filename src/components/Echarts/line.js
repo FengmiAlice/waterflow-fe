@@ -26,24 +26,44 @@ const useLineEcharts = (props)=>{
         if(!lineChart){
             lineChart = echarts.init(lineChartDom)
         }
-        // 如果不存在则创建
-        let lineOption = {
-            title: {
-                text: title,
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
+        let legend={};
+        let grid={};
+        // 适配屏幕尺寸
+        if(document.documentElement.clientWidth < 576){
+            legend =  {
+                top:30,
+                right:0,
+                show: true,
+                orient: "horizontal",
+                // data:legendData,
+            };
+
+            grid = {
                 containLabel: true
-              },
-            legend: {
+            };
+        }else{
+            legend =  {
                 top:0,
                 right:0,
                 show: true,
                 orient: "horizontal",
                 // data:legendData,
+            };
+
+            grid = {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            };
+        }
+        // 如果不存在则创建
+        let lineOption = {
+            title: {
+                text: title,
             },
+            grid: [grid],
+            legend:[legend],
             tooltip: {
                 trigger: "axis",
                 backgroundColor: "#faeffe",
@@ -112,7 +132,7 @@ const useLineEcharts = (props)=>{
         };
         // lineCharts.clear();
         lineChart.setOption(lineOption);
-        window.addEventListener('resize',()=>{
+        window.addEventListener('resize',()=>{         
             lineChart.resize()
         })
     }

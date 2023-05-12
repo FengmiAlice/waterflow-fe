@@ -5,7 +5,7 @@
 import { makeAutoObservable } from 'mobx'
 
 export default class Common {
-  sideBarCollapsed = false
+  sideBarCollapsed = false;
 
   constructor () {
     /**
@@ -24,7 +24,8 @@ export default class Common {
     * action
     */
   setSideBarCollapsed (val) {
+    console.log(val)
     this.sideBarCollapsed = val
-    window.localStorage.setItem('sideBarCollapsed', this.sideBarCollapsed + '')
+    window.localStorage.setItem('sideBarCollapsed', this.sideBarCollapsed)
   }
 }

@@ -7,7 +7,7 @@ import { Outlet,Link,useLocation} from 'react-router-dom';
 import HeadBar from './headBar';
 import SideBar from './sideBar';
 import { getRouteMetaMap } from '../../utils/appTools';
-import {Layout,Breadcrumb} from 'antd';
+import {Layout,Breadcrumb,Row,Col } from 'antd';
 const {  Content } = Layout;
 
 function AppLayout () {
@@ -36,19 +36,29 @@ function AppLayout () {
   
   return (
     <div className="c-PageLayout-index">
-        <HeadBar />
+      <Row >
+        <Col span={24}>
+          <HeadBar />
+        </Col>
+      </Row>
       <div className="appMainWrap">
-          <SideBar />
-          
-              <Content className="appMain">
-                <div>            
-                    <Breadcrumb>
-                        {extraBreadcrumbItems}
-                    </Breadcrumb>
-                </div>
-                  <Outlet />
-              </Content>
-         
+          <Row>
+            <Col xs={24} sm={24} md={6} lg={4} xl={4}>
+            {/* .style={{minHeight: 'calc(100vh - 50px)'}} */}
+              <SideBar />
+            </Col>
+            <Col xs={24} sm={24} md={18} lg={20} xl={20} className='appMain'>
+            {/* style={{minHeight: 'calc(100vh - 50px)',padding:'15px' }} */}
+                <Content>
+                  <div>            
+                      <Breadcrumb>
+                          {extraBreadcrumbItems}
+                      </Breadcrumb>
+                  </div>
+                    <Outlet />
+                </Content>
+            </Col>
+          </Row>
       </div>
     </div>
   )

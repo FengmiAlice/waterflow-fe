@@ -289,16 +289,12 @@ function Report(){
                         <DatePicker format='YYYY'    picker="year"  onChange={getYearChange} />
                     </Form.Item>
                     <Form.Item  >
-                        <Button type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
-                    </Form.Item>
-                    <Form.Item  >
-                        <Button type="primary" className="searchBtn" onClick={detailReport}> 详细报告</Button>
+                        <Button type="primary" size="small" className="reportSearchBtn" onClick={buttonSearch} > 搜索</Button>
+                        <Button type="primary" size="small" className="reportSearchBtn" onClick={detailReport}> 详细报告</Button>
                     </Form.Item>
             </Form>
-           
         </header>
         <section>
-           
             <div className="pieContainer">
                 <div className='leftStatistics'>
                     <Statistic  className='titleCenter' title="支出" value={consumeAcount} />
@@ -330,37 +326,31 @@ function Report(){
                 <Form  className="reportWrap" layout="inline" name="Report"  size="small" form={lineForm}  
                 //设置初始值
                 initialValues={{'startField':moment().subtract(1, 'year'),'endField':moment(),'countNum':statisticType.current}}>
-                        <Form.Item label="开始日期" name="startField" >
-                            <DatePicker format='YYYY-MM-DD'   onChange={getStartDateChange} />
-                            {/* defaultValue={moment().subtract(1, 'year')} */}
-                        </Form.Item>
-                        <Form.Item label="结束日期" name="endField">
-                            <DatePicker format='YYYY-MM-DD'  onChange={getEndDateChange} />
-                            {/* defaultValue={moment()}  */}
-                        </Form.Item>
-                        <Form.Item  >
-                        <Form.Item label="统计粒度" name="countNum">
-                            <Select style={{ width: 120 }}  onChange={countChange} allowClear={true}>
-                                    {
-                                        selectedTypeArray.map( (item,index,arr) => (
-                                            <Option key={item.key} value={item.key}>
-                                                {item.name}
-                                            </Option>
-                                        ))
-                                    }
-                            </Select>
-                            {/* defaultValue={statisticType.current} */}
-                        </Form.Item>
-                        </Form.Item>
-                        <Form.Item  >
-                            <Button type="primary" className="searchBtn" onClick={buttonLineSearch} > 搜索</Button>
-                        </Form.Item>
-                    
+                    <Form.Item label="开始日期" name="startField" >
+                        <DatePicker format='YYYY-MM-DD'   onChange={getStartDateChange} />
+                        {/* defaultValue={moment().subtract(1, 'year')} */}
+                    </Form.Item>
+                    <Form.Item label="结束日期" name="endField">
+                        <DatePicker format='YYYY-MM-DD'  onChange={getEndDateChange} />
+                        {/* defaultValue={moment()}  */}
+                    </Form.Item>
+                    <Form.Item label="统计粒度" name="countNum">
+                        <Select style={{ width: 120 }}  onChange={countChange} allowClear={true}>
+                                {
+                                    selectedTypeArray.map( (item,index,arr) => (
+                                        <Option key={item.key} value={item.key}>
+                                            {item.name}
+                                        </Option>
+                                    ))
+                                }
+                        </Select>
+                        {/* defaultValue={statisticType.current} */}
+                        <Button type="primary" size="small" className="reportSearchLineBtn" onClick={buttonLineSearch} > 搜索</Button>
+                    </Form.Item>
                 </Form>
                 <div className='echartsLineItem'>
                     <ArgLineEcharts id="multipleLine" title={lineTitle} legendData={lineLenData} xData={lineXData} seriesData={lineData} />
                 </div>
-               
            </div>
        
         </section>

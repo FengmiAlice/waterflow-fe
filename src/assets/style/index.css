@@ -32,3 +32,93 @@ code {
   z-index: 9999;
   font-size: 20px;
 }
+
+/* 媒体查询 */
+@media screen and (max-width: 576px) {
+    html,body{
+      font-size: 12px!important;
+    }
+    .ant-table{
+      font-size: 12px;
+    }
+    .ant-btn-sm, .ant-btn{
+      font-size: 12px;
+      margin: 10px 0;
+    }
+    .ant-pagination{
+      font-size: 12px;
+    }
+    .ant-form .ant-form-item{
+      flex-basis: 100%;
+    }
+    .toggleIcon{
+      display: none;
+    }
+    .sideBarCol{
+      min-height: 50px;
+    }
+    .c-PageLayout-sideBar .sideBarLayout{
+        min-height: 0!important;
+    }
+    .ant-layout-sider{
+      flex: 0 0 0px!important;
+    }
+    .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
+      padding:4px;
+    }
+    .largeBtnBox{
+      display:none;
+    }
+    .miniPrimaryBtn{
+      color:#1890ff;
+    }
+    .signInSection, .signUpSection{
+      width:100%!important;
+    }
+    .signInSection .formWrap, .signUpSection .formWrap{
+      width:100%!important;
+    }
+    .signInSection .title, .signUpSection .title{
+      font-size:18px!important;
+    }
+    .pieContainer, .barContainer{
+      display: block!important;
+    }
+    .leftStatistics{
+      width: 100%!important;
+      display: block!important;
+      margin: 10px 0!important;
+      padding: 10px 0!important;
+    }
+    .rightStatistics{
+      display: block!important;
+    }
+    .echartsPieItem, .echartsBarItem{
+      width:100%!important;
+      float: none!important;
+      display: block;
+    }
+    .searchFormHeader{
+      margin:0!important;
+    }
+    .consumeTypeSelect, .incomeTypeSelect{
+      width: 74%!important;
+    }
+  
+}
+
+ @media screen and (min-width: 1200px) {
+    html,body {
+      font-size: 18px!important;
+    }
+    .ant-btn-sm{
+      margin-right:4px;
+    }
+    .miniBtnBox{
+      display: none;
+    }
+    .consumeTypeSelect, .incomeTypeSelect{
+      width: 78%!important;
+    }
+   
+ }
