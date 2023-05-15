@@ -39,7 +39,7 @@ const useLineEcharts = (props)=>{
             };
 
             grid = {
-                containLabel: true
+                // containLabel: true
             };
         }else{
             legend =  {

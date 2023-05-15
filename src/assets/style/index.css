@@ -33,7 +33,7 @@ code {
   font-size: 20px;
 }
 
-/* 媒体查询 */
+/* 媒体查询适配屏幕分辨率 */
 @media screen and (max-width: 576px) {
     html,body{
       font-size: 12px!important;
@@ -105,7 +105,52 @@ code {
       width: 74%!important;
       position: relative;
     }
+    .consumeTypeButton, .incomeTypeButton{
+      margin-left:6px;
+      position: absolute;
+      right:0;
+      top:-10px;
+    }
   
+}
+@media screen and (min-width:576px) and (max-width:760px){
+  html,body {
+    font-size: 14px!important;
+  }
+  .ant-table{
+    font-size: 14px;
+  }
+  .ant-btn-sm, .ant-btn{
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  .ant-pagination{
+    font-size: 14px;
+  }
+  .c-PageLayout-sideBar .sideBarLayout{
+    min-height:0!important;
+  }
+  .toggleIcon{
+    display: none;
+  }
+  .pieContainer, .barContainer{
+    display: block!important;
+  }
+  .leftStatistics{
+    width: 100%!important;
+    display: block!important;
+    margin: 10px 0!important;
+    padding: 10px 0!important;
+  }
+  .rightStatistics{
+    display: block!important;
+  }
+  .echartsPieItem, .echartsBarItem{
+    width:100%!important;
+    float: none!important;
+    display: block;
+  }
+
 }
 
  @media screen and (min-width: 1200px) {
@@ -122,5 +167,10 @@ code {
       width: 78%!important;
       position: relative;
     }
-    
+    .consumeTypeButton, .incomeTypeButton{
+      margin-left:6px;
+      position: absolute;
+      right:0;
+      top:0;
+    }
  }
