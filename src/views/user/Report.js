@@ -121,6 +121,8 @@ function Report(){
                 setReportTitle(res.data.obj.report.title);
                 setReportText(res.data.obj.report.text);
             }
+        }).catch((error)=>{
+            console.log(error)
         })
         getConsumePieData();
         getConsumePieTypeData();
@@ -148,7 +150,8 @@ function Report(){
         }
         getConsumePie(params).then((res)=>{
             setPieData(res.data)
-          
+        }).catch((error)=>{
+            console.log(error)
         })
     }
      // 获取各类支付方式占比图数据
@@ -159,7 +162,8 @@ function Report(){
         }
         getConsumePieType(params).then((res)=>{
             setPieTypeData(res.data)
-          
+        }).catch((error)=>{
+            console.log(error)
         })
     }
     // 获取各类收入占比图数据
@@ -170,7 +174,8 @@ function Report(){
         }
         getIncome(params).then((res)=>{
             setIncomeData(res.data)
-          
+        }).catch((error)=>{
+            console.log(error)
         })
     }
     
@@ -194,6 +199,8 @@ function Report(){
             }
             setBarData(seriesArray);
     
+        }).catch((error)=>{
+            console.log(error)
         })
     }
     // 获取最近三个月支出情况数据
@@ -234,6 +241,8 @@ function Report(){
                 }
             }
             setMultipleBarData(seriesArray);
+        }).catch((error)=>{
+            console.log(error)
         })
     }
 
@@ -266,6 +275,8 @@ function Report(){
                 seriesArray.push(stackData)
             }
             setLineData(seriesArray);
+        }).catch((error)=>{
+            console.log(error)
         })
     }
     // 点击查看详细报告按钮事件
@@ -334,16 +345,18 @@ function Report(){
                         <DatePicker format='YYYY-MM-DD'  onChange={getEndDateChange} />
                         {/* defaultValue={moment()}  */}
                     </Form.Item>
-                    <Form.Item label="统计粒度" name="countNum">
-                        <Select style={{ width: 120 }}  onChange={countChange} allowClear={true}>
-                                {
-                                    selectedTypeArray.map( (item,index,arr) => (
-                                        <Option key={item.key} value={item.key}>
-                                            {item.name}
-                                        </Option>
-                                    ))
-                                }
-                        </Select>
+                    <Form.Item label="统计粒度" >
+                        <Form.Item name="countNum" noStyle>
+                            <Select style={{ width: 120 }}  onChange={countChange} allowClear={true}>
+                                    {
+                                        selectedTypeArray.map( (item,index,arr) => (
+                                            <Option key={item.key} value={item.key}>
+                                                {item.name}
+                                            </Option>
+                                        ))
+                                    }
+                            </Select>
+                        </Form.Item>
                         {/* defaultValue={statisticType.current} */}
                         <Button type="primary" size="small" className="reportSearchLineBtn" onClick={buttonLineSearch} > 搜索</Button>
                     </Form.Item>

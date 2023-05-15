@@ -244,8 +244,11 @@ margin:10px 0;
   margin-right:10px;
   /* border-radius:10px!important; */
 }
-.consumeTypeButton,.incomeTypeButton{
+.consumeTypeButton, .incomeTypeButton{
   margin-left:6px;
+  position: absolute;
+  right:0;
+  top:0;
 }
 .totalStyle{
   color: red;

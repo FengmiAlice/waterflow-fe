@@ -27,6 +27,8 @@ function App(){
                               let data = res.data.obj
                               userStore.setUserInfo(data)
                               setIsRender(true)
+                        }).catch((error)=>{
+                              console.log(error)
                         })
                   // }
             }

@@ -35,6 +35,8 @@ function UserInfo(){
                     if(res.data.success === true){
                         userStore.setUserInfo(res.data.obj)
                     }
+                }).catch((error)=>{
+                    console.log(error)
                 })
             },
             // 取消按钮操作

@@ -207,6 +207,8 @@ function Consume(){
                 setSelectedTypeArray(res.data.page.list)
              
             }
+        }).catch((error)=>{
+            console.log(error)
         })
     }
     // 获取支出方式列表
@@ -216,6 +218,8 @@ function Consume(){
                 setPaymentTypeArray(res.data.page.list)
              
             }
+        }).catch((error)=>{
+            console.log(error)
         })
     }
     // 获取搜索类别值
@@ -279,6 +283,8 @@ function Consume(){
             }else{
                 operTypeFunc(true);
             }
+        }).catch((error)=>{
+            console.log(error)
         })
     }
 
@@ -326,6 +332,8 @@ function Consume(){
                         message.success(res.data.message);
                         buttonSearch();//重新掉接口刷新表格数据
                     }
+                }).catch((error)=>{
+                    console.log(error)
                 })
             }
            
@@ -355,6 +363,8 @@ function Consume(){
                         buttonSearch();//重新掉接口刷新表格数据
                         setRowKeys([]);//清空选择的数据
                     }
+                }).catch((error)=>{
+                    console.log(error)
                 })
             }
         });
@@ -388,6 +398,8 @@ function Consume(){
             a.click();//添加元素点击事件
             document.body.removeChild(a);//移除a元素
             window.URL.revokeObjectURL(link);//释放掉blob
+        }).catch((error)=>{
+            console.log(error)
         })
     }
 
@@ -399,13 +411,13 @@ function Consume(){
             // if(values.time !== undefined){
             //     times = values.time.format('YYYY-MM-DD');
             // }
-            
+            // console.log(values)
             let params = {
                 id:rowId,
-                typeId:addConsumeType.current,
-                time:consumeTime.current,
+                typeId:values.typeId,//addConsumeType.current
+                time:values.time,//consumeTime.current
                 description:values.description,
-                paymentId:addPaymentType.current,
+                paymentId:values.paymentId,//addPaymentType.current
                 amount:values.amount,
                 note:values.note
             };
@@ -417,6 +429,8 @@ function Consume(){
             }else{
                 operDialogFunc(true)
             }
+        }).catch((error)=>{
+            console.log(error)
         })
     }
 
@@ -525,26 +539,20 @@ function Consume(){
                 <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
                     <section >
                         <Form   name="consumeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
-                            <Form.Item  label="支出类别" name="typeId"  rules={[
-                                    {required:true,message:'请选择支出类别'},
-                                
-                                ]} style={{position:'relative'}} >
+                            <Form.Item  label="支出类别" >
+                                <Form.Item  name="typeId"  rules={[ {required:true,message:'请选择支出类别'}, ]} noStyle>
                                     <Select className='consumeTypeSelect'  onChange={addTypeChange} placeholder="请选择" allowClear >
-                                        {/* style={{width:80+'%'}} */}
-                                        {
-                                            selectedTypeArray.map( (item,index,arr) => (
-                                            
-                                                <Option key={item.id} value={item.id}>
-                                                    {item.name}
-                                                </Option>
-                                            ))
+                                            {
+                                                selectedTypeArray.map( (item,index,arr) => (
+                                                    <Option key={item.id} value={item.id}>
+                                                        {item.name}
+                                                    </Option>
+                                                ))
                                             }
                                     </Select>
-                                    <Button  type="primary" onClick={addNewType} className="consumeTypeButton">新类别</Button>
+                                </Form.Item>    
+                                <Button  type="primary" onClick={addNewType} className="consumeTypeButton">新类别</Button>   
                             </Form.Item>
-                            {/* <Form.Item style={{position:'absolute',right:20,top:78}}>
-                                <Button size="small" type="primary" onClick={addNewType} >新类别</Button>
-                            </Form.Item> */}
                             <Form.Item style={{clear:'both'}} label="支出时间" name="time"  
                                     rules={[
                                         {required:true,message:'请选择支出时间'},

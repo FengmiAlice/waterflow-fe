@@ -23,7 +23,8 @@ function SignUp(){
                 // 跳转到主页页面
                 navigate('/signIn');
             }
-          
+        }).catch((error)=>{
+            console.log(error)
         })
        
     }

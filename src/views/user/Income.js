@@ -179,8 +179,9 @@ function Income(){
         dateString =dateString || '';
         month.current = dateString; 
     }
+    // 获取收入时间事件
     function getTimeChange(date,dateString){
-        console.log(dateString)
+        // console.log(dateString)
         incomeTime.current = dateString;
     }
    // 获取年份日期值
@@ -211,6 +212,8 @@ function Income(){
                 setSelectedTypeArray(res.data.page.list)
             
             }
+        }).catch((error)=>{
+            console.log(error)
         })
     }
     // 获取收入付款方式列表
@@ -220,6 +223,8 @@ function Income(){
                 setPaymentTypeArray(res.data.page.list)
             
             }
+        }).catch((error)=>{
+            console.log(error)
         })
     }
     // 获取新增收入记录类别值
@@ -264,6 +269,8 @@ function Income(){
             a.click();//添加元素点击事件
             document.body.removeChild(a);//移除a元素
             window.URL.revokeObjectURL(link);//释放掉blob
+        }).catch((error)=>{
+            console.log(error)
         })
     }
     // 添加支出按钮事件
@@ -279,6 +286,7 @@ function Income(){
     }
     // 编辑支出记录按钮操作
     function handleEdit(row){
+        // console.log(row)
         // 将返回的时间转换为moment格式用于编辑显示在时间组件上
         row.time = moment(row.time)
         addConsumeType.current = row.typeId;
@@ -307,6 +315,8 @@ function Income(){
                         message.success(res.data.message);
                         buttonSearch();//重新掉接口刷新表格数据
                     }
+                }).catch((error)=>{
+                    console.log(error)
                 })
             }
            
@@ -314,35 +324,34 @@ function Income(){
     }
     // 添加支出记录弹窗信息确认操作
     function handleSubmit(){
-       
-                form.validateFields().then(async (values) => {
-                    // 将时间组件值转为字符串用于传值
-                    // let times;
-                    // if(values.time !== undefined){
-                    //     times = values.time.format('YYYY-MM-DD');
-                    // }
-                    
-                    let params = {
-                        id:rowId,
-                        typeId:addConsumeType.current,
-                        time:incomeTime.current,
-                        description:values.description,
-                        paymentId:addPaymentType.current,
-                        amount:values.amount,
-                        note:values.note
-                    };
-                    let res = await addIncomeTableRow(params);
-                    if(res.data.success === true){
-                        buttonSearch();//重新掉接口刷新表格数据
-                        message.success(res.data.message);
-                        operDialogFunc(false);
-                    }else{
-                        operDialogFunc(true);
-                    }
-                })
-        
-         
-        }
+        form.validateFields().then(async (values) => {
+            // 将时间组件值转为字符串用于传值
+            // let times;
+            // if(values.time !== undefined){
+            //     times = values.time.format('YYYY-MM-DD');
+            // }
+            // console.log(values)
+            let params = {
+                id:rowId,
+                typeId:values.typeId,//addConsumeType.current
+                time:values.time,//incomeTime.current
+                description:values.description,
+                paymentId:values.paymentId,//addPaymentType.current
+                amount:values.amount,
+                note:values.note
+            };
+            let res = await addIncomeTableRow(params);
+            if(res.data.success === true){
+                buttonSearch();//重新掉接口刷新表格数据
+                message.success(res.data.message);
+                operDialogFunc(false);
+            }else{
+                operDialogFunc(true);
+            }
+        }).catch((error)=>{
+            console.log(error)
+        })   
+    }
 
     // 添加新类别按钮事件
     function addNewType(){
@@ -367,6 +376,8 @@ function Income(){
             }else{
                 operTypeFunc(true);
             }
+        }).catch((error)=>{
+            console.log(error)
         })
     }
 
@@ -409,7 +420,9 @@ function Income(){
     //             setTableData([...table])
     //             setTotalAmount(res.data.extraData.totalAmount);
     //         }
-    //     })
+    //     }).catch((error)=>{
+        //     console.log(error)
+        // })
     // }
 
     return(
@@ -479,13 +492,10 @@ function Income(){
                  <AsyncModal title={incomeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={incomeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
                  <section >
                       <Form   name="incomeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
-                          <Form.Item  label="收入类别" name="typeId"  rules={[
-                                {required:true,message:'请选择支出类别'},
-                            
-                            ]} style={{position:'relative'}} >
-                                <Select  className='incomeTypeSelect' onChange={addTypeChange} placeholder="请选择" allowClear >
-                                {/* style={{width:80+'%'}} */}
-                                    {
+                          <Form.Item  label="收入类别">
+                                 <Form.Item  name="typeId"  rules={[ {required:true,message:'请选择支出类别'},]} noStyle>
+                                    <Select  className='incomeTypeSelect' onChange={addTypeChange} placeholder="请选择" allowClear >
+                                        {
                                         selectedTypeArray.map( (item,index,arr) => (
                                         
                                             <Option key={item.id} value={item.id}>
@@ -493,12 +503,11 @@ function Income(){
                                             </Option>
                                         ))
                                         }
-                                </Select>
+                                    </Select>
+                                 </Form.Item>
+                                
                                 <Button  type="primary" onClick={addNewType} className="incomeTypeButton">新类别</Button>
                           </Form.Item>
-                          {/* <Form.Item style={{position:'absolute',right:20,top:78}}>
-                          <Button size="small" type="primary" onClick={addNewType} className="typeButton">新类别</Button>
-                          </Form.Item> */}
                           <Form.Item style={{clear:'both'}} label="收入时间" name="time"   
                                 rules={[
                                     {required:true,message:'请选择收入时间'},

@@ -71,11 +71,17 @@ function SignIn(){
                             let data = res.data.obj;
                             userStore.setUserInfo(data)
                         } 
+                    }).catch((error)=>{
+                        console.log(error)
                     })
                     // 跳转到主页面
                     navigate('/index/consume');  
                 }
-             });
+             }).catch((error)=>{
+                console.log(error)
+            });
+        }).catch((error)=>{
+            console.log(error)
         })
     }
 

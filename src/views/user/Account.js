@@ -89,7 +89,7 @@ function Account(){
     const [totalDebt,setTotalDebt] = useState(0);//统计账户债务
     const [totalOther,settotalOther ] = useState(0);//统计账户其他
     const [totalAmount,setTotalAmount] = useState(0);//统计账户总计
-    const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
+    // const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
 
 
     // 搜索条件的一些参数获取
@@ -99,7 +99,7 @@ function Account(){
     const accountType= useRef('');//设置搜索账户类别值
     // const paymentType = useRef('');//设置搜索支付方式值
     const keyword = useRef('');//设置搜索关键字值
-    const addAccountType= useRef('');//设置新增账户类别值
+    const addAccountType = useRef('');//设置新增账户类别值
     // const addPaymentType= useRef('');//设置新增支出记录支付方式值
 
     // const tableIds = useRef('account_report');//获取账户列表table id
@@ -117,9 +117,9 @@ function Account(){
  
 
     // 设置表格选择的数据
-    function handleKeys(val){
-        setRowKeys(val)
-    }
+    // function handleKeys(val){
+    //     setRowKeys(val)
+    // }
     
     // 设置查询条件初始化
     function initFunc(){
@@ -137,6 +137,8 @@ function Account(){
                 settotalOther(res.data.obj.totalOther);
                 setTotalAmount(res.data.obj.totalAmount)
             }
+        }).catch((error)=>{
+            console.log(error)
         })
     }
    
@@ -145,7 +147,7 @@ function Account(){
         accountType.current = value;
     }
      // 获取账户类别值
-    function addTypeChange(){
+    function addTypeChange(value,current){
         addAccountType.current = 1;
     }
 
@@ -178,7 +180,9 @@ function Account(){
     //         }else{
     //             operTypeFunc(true);
     //         }
-    //     })
+    //     }).catch((error)=>{
+        //     console.log(error)
+        // })
     // }
 
 
@@ -212,6 +216,8 @@ function Account(){
                         message.success(res.data.message);
                         buttonSearch();//重新掉接口刷新表格数据
                     }
+                }).catch((error)=>{
+                    console.log(error)
                 })
             }
            
@@ -241,7 +247,9 @@ function Account(){
     //                     buttonSearch();//重新掉接口刷新表格数据
     //                     setRowKeys([]);//清空选择的数据
     //                 }
-    //             })
+    //             }).catch((error)=>{
+        //     console.log(error)
+        // })
     //         }
     //     });
     // }
@@ -256,10 +264,10 @@ function Account(){
             // if(values.time !== undefined){
             //     times = values.time.format('YYYY-MM-DD');
             // }
-            
+            // console.log(values)
             let params = {
                 id:rowId,
-                types:addAccountType.current,
+                types:values.types,//addAccountType.current
                 amount:values.amount,
                 note:values.note
             };
@@ -271,6 +279,8 @@ function Account(){
             }else{
                 operDialogFunc(true)
             }
+        }).catch((error)=>{
+            console.log(error)
         })
     }
 
@@ -300,9 +310,9 @@ function Account(){
     return(
     <div>
         <header className='searchFormHeader'>
-            <Form  className="consumeWrap" layout="inline" name="Consume"  size="small"  >
-                    <Form.Item label="类别">
-                        <Select style={{ width: 120 }} defaultValue="null" onChange={typeChange} allowClear={true}>
+            <Form  className="consumeWrap" layout="inline" name="Consume"  size="small">
+                    <Form.Item label="类别" name="types" initialValue={'null'}>
+                        <Select style={{ width: 120 }}  onChange={typeChange} allowClear={true} >
                                 {
                                     selectedTypeArray.map( (item) => (
                                         <Option key={item.value} value={item.value}>
@@ -312,7 +322,7 @@ function Account(){
                                 }
                         </Select>
                     </Form.Item>
-                    <Form.Item  label="关键字" >
+                    <Form.Item  label="关键字" name="keyword">
                         <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                     </Form.Item>
                     <Form.Item  >
@@ -344,14 +354,15 @@ function Account(){
                 baseProps={{ rowKey: record => record.id }}
                 params = {searchData} 
                 initMethod={initFunc}
-                getRowKeys={handleKeys}
+         
                 
             />                           
+            {/* getRowKeys={handleKeys} */}
 
             {/* 添加账户弹窗 */}
             <AsyncModal title={accountTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
                 <section >
-                    <Form   name="consumeForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off" >
+                    <Form   name="consumeForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off">
                         <Form.Item label="名称" name="name"    >
                             <Input  placeholder="请输入账户名称"    />
                         </Form.Item>
@@ -361,10 +372,10 @@ function Account(){
                         <Form.Item  label="账户类型" name="types"  rules={[
                                 {required:true,message:'请选择账户类型'},
                             
-                            ]} style={{position:'relative'}} >
-                                <Select style={{width:80+'%'}} defaultValue="1" onChange={addTypeChange} placeholder="请选择" allowClear >
+                            ]} style={{position:'relative'}} initialValue={'1'}>
+                                <Select style={{width:80+'%'}}  onChange={addTypeChange} placeholder="请选择" allowClear >
                                     <Option key="1" value="1">
-                                     储蓄
+                                        储蓄
                                     </Option>
                                 </Select>
                         </Form.Item>
