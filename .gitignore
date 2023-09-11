@@ -7,7 +7,8 @@
 .pnp.js
 README.md
 yarn.lock
-
+nginx/
+Dockerfile
 
 
 # testing

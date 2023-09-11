@@ -188,7 +188,9 @@ function Consume(){
         month.current = dateString; 
     }
     // 获取支出记录时间
-    function getTimeChange(date,dateString){
+    function getTimeChange(date, dateString) {
+        console.log(date)
+        console.log(dateString)
         consumeTime.current = dateString;
     }
     // 获取年份日期值
@@ -411,11 +413,12 @@ function Consume(){
             // if(values.time !== undefined){
             //     times = values.time.format('YYYY-MM-DD');
             // }
-            // console.log(values)
+            console.log(values)
+
             let params = {
                 id:rowId,
                 typeId:values.typeId,//addConsumeType.current
-                time:values.time,//consumeTime.current
+                time:consumeTime.current,
                 description:values.description,
                 paymentId:values.paymentId,//addPaymentType.current
                 amount:values.amount,
