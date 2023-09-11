@@ -84,11 +84,11 @@ function Consume(){
                         <Space size="middle" >
                             <div className='largeBtnBox'>
                                 <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
-                                <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
+                                <Button size="small" type="danger"   onClick={ ()=> handleDelete(record)}>删除</Button>
                             </div>
                             <div className="miniBtnBox">
-                                <Button size="small" type="text" className='miniPrimaryBtn' onClick={ ()=> handleEdit(record)}>编辑</Button>
-                                <Button size="small" type="text" danger onClick={ ()=> handleDelete(record)}>删除</Button>
+                                <Button size="small" type="text"  className='miniPrimaryBtn' onClick={ ()=> handleEdit(record)}>编辑</Button>
+                                <Button size="small" type="text"  danger onClick={ ()=> handleDelete(record)}>删除</Button>
                             </div>
                         </Space>
                     )
@@ -145,6 +145,7 @@ function Consume(){
 
     let curTime= moment().format("YYYY-MM-DD");
     const consumeTime = useRef(curTime);//设置支出记录默认时间
+    const [isAddFlag,setAddFlag] = useState(false)//标识是否是新增
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
        useEffect(()=>{
                 month.current = moment().format("YYYY-MM");//格式化当前月份
@@ -189,8 +190,8 @@ function Consume(){
     }
     // 获取支出记录时间
     function getTimeChange(date, dateString) {
-        console.log(date)
-        console.log(dateString)
+        // console.log(date)
+        // console.log(dateString)
         consumeTime.current = dateString;
     }
     // 获取年份日期值
@@ -296,6 +297,11 @@ function Consume(){
         // 置空表单数据
         addConsumeType.current = '';
         addPaymentType.current = '';
+        setAddFlag(true);
+        if (isAddFlag === true) {
+            // console.log(isAddFlag,1111)
+            consumeTime.current = moment().format("YYYY-MM-DD")
+        }
         form.resetFields();
         setConsumeTitle('添加支出记录');
         setIsModalType('common');
@@ -304,7 +310,12 @@ function Consume(){
     }
 
     // 编辑支出记录按钮操作
-    function handleEdit(row){
+    function handleEdit(row) {
+        setAddFlag(false);
+        if (isAddFlag === false) {
+            //  console.log(isAddFlag,2222)
+            consumeTime.current = row.timeStr;
+        }
         // 将返回的时间转换为moment格式用于编辑显示在时间组件上
         row.time = moment(row.time)
         addConsumeType.current = row.typeId;
@@ -408,17 +419,11 @@ function Consume(){
     // 添加支出记录弹窗信息确认操作
     function handleSubmit(){
         form.validateFields().then(async (values) => {
-            // 将时间组件值转为字符串用于传值
-            // let times;
-            // if(values.time !== undefined){
-            //     times = values.time.format('YYYY-MM-DD');
-            // }
-            console.log(values)
-
+            // console.log(values)
             let params = {
                 id:rowId,
                 typeId:values.typeId,//addConsumeType.current
-                time:consumeTime.current,
+                time:values.time.format('YYYY-MM-DD'),//consumeTime.current
                 description:values.description,
                 paymentId:values.paymentId,//addPaymentType.current
                 amount:values.amount,
