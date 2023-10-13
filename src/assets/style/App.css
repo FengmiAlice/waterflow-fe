@@ -126,12 +126,17 @@
  /* .ant-layout.ant-layout-has-sider{
    flex-direction: column!important;
  } */
- /* .ant-layout-sider{
-   background:#fff!important;
- } */
+ .ant-layout-sider{
+    /* width: 100%!important;
+    max-width: 100%!important; */
+ }
+.ant-layout-sider-collapsed .c-PageLayout-sideBar{
+    width:80px!important;
+}
 
- .c-PageLayout-sideBar {
-  height: 100%;
+.c-PageLayout-sideBar {
+    width: 200px;
+    height: 100%;
 }
 /* .sideBarCol{
   min-height:calc(100vh - 50px)

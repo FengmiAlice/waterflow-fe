@@ -56,13 +56,13 @@ function Account(){
     // const { userInfo } = userStore;
     // let currentMonth =  moment().format("YYYY-MM");
     let initSearchData = {
-            types:1,
+            types:'',
             keyword:'',
     }
     const [searchData,setSearchData] = useState(initSearchData);//设置初始传参列表
     //设置账户类别列表
     const selectedTypeArray=[
-        {name:'全部',value:'null'},
+        {name:'全部',value:''},
         {name:'储蓄',value:1},
         {name:'理财',value:2},
         {name:'债务',value:3},
@@ -143,7 +143,7 @@ function Account(){
     }
    
     // 获取搜索账户类别值
-    function typeChange(value,current){
+    function typeChange(value, current) {
         accountType.current = value;
     }
      // 获取账户类别值
@@ -300,6 +300,7 @@ function Account(){
         if(tableRef.current){
             tableRef.current.resetPage()
         }
+       
         setSearchData({
             types:accountType.current,
             keyword:keyword.current,
@@ -311,7 +312,7 @@ function Account(){
     <div>
         <header className='searchFormHeader'>
             <Form  className="consumeWrap" layout="inline" name="Consume"  size="small">
-                    <Form.Item label="类别" name="types" initialValue={'null'}>
+                    <Form.Item label="类别" name="types" initialValue={''}>
                         <Select style={{ width: 120 }}  onChange={typeChange} allowClear={true} >
                                 {
                                     selectedTypeArray.map( (item) => (

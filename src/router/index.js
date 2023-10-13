@@ -39,7 +39,6 @@ const routes = [
                     icon:<UserOutlined />
                 },
                 component: () => import('../views/user/Income'),
-                
             },
             {
                 path:'/index/account',
@@ -48,7 +47,6 @@ const routes = [
                     icon:<UserOutlined />
                 },
                 component: () => import('../views/user/Account'),
-                
             },
             {
                 path:'/index/report',

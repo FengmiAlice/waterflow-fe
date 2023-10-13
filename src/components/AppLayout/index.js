@@ -48,7 +48,6 @@ function AppLayout () {
               <SideBar />
             </Col>
             <Col xs={24} sm={24} md={18} lg={20} xl={20} className='appMain'>
-            {/* style={{minHeight: 'calc(100vh - 50px)',padding:'15px' }} */}
                 <Content>
                   <div>            
                       <Breadcrumb>
