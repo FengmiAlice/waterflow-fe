@@ -150,7 +150,16 @@ function Consume(){
        useEffect(()=>{
                 month.current = moment().format("YYYY-MM");//格式化当前月份
                 getTypeList();
-                getPaymentList();
+           getPaymentList();
+           window.addEventListener('resize', () =>{
+            if(document.activeElement.tagName === 'INPUT' ||
+                document.activeElement.tagName === 'TEXTAREA'||document.activeElement.tagName === 'ant-picker-input') {
+                window.setTimeout(() => {
+                    document.activeElement.scrollIntoViewIfNeeded();
+                }, 0);
+            }
+            });
+
        },[])
  
     // 设置表格总花费方法

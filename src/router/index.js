@@ -87,15 +87,15 @@ const routes = [
     //     ]
     // },
 
-    // {
-    //     path:'/userInfo',
-    //     meta:{
-    //         title:"个人信息页",
-    //         hideMenu: true,
-    //         noLogin:true,
-    //     },
-    //     component: () => import( '../views/user/UserInfo'),
-    // },
+    {
+        path:'/userInfo',
+        meta:{
+            title:"个人信息页",
+            hideMenu: true,
+            noLogin:true,
+        },
+        component: () => import( '../views/user/UserInfo'),
+    },
     {
         path:'/signIn',
         meta:{

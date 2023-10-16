@@ -43,11 +43,11 @@ function AppLayout () {
       </Row>
       <div className="appMainWrap">
           <Row>
-            <Col xs={24} sm={24} md={6} lg={4} xl={4}>
+            <Col xs={24} sm={24} md={6} lg={4} xl={3}>
             {/* .style={{minHeight: 'calc(100vh - 50px)'}} */}
               <SideBar />
             </Col>
-            <Col xs={24} sm={24} md={18} lg={20} xl={20} className='appMain'>
+            <Col xs={24} sm={24} md={18} lg={20} xl={21} className='appMain'>
                 <Content>
                   <div>            
                       <Breadcrumb>

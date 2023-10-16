@@ -58,10 +58,10 @@
 }
  
 .appMain {
-  /* height: 100%;
-  overflow: hidden; */
-  min-height:calc(100vh - 50px);
-  padding: 15px;
+    /* height: 100%;
+    overflow: hidden; */
+    min-height:calc(100vh - 50px);
+    padding: 12px 30px;
 }
 
 /* 顶部菜单*/
