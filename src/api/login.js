@@ -20,3 +20,7 @@ export function getUserInfo(){
 export function updateUserInfo(data){
     return http('post','/api1/user/update',data)
 }
+
+export function updatePassword(data){
+    return http('post','/api1/resetPassword',data)
+}

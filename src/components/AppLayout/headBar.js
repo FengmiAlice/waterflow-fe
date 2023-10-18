@@ -1,12 +1,12 @@
 /**
  * @Description: 顶部栏
 */
-import React, {  useEffect, useState } from 'react';
+import React, {  useEffect, useState,useRef } from 'react';
 import { useStore, observer } from '../../hooks/storeHook';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/img/logo.svg';
-import { updateUserInfo } from '../../api/login';
-import { Form,Input, Dropdown,Modal,Menu,Space, } from 'antd';//Button
+import { updateUserInfo,updatePassword } from '../../api/login';
+import { Form,Input, Dropdown,Modal,Menu,Space,message } from 'antd';//Button
 import { ExclamationCircleOutlined,DownOutlined,UserOutlined,SettingOutlined,LogoutOutlined} from '@ant-design/icons';
 const {confirm} = Modal;
  
@@ -15,29 +15,32 @@ function HeadBar () {
     const { userInfo } = userStore;
     // 使用useForm创建form实例
     const [form] = Form.useForm();
+    const [pwdForm] = Form.useForm();
     const navigate = useNavigate();
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    useEffect(()=>{
-    if(isModalVisible){
+    const [infoVisible, setInfoVisible] = useState(false);
+    const [resetVisible, setResetVisible] = useState(false);
+    
+    useEffect(() => {
+    if(infoVisible){
         //使用setFieldsValue回显表格数据
         form.setFieldsValue(userInfo)
     }
-    },[form,userInfo,isModalVisible])
+    },[form,pwdForm,userInfo,infoVisible,resetVisible])
     // 弹出个人信息页弹框
-    function turnToUserInfo(){
-    setIsModalVisible(true);
+    function turnToUserInfo() {
+        form.resetFields();
+        setInfoVisible(true);
     }
-    // 个人信息弹窗提交表单数据操作
+    // 个人信息弹窗提交表单数据确认按钮操作
     function handleSubmit(){
         confirm({
-            title: '确认修改?',
+            title: '确认修改个人信息?',
             icon: <ExclamationCircleOutlined />,
             okText:"确认",
             cancelText:"取消",
             // 确认按钮操作
             onOk() {
                 form.validateFields().then(async (values) => {
-                    // 调用登陆Api，获取结果
                     let params = {
                         name:values.name,
                         phone:values.phone,
@@ -47,15 +50,61 @@ function HeadBar () {
                     if(res.data.success === true){
                         userStore.setUserInfo(res.data.obj)
                     }
+                }).catch((info) => {
+                    console.log('validate failed',info)
                 })
             },
 
         });
-        setIsModalVisible(true);
+        setInfoVisible(false);
     }
-    // 个人信息弹窗取消操作
-    function handleCancel(){
-    setIsModalVisible(false);
+    // 个人信息弹窗取消按钮操作
+    function handleCancel() {
+        setInfoVisible(false);
+    }
+    // 弹出重置密码弹窗
+    function setPassword() {
+        pwdForm.resetFields();
+        setResetVisible(true);
+    }
+
+    // 重置密码弹窗确定按钮操作
+    async function handleResetSubmit() {
+        try {
+            const values = await pwdForm.validateFields();
+            // console.log('重置密码', values)
+            if (values) {
+                confirm({
+                    title: '确认重置密码?',
+                    icon: <ExclamationCircleOutlined />,
+                    okText:"确认",
+                    cancelText:"取消",
+                    // 确认按钮操作
+                    onOk() {
+                            let params = {
+                                newPassword:values.newPwd,
+                                repeatPassword:values.repeatPwd,
+                            };
+                            updatePassword(params).then((res) => {
+                            if(res.data.success === true){
+                                // userStore.setUserInfo(res.data.obj);
+                                message.success(res.data.message);
+                                setResetVisible(false);
+                            }
+                        }).catch((error) => {
+                                console.log('validate failed',error)
+                            })
+                    },
+                });
+            }
+        } catch (error) {
+            console.log(error)
+       }    
+    }
+    
+    // 重置密码弹窗取消按钮操作
+    function handleResetCancel() { 
+        setResetVisible(false);
     }
     //   退出登录
     function onLogout () {
@@ -79,7 +128,7 @@ function HeadBar () {
             turnToUserInfo();
         }
         else if (e.key === '2') {
-            
+            setPassword()
         } else if (e.key === '3') {
             onLogout();
         }
@@ -112,45 +161,62 @@ function HeadBar () {
                 </Dropdown>
         </div>
         {/* 个人信息弹窗 */}
-        <Modal title="个人信息" forceRender visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
+        <Modal title="个人信息" forceRender visible={infoVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
+        <section >
+                <Form  className="infoFormWrap" name="infoForm"  form={form}  labelCol={{span:4}}  size="large"  autoComplete="off" >
+                    <Form.Item  label="账号" name="username"   >
+                        <Input  placeholder="请输入账号"   disabled/>
+                    </Form.Item>
+                    <Form.Item  label="昵称" name="name"   
+                        rules={[
+                            { 
+                                pattern: /^[\u4e00-\u9fa5]|[a-zA-Z]/, 
+                                message: "昵称可以是字母或者中文"
+                            }
+                        ]} >
+                        
+                        <Input  placeholder="请输入昵称"   />
+                    </Form.Item>
+            
+                    <Form.Item label="手机号" name="phone" 
+                        rules={[ 
+                            {
+                                pattern:/^1[345678]\d{9}$/,
+                                message: "请输入正确的11位手机号"
+                            }
+                        ]}>
+                        
+                        <Input  placeholder="请输入手机号，用于找回密码，选填"    />
+                    </Form.Item>
+                    <Form.Item label="邮箱" name="email" 
+                        rules={[   
+                            {
+                                pattern:/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
+                                message: "请输入正确的邮箱格式"
+                            }
+                        ]}>
+                            
+                        <Input  type="text" placeholder="请输入邮箱，用于找回密码，选填"  />
+                    </Form.Item>
+                </Form>
+            </section>
+        </Modal>
+        {/* 重置密码弹窗 */}
+        <Modal title="重置密码" forceRender visible={resetVisible} onOk={handleResetSubmit} onCancel={handleResetCancel} okText="确认" cancelText="取消" >
             <section >
-                    <Form  className="infoFormWrap" name="infoForm"  form={form}  labelCol={{span:4}}  size="large"  autoComplete="off" >
-                        <Form.Item  label="账号" name="username"   >
-                            <Input  placeholder="请输入账号"   disabled/>
-                        </Form.Item>
-                        <Form.Item  label="昵称" name="name"   
-                            rules={[
-                                { 
-                                    pattern: /^[\u4e00-\u9fa5]|[a-zA-Z]/, 
-                                    message: "昵称可以是字母或者中文"
-                                }
+                <Form  className="infoFormWrap" name="pwdForm"  form={pwdForm} labelCol={{span:6}}  size="large"  autoComplete="off" >
+                    <Form.Item  label="新密码：" name="newPwd"   rules={[
+                                {required:true,message:'请输入新密码'},
                             ]} >
-                            
-                            <Input  placeholder="请输入昵称"   />
-                        </Form.Item>
-                
-                        <Form.Item label="手机号" name="phone" 
-                            rules={[ 
-                                {
-                                    pattern:/^1[345678]\d{9}$/,
-                                    message: "请输入正确的11位手机号"
-                                }
-                            ]}>
-                            
-                            <Input  placeholder="请输入手机号，用于找回密码，选填"    />
-                        </Form.Item>
-                        <Form.Item label="邮箱" name="email" 
-                            rules={[   
-                                {
-                                    pattern:/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
-                                    message: "请输入正确的邮箱格式"
-                                }
-                            ]}>
-                                
-                            <Input  type="text" placeholder="请输入邮箱，用于找回密码，选填"  />
-                        </Form.Item>
-                    </Form>
-                </section>
+                        <Input type="password" placeholder="新密码，必填" />
+                    </Form.Item>
+                    <Form.Item label="确认新密码：" name="repeatPwd"  rules={[
+                                {required:true,message:'请再次输入新密码'},    
+                                ]} >
+                        <Input type="password" placeholder="再次输入新密码，必填"  />
+                    </Form.Item>   
+                </Form>
+            </section>
         </Modal>
     </div>
     )

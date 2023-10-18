@@ -55,10 +55,8 @@ function SignIn(){
     // 登录提交事件
      function handleLogin(){
         form.validateFields().then( (values) => {
-            // 调用登陆Api，获取结果
             let params = {username:values.username,password:values.password};
              doSignIn(params).then((res)=>{
-  
                 if(res.data.success=== true){
                     //  登录成功后重新获取token
                     const token = res.headers.authorization;
@@ -66,7 +64,6 @@ function SignIn(){
                     
                     // 登录之后获取用户信息
                     getUserInfo().then((res) => {
-                 
                         if(res.data.success === true){
                             let data = res.data.obj;
                             userStore.setUserInfo(data)

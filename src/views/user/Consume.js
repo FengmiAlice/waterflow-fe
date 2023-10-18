@@ -155,7 +155,11 @@ function Consume(){
             if(document.activeElement.tagName === 'INPUT' ||
                 document.activeElement.tagName === 'TEXTAREA'||document.activeElement.tagName === 'ant-picker-input') {
                 window.setTimeout(() => {
-                    document.activeElement.scrollIntoViewIfNeeded();
+                    if('scrollIntoView' in document.activeElement) {
+                        document.activeElement.scrollIntoView();
+                    } else {
+                        document.activeElement.scrollIntoViewIfNeeded();
+                    }
                 }, 0);
             }
             });
