@@ -331,7 +331,7 @@ function Income(){
             // if(values.time !== undefined){
             //     times = values.time.format('YYYY-MM-DD');
             // }
-            console.log('收入信息',values)
+            // console.log('收入信息',values)
             if (values) {
                 let params = {
                     id:rowId,
@@ -369,7 +369,7 @@ function Income(){
     async function handleTypeSubmit() {
         try {
             const values = await typeForm.validateFields();
-            console.log('收入类别',values)
+            // console.log('收入类别',values)
             if (values) {
                 let params = {
                     type:1,

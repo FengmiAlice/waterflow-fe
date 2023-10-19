@@ -39,9 +39,11 @@ function Account(){
                     return(
                         <Space size="middle">
                             <div className='largeBtnBox'>
+                                <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
                                 <Button size="small" type="danger"  onClick={ ()=> handleDelete(record)}>删除</Button>
                             </div>
                             <div className="miniBtnBox">
+                                <Button size="small" type="text" className='miniPrimaryBtn' onClick={ ()=> handleEdit(record)}>编辑</Button>
                                 <Button size="small" type="text" danger onClick={ ()=> handleDelete(record)}>删除</Button>
                             </div> 
                         </Space>
@@ -84,26 +86,16 @@ function Account(){
 
 
     // 搜索条件的一些参数获取
-    // const month = useRef();//设置月份
-    // const year = useRef();//设置年份
-    // const times = useRef();//设置时间选择
     const accountType= useRef('');//设置搜索账户类别值
-    // const paymentType = useRef('');//设置搜索支付方式值
     const keyword = useRef('');//设置搜索关键字值
-    const addAccountType = useRef('');//设置新增账户类别值
-    // const addPaymentType= useRef('');//设置新增支出记录支付方式值
-
-    // const tableIds = useRef('account_report');//获取账户列表table id
+    const addAccountType = useRef('1');//设置新增账户类别值
     const tableRef = useRef(null);//设置表格的ref
 
-    // let curTime= moment().format("YYYY-MM-DD");
-    // const consumeTime = useRef(curTime);//设置支出记录默认时间
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
        useEffect(()=>{
                 // month.current = moment().format("YYYY-MM");//格式化当前月份
                 getStatisticData();
-                // getTypeList();
-                // getPaymentList();
+            
        },[])
  
 
@@ -139,7 +131,7 @@ function Account(){
     }
      // 获取账户类别值
     function addTypeChange(value,current){
-        addAccountType.current = 1;
+        addAccountType.current = value;
     }
 
     // 获取搜索输入框值
@@ -149,14 +141,22 @@ function Account(){
 
     // 添加账户按钮事件
     function handleAdd(){
-        // 置空表单数据
-        // addAccountType.current = '';
-        // addPaymentType.current = '';
         form.resetFields();
         setAccountTitle('新增账户');
         setIsModalType('common');
         setRowId('');
         operDialogFunc(true);  
+    }
+    // 编辑账户按钮操作
+    function handleEdit(row){
+        // console.log('账户编辑',row)
+        // 赋值显示
+        addAccountType.current = row.types;
+        form.setFieldsValue(row); 
+        setAccountTitle('编辑账户');
+        setIsModalType('common');
+        setRowId(row.id);
+        operDialogFunc(true);
     }
 
     // 删除表格中的一行数据
@@ -181,7 +181,6 @@ function Account(){
                     console.log(error)
                 })
             }
-           
         });
     }
 
@@ -243,7 +242,6 @@ function Account(){
         })
     }
 
-   
     return(
     <div>
         <header className='searchFormHeader'>

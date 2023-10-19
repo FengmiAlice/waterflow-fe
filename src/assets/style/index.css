@@ -57,11 +57,16 @@ code {
     .sideBarCol{
       min-height: 50px;
     }
+    .c-PageLayout-sideBar{
+        width: 100%!important;
+    }
     .c-PageLayout-sideBar .sideBarLayout{
         min-height: 0!important;
     }
     .ant-layout-sider{
-      flex: 0 0 0px!important;
+        flex: 0 0 0px!important;
+        width: 100%!important;
+        max-width: 100%!important;
     }
     .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
       padding:4px;
