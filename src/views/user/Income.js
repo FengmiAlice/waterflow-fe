@@ -305,7 +305,7 @@ function Income(){
             okText: '确认',
             okType: 'danger',
             cancelText: '取消', 
-            // 点击确认触发
+            // 弹框内确认按钮事件
             onOk() {
                 let par = {
                     id:row.id
@@ -322,35 +322,41 @@ function Income(){
            
         });
     }
-    // 添加支出记录弹窗信息确认操作
-    function handleSubmit(){
-        form.validateFields().then(async (values) => {
+    // 添加收入记录弹窗信息确认操作
+    async function handleSubmit() {
+        try {
+            const values = await form.validateFields();
             // 将时间组件值转为字符串用于传值
             // let times;
             // if(values.time !== undefined){
             //     times = values.time.format('YYYY-MM-DD');
             // }
-            // console.log(values)
-            let params = {
-                id:rowId,
-                typeId:values.typeId,//addConsumeType.current
-                time:values.time,//incomeTime.current
-                description:values.description,
-                paymentId:values.paymentId,//addPaymentType.current
-                amount:values.amount,
-                note:values.note
-            };
-            let res = await addIncomeTableRow(params);
-            if(res.data.success === true){
-                buttonSearch();//重新掉接口刷新表格数据
-                message.success(res.data.message);
-                operDialogFunc(false);
-            }else{
-                operDialogFunc(true);
+            console.log('收入信息',values)
+            if (values) {
+                let params = {
+                    id:rowId,
+                    typeId:values.typeId,//addConsumeType.current
+                    time:values.time,//incomeTime.current
+                    description:values.description,
+                    paymentId:values.paymentId,//addPaymentType.current
+                    amount:values.amount,
+                    note:values.note
+                };
+                addIncomeTableRow(params).then((res) => {
+                    if(res.data.success === true){
+                        buttonSearch();//重新掉接口刷新表格数据
+                        message.success(res.data.message);
+                        operDialogFunc(false);
+                    }else{
+                        operDialogFunc(true);
+                    }
+                }).catch((error)=>{
+                    console.log(error)
+                })  
             }
-        }).catch((error)=>{
-            console.log(error)
-        })   
+        } catch (error) {
+            console.log('validate failed',error)
+        }
     }
 
     // 添加新类别按钮事件
@@ -360,25 +366,31 @@ function Income(){
         typeForm.resetFields();
     }
     // 添加新类别弹窗提交按钮事件
-    function handleTypeSubmit(){
-        typeForm.validateFields().then(async (values) => {
-            let params = {
-                type:1,
-                name:values.name,
-                description:values.description,
-            
-            };
-            let res = await addIncomeType(params);
-            if(res.data.success === true){
-                getTypeList();//重新掉接口刷新类别列表数据
-                message.success("添加新类别成功");
-                operTypeFunc(false);
-            }else{
-                operTypeFunc(true);
+    async function handleTypeSubmit() {
+        try {
+            const values = await typeForm.validateFields();
+            console.log('收入类别',values)
+            if (values) {
+                let params = {
+                    type:1,
+                    name:values.name,
+                    description:values.description,
+                }
+                addIncomeType(params).then((res) => {
+                    if(res.data.success === true){
+                        getTypeList();//重新掉接口刷新类别列表数据
+                        message.success("添加新类别成功");
+                        operTypeFunc(false);
+                    }else{
+                        operTypeFunc(true);
+                    }
+                }).catch((error)=>{
+                    console.log(error)
+                })
             }
-        }).catch((error)=>{
-            console.log(error)
-        })
+        } catch (error) {
+             console.log('validate failed',error)
+        }
     }
 
     // 设置新增编辑支出弹窗显示隐藏事件
@@ -391,7 +403,6 @@ function Income(){
     }
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
-        // 每次翻页查询之后页码，条数重置
         // 每次翻页查询之后页码，条数重置
         if(tableRef.current){
             tableRef.current.resetPage();
@@ -489,11 +500,11 @@ function Income(){
                 /> */}
 
                  {/* 添加或编辑收入记录弹窗 */}
-                 <AsyncModal title={incomeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={incomeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
+                 <AsyncModal title={incomeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={incomeFooter} operDialogFunc={operDialogFunc} handleOk={handleSubmit}>
                  <section >
                       <Form   name="incomeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                           <Form.Item  label="收入类别">
-                                 <Form.Item  name="typeId"  rules={[ {required:true,message:'请选择支出类别'},]} noStyle>
+                                 <Form.Item  name="typeId"  rules={[ {required:true,message:'请选择收入类别'},]} noStyle>
                                     <Select  className='incomeTypeSelect' onChange={addTypeChange} placeholder="请选择" allowClear >
                                         {
                                         selectedTypeArray.map( (item,index,arr) => (
@@ -553,7 +564,7 @@ function Income(){
                  </AsyncModal>
 
               {/* 新增和编辑收入页面添加类别弹窗 */}
-              <AsyncModal  title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={incomeTypeFooter}  operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
+              <AsyncModal  title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={incomeTypeFooter}  operDialogFunc={operTypeFunc} handleOk={handleTypeSubmit}>
                     <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
                         <Form.Item  label="名称" name="name"  
                             rules={[

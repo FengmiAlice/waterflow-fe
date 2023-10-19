@@ -68,10 +68,10 @@ export function getAccountList(params){
     return http('get','/api1/account/list',params)
 }
 // 删除账户
-export function deleteAccountById(params){
-    return http('get','/api1/account/delete',params)
+export function deleteAccountById(data){
+    return http('post','/api1/account/delete',data)
 }
 // 新增账户
-export function addAccounts(params){
-    return http('get','/api1/account/save',params)
+export function addAccount(data){
+    return http('post','/api1/account/save',data)
 }

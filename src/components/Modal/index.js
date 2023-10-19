@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Modal} from 'antd';
-import {ExclamationCircleOutlined} from '@ant-design/icons';
-const {confirm} = Modal;
 /**
  *  @description：封装全局通用弹窗组件
  *  @param {string} title 弹窗标题 
@@ -14,24 +12,9 @@ const {confirm} = Modal;
  * 
 */
 const useAsyncModal = (props)=>{
-    const {title,modalType,vis,operDialogFunc,handleOperate,isClosable,isFooter} = props;
+    const {title,modalType,vis,operDialogFunc,handleOk,isClosable,isFooter} = props;
 
     const [isVisble,setIsVisble] = useState(false);//设置弹窗显示或隐藏
-
-    // 弹窗确认提交按钮事件
-    function handleSubmit(){
-        confirm({
-            title: '确认提交?',
-            icon: <ExclamationCircleOutlined />,
-            okText:"确认",
-            cancelText:"取消",
-            // 确认按钮操作
-            onOk() {
-                handleOperate()
-             
-            },
-        });
-    }
 
     useEffect(()=>{
             // console.log(vis)
@@ -47,7 +30,7 @@ const useAsyncModal = (props)=>{
     },[vis,modalType])
 
     return(
-        <Modal title={title}  forceRender visible={isVisble} closable ={isClosable} onOk={handleSubmit} onCancel={()=> operDialogFunc(false)} okText="确认" cancelText="取消" footer={ isFooter ? undefined : null}>
+        <Modal title={title}  forceRender visible={isVisble} closable ={isClosable} onOk={handleOk} onCancel={()=> operDialogFunc(false)} okText="确认" cancelText="取消" footer={ isFooter ? undefined : null}>
             <div>{props.children}</div>
         </Modal>
     )

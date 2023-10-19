@@ -1,14 +1,14 @@
 /**
  * @Description: 顶部栏
 */
-import React, {  useEffect, useState,useRef } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { useStore, observer } from '../../hooks/storeHook';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/img/logo.svg';
 import { updateUserInfo,updatePassword } from '../../api/login';
-import { Form,Input, Dropdown,Modal,Menu,Space,message } from 'antd';//Button
-import { ExclamationCircleOutlined,DownOutlined,UserOutlined,SettingOutlined,LogoutOutlined} from '@ant-design/icons';
-const {confirm} = Modal;
+import { Form,Input, Dropdown,Modal,Menu,Space,message } from 'antd';
+import { DownOutlined,UserOutlined,SettingOutlined,LogoutOutlined} from '@ant-design/icons';
+// const {confirm} = Modal;ExclamationCircleOutlined
  
 function HeadBar () {
     const { userStore } = useStore()
@@ -31,32 +31,29 @@ function HeadBar () {
         form.resetFields();
         setInfoVisible(true);
     }
-    // 个人信息弹窗提交表单数据确认按钮操作
-    function handleSubmit(){
-        confirm({
-            title: '确认修改个人信息?',
-            icon: <ExclamationCircleOutlined />,
-            okText:"确认",
-            cancelText:"取消",
-            // 确认按钮操作
-            onOk() {
-                form.validateFields().then(async (values) => {
-                    let params = {
-                        name:values.name,
-                        phone:values.phone,
-                        email:values.email
-                    };
-                    let res = await updateUserInfo(params);
-                    if(res.data.success === true){
-                        userStore.setUserInfo(res.data.obj)
+    // 个人信息弹窗提交表单数据确认按钮操作,modal异步验证表单项使用async await
+    async function handleSubmit() {
+        try {
+            const values = await form.validateFields();
+            // console.log('个人信息',values);
+            if (values) {
+                let params = {
+                    name: values.name,
+                    phone: values.phone,
+                    email: values.email
+                };
+                updateUserInfo(params).then((res) => {
+                    if (res.data.success === true) {
+                        userStore.setUserInfo(res.data.obj);
+                        setInfoVisible(false);
                     }
-                }).catch((info) => {
-                    console.log('validate failed',info)
-                })
-            },
-
-        });
-        setInfoVisible(false);
+                }).catch((error) => {
+                    console.log(error)
+                });  
+            }
+        } catch (error){
+            console.log('validate failed',error)
+        }
     }
     // 个人信息弹窗取消按钮操作
     function handleCancel() {
@@ -74,32 +71,32 @@ function HeadBar () {
             const values = await pwdForm.validateFields();
             // console.log('重置密码', values)
             if (values) {
-                confirm({
-                    title: '确认重置密码?',
-                    icon: <ExclamationCircleOutlined />,
-                    okText:"确认",
-                    cancelText:"取消",
-                    // 确认按钮操作
-                    onOk() {
-                            let params = {
-                                newPassword:values.newPwd,
-                                repeatPassword:values.repeatPwd,
-                            };
-                            updatePassword(params).then((res) => {
-                            if(res.data.success === true){
-                                // userStore.setUserInfo(res.data.obj);
-                                message.success(res.data.message);
-                                setResetVisible(false);
-                            }
-                        }).catch((error) => {
-                                console.log('validate failed',error)
-                            })
-                    },
-                });
+                // confirm({
+                //     title: '确认重置密码?',
+                //     icon: <ExclamationCircleOutlined />,
+                //     okText:"确认",
+                //     cancelText:"取消",
+                //    // confirm弹框内确认按钮操作
+                //     onOk() {
+                           
+                //     },
+                // });
+                 let params = {
+                    newPassword:values.newPwd,
+                    repeatPassword:values.repeatPwd,
+                };
+                updatePassword(params).then((res) => {
+                    if(res.data.success === true){
+                        message.success(res.data.message);
+                        setResetVisible(false);
+                    }
+                }).catch((error) => {
+                    console.log(error)
+                })
             }
         } catch (error) {
-            console.log(error)
-       }    
+            console.log('validate failed',error)
+        }    
     }
     
     // 重置密码弹窗取消按钮操作
@@ -170,6 +167,7 @@ function HeadBar () {
                     <Form.Item  label="昵称" name="name"   
                         rules={[
                             { 
+                                required: true,
                                 pattern: /^[\u4e00-\u9fa5]|[a-zA-Z]/, 
                                 message: "昵称可以是字母或者中文"
                             }
@@ -181,6 +179,7 @@ function HeadBar () {
                     <Form.Item label="手机号" name="phone" 
                         rules={[ 
                             {
+                                required: true,
                                 pattern:/^1[345678]\d{9}$/,
                                 message: "请输入正确的11位手机号"
                             }
@@ -191,6 +190,7 @@ function HeadBar () {
                     <Form.Item label="邮箱" name="email" 
                         rules={[   
                             {
+                                required: true,
                                 pattern:/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
                                 message: "请输入正确的邮箱格式"
                             }

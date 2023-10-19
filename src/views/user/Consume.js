@@ -4,7 +4,7 @@ import AsyncModal from '../../components/Modal';
 import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip} from 'antd';
 import moment from 'moment';
-import { getConsumeList,getConsumeTypeList, getPaymentTypeList,addTableRow,deleteTableRow,deleteTableRowArray,exportConsumeTable,addType} from '../../api/user';
+import { getConsumeList, getConsumeTypeList, getPaymentTypeList, addTableRow, deleteTableRow, deleteTableRowArray, exportConsumeTable, addType } from '../../api/user';
 const {  RangePicker } = DatePicker; 
 const { Option } = Select;
 const {confirm} = Modal;
@@ -122,7 +122,7 @@ function Consume(){
     const typeFooter = useState(true);//设置新类别弹窗是否显示底部按钮
     const [isModalVisible, setIsModalVisible] = useState(false)//设置添加编辑支出类弹窗
     const [isTypeVisible,setTypeVisible] = useState(false);//设置新类别弹窗
-    const [consumeTitle,setConsumeTitle] = useState('');//设置添加编辑弹框title值
+    const [consumeTitle,setConsumeTitle] = useState('');//设置添加编辑弹窗title值
     const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
 
     const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
@@ -283,25 +283,31 @@ function Consume(){
        
     }
     // 添加类别弹窗提交按钮事件
-    function handleTypeSubmit(){
-        typeForm.validateFields().then(async (values) => {
-            let params = {
-                type:2,
-                name:values.typeName,
-                description:values.typeDescription,
-              
-            };
-            let res = await addType(params);
-            if(res.data.success === true){
-                getTypeList();//重新掉接口刷新类别列表数据
-                message.success("添加新类别成功");
-                operTypeFunc(false);
-            }else{
-                operTypeFunc(true);
+    async function handleTypeSubmit() {
+        try {
+            const values = await typeForm.validateFields();
+            // console.log('类别',values)
+            if (values) {
+                let params = {
+                    type:2,
+                    name:values.typeName,
+                    description:values.typeDescription,
+                };
+                addType(params).then((res) => {
+                    if(res.data.success === true){
+                        getTypeList();//重新掉接口刷新类别列表数据
+                        message.success("添加新类别成功");
+                        operTypeFunc(false);
+                    }else{
+                        operTypeFunc(true);
+                    }
+                }).catch((error)=>{
+                    console.log(error)
+                })
             }
-        }).catch((error)=>{
-            console.log(error)
-        })
+        } catch (err) {
+            console.log('validate failed',err)
+        }
     }
 
 
@@ -342,13 +348,13 @@ function Consume(){
 
     // 删除表格中的一行数据
     function handleDelete(row){
-        // 弹框
+        // confirm弹框
         confirm({
             title: '确认删除?',
             okText: '确认',
             okType: 'danger',
             cancelText: '取消', 
-            // 点击确认触发
+            // confirm弹框内确认按钮事件
             onOk() {
                 let par = {
                     id:row.id
@@ -372,13 +378,13 @@ function Consume(){
             message.warning('请选择删除的数据');
             return;
         }
-        // 弹框
+        // confirm弹框
         confirm({
             title: '确认删除?',
             okText: '确认',
             okType: 'danger',
             cancelText: '取消',
-            // 点击确认触发
+            // confirm弹框内确认按钮事件
             onOk() {
                 let param={
                     idList:rowKeys
@@ -412,7 +418,6 @@ function Consume(){
             var blob = new Blob([exportFileContent], { type: "text/plain;charset=utf-8" });//使用blob,解决中文乱码问题
             blob = new Blob([String.fromCharCode(0xFEFF), blob], { type: blob.type });
         
-       
             var contentDisposition = res.headers['content-disposition'];//在响应headers中获取表格的文件名
             var fileName=contentDisposition.substring(20);
             var link = window.URL.createObjectURL(blob);//创建新的blob url
@@ -430,36 +435,40 @@ function Consume(){
     }
 
     // 添加支出记录弹窗信息确认操作
-    function handleSubmit(){
-        form.validateFields().then(async (values) => {
-            // console.log(values)
-            let params = {
-                id:rowId,
-                typeId:values.typeId,//addConsumeType.current
-                time:values.time.format('YYYY-MM-DD'),//consumeTime.current
-                description:values.description,
-                paymentId:values.paymentId,//addPaymentType.current
-                amount:values.amount,
-                note:values.note
-            };
-            let res = await addTableRow(params);
-            if(res.data.success === true){
-                buttonSearch();//重新掉接口刷新表格数据
-                message.success(res.data.message);
-                operDialogFunc(false);
-            }else{
-                operDialogFunc(true)
+    async function handleSubmit() {
+        try {
+            const values = await form.validateFields();
+            // console.log('支出', values)
+            if (values) {
+                let params = {
+                    id: rowId,
+                    typeId: values.typeId,//addConsumeType.current
+                    time: values.time.format('YYYY-MM-DD'),//consumeTime.current
+                    description: values.description,
+                    paymentId: values.paymentId,//addPaymentType.current
+                    amount: values.amount,
+                    note: values.note
+                };
+                addTableRow(params).then((res) => {
+                    if (res.data.success === true) {
+                        buttonSearch();//重新掉接口刷新表格数据
+                        message.success(res.data.message);
+                        operDialogFunc(false);
+                    } else {
+                        operDialogFunc(true)
+                    }
+                }).catch((error) => {
+                    console.log(error)
+                })    
             }
-        }).catch((error)=>{
-            console.log(error)
-        })
+        } catch (error) {
+            console.log('validate failed',error)
+        }
     }
 
     // 设置新增编辑支出弹窗显示隐藏事件
     const operDialogFunc = (flag)=>{
-      
         setIsModalVisible(flag);
-       
     }
      // 设置新增类别弹窗显示隐藏事件
     const operTypeFunc = (flag)=>{
@@ -472,7 +481,6 @@ function Consume(){
         if(tableRef.current){
             tableRef.current.resetPage()
         }
-
         setSearchData({
             times:times.current,
             month:month.current,
@@ -483,7 +491,6 @@ function Consume(){
         })
     }
 
-   
     return(
     <div>
         <header className='searchFormHeader'>
@@ -557,7 +564,7 @@ function Consume(){
                 />                           
 
                 {/* 添加或编辑支出记录弹窗 */}
-                <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOperate={handleSubmit}>
+                <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOk={handleSubmit}>
                     <section >
                         <Form   name="consumeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                             <Form.Item  label="支出类别" >
@@ -619,7 +626,7 @@ function Consume(){
                 </AsyncModal>
                 
                 {/* 添加类别弹窗 */}
-                <AsyncModal title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operTypeFunc} handleOperate={handleTypeSubmit}>
+                <AsyncModal title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operTypeFunc} handleOk={handleTypeSubmit}>
                     <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
                         <Form.Item  label="名称" name="typeName"  
                             rules={[
