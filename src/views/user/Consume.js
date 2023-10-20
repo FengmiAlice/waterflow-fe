@@ -148,22 +148,21 @@ function Consume(){
     const [isAddFlag,setAddFlag] = useState(false)//标识是否是新增
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
        useEffect(()=>{
-                month.current = moment().format("YYYY-MM");//格式化当前月份
-                getTypeList();
-           getPaymentList();
-           window.addEventListener('resize', () =>{
-            if(document.activeElement.tagName === 'INPUT' ||
-                document.activeElement.tagName === 'TEXTAREA'||document.activeElement.tagName === 'ant-picker-input') {
-                window.setTimeout(() => {
-                    if('scrollIntoView' in document.activeElement) {
-                        document.activeElement.scrollIntoView();
-                    } else {
-                        document.activeElement.scrollIntoViewIfNeeded();
-                    }
-                }, 0);
-            }
+            month.current = moment().format("YYYY-MM");//格式化当前月份
+            getTypeList();
+            getPaymentList();
+            window.addEventListener('resize', () =>{
+                if(document.activeElement.tagName === 'INPUT' ||
+                    document.activeElement.tagName === 'TEXTAREA'||document.activeElement.tagName === 'ant-picker-input') {
+                    window.setTimeout(() => {
+                        if('scrollIntoView' in document.activeElement) {
+                            document.activeElement.scrollIntoView();
+                        } else {
+                            document.activeElement.scrollIntoViewIfNeeded();
+                        }
+                    }, 0);
+                }
             });
-
        },[])
  
     // 设置表格总花费方法

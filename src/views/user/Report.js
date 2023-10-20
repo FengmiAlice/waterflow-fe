@@ -160,7 +160,7 @@ function Report(){
             month:month.current,
             year:year.current,
         }
-        getConsumePieType(params).then((res)=>{
+        getConsumePieType(params).then((res) => {
             setPieTypeData(res.data)
         }).catch((error)=>{
             console.log(error)

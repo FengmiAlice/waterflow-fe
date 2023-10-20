@@ -49,6 +49,14 @@ const routes = [
                 component: () => import('../views/user/Account'),
             },
             {
+                path: '/index/accountReport',
+                meta:{
+                    title: '账户统计',
+                    icon:<UserOutlined />,
+                },
+                component: () => import('../views/user/AccountReport'),
+            },
+            {
                 path:'/index/report',
                 meta:{
                     title:'报告',

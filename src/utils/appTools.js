@@ -19,7 +19,7 @@ import { routes } from '../router';
         })
         return map;
     }
-    return getMap(routes)
+    return getMap(routes);
 }
 
 /**
@@ -35,7 +35,7 @@ function putTitleinMap(obj,map){
     }
     map.set(obj.path, obj.meta.title)
     if(obj.children){
-        obj.children.forEach( (k)=>{
+        obj.children.forEach((k) => {
             // map.set(k.path,k.meta.title)
             putTitleinMap(k,map)
         })

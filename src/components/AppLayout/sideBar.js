@@ -61,27 +61,29 @@ function SideBar () {
         // 获取有children的菜单
         let outputData = [];
         for (const item of data) {
-            const obj = {
+            if (item.path !== undefined) {
+                const obj = {
                     key:item.path,
                     label: item.meta.title,
                     path: item.path,
                     children:item.children
                 }
-            // 判断是否有子菜单
-            if (item.children) {
-                    // 转化为{label:'',path:'',children:[]}格式
-                    let child = item.children.map((v) => {
-                        return {
-                            key:v.path,
-                            label: v.meta.title,
-                            path: v.path,
-                        }
-                    })
-                // console.log(child)
-                obj.children = child;
-                outputData.push(obj);
-                getTreeData(item.children);
-            } 
+                // 判断是否有子菜单
+                if (item.children) {
+                        // 转化为{label:'',path:'',children:[]}格式
+                    let child = item.children.map((v, i) => {
+                            return {
+                                key:v.path,
+                                label: v.meta.title,
+                                path: v.path,
+                            }
+                        })
+                    // console.log('左侧菜单',child)
+                    obj.children = child;
+                    outputData.push(obj);
+                    getTreeData(item.children);
+                } 
+            }
         }
         return outputData;
     }

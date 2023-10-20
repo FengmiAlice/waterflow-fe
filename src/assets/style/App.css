@@ -262,8 +262,16 @@ margin:10px 0;
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
-  /* justify-content: flex-start; */
   justify-content: space-around;
+}
+.accountReportContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top:60px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 .lineContiner{
   margin-top:20px;

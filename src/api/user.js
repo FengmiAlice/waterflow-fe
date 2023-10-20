@@ -63,6 +63,10 @@ export function addIncomeType(data){
 export function getStatistics(params){
     return http('get','/api1/account/statistic',params)
 }
+// 账户内的扇形图表统计
+export function typePieAccount(params){
+    return http('get','/api1/report/statistics/pieChart/typeAccount',params)
+}
 // 账户页面获取账户列表信息
 export function getAccountList(params){
     return http('get','/api1/account/list',params)
@@ -74,4 +78,8 @@ export function deleteAccountById(data){
 // 新增账户
 export function addAccount(data){
     return http('post','/api1/account/save',data)
+}
+// 转账
+export function transformAccount(data){
+    return http('post','/api1/account/transform',data)
 }
