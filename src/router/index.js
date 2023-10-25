@@ -22,21 +22,26 @@ const routes = [
             title:"首页",
             icon: <HomeOutlined />,
         },
-        children:[
+        children: [
+            {
+                path:'/index/budget',
+                meta:{
+                    title:'预算',
+                    icon:<UserOutlined />
+                },
+                component: () => import('../views/user/Budget'),
+            },
             {
                 path:'/index/consume',
                 meta:{
                     title:'支出',
-                    icon:<UserOutlined />
                 },
                 component: () => import('../views/user/Consume'),
-                // element:<About />
             },
             {
                 path:'/index/income',
                 meta:{
                     title:'收入',
-                    icon:<UserOutlined />
                 },
                 component: () => import('../views/user/Income'),
             },
@@ -44,7 +49,6 @@ const routes = [
                 path:'/index/account',
                 meta:{
                     title:'账户',
-                    icon:<UserOutlined />
                 },
                 component: () => import('../views/user/Account'),
             },
@@ -52,17 +56,15 @@ const routes = [
                 path: '/index/accountReport',
                 meta:{
                     title: '账户统计',
-                    icon:<UserOutlined />,
                 },
                 component: () => import('../views/user/AccountReport'),
             },
             {
                 path:'/index/report',
                 meta:{
-                    title:'报告',
-                    icon:<UserOutlined />
+                    title:"报告",
                 },
-                component: () => import('../views/user/Report'),
+                component: () => import( '../views/user/Report'),
             },
         ]
     },
@@ -94,15 +96,7 @@ const routes = [
     //        },
     //     ]
     // },
-    // {
-    //     path:'/userInfo',
-    //     meta:{
-    //         title:"个人信息页",
-    //         hideMenu: true,
-    //         noLogin:true,
-    //     },
-    //     component: () => import( '../views/user/UserInfo'),
-    // },
+   
     {
         path:'/signIn',
         meta:{
@@ -121,7 +115,6 @@ const routes = [
             noLogin:true,
         },
         component: () => import( '../views/register/SignUp'),
-        // element:<SignUp />
     },  
     {
         path: '*',
@@ -131,7 +124,6 @@ const routes = [
           noLogin:true,
         },
         component: () => import('../views/errorPage/Page404'),
-        // element: <Page404 />,
     },
 ]
 /**

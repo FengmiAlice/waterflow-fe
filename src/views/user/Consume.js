@@ -120,7 +120,7 @@ function Consume(){
     
     const consumeFooter = useState(true);//设置添加编辑支出类弹窗是否显示底部按钮
     const typeFooter = useState(true);//设置新类别弹窗是否显示底部按钮
-    const [isModalVisible, setIsModalVisible] = useState(false)//设置添加编辑支出类弹窗
+    const [isModalVisible, setIsModalVisible] = useState(false)//设置是否显示添加编辑支出类弹窗
     const [isTypeVisible,setTypeVisible] = useState(false);//设置新类别弹窗
     const [consumeTitle,setConsumeTitle] = useState('');//设置添加编辑弹窗title值
     const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
@@ -148,7 +148,7 @@ function Consume(){
     const [isAddFlag,setAddFlag] = useState(false)//标识是否是新增
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
        useEffect(()=>{
-            month.current = moment().format("YYYY-MM");//格式化当前月份
+            month.current = moment().format("YYYY-MM");//初始化赋值当前月份
             getTypeList();
             getPaymentList();
             window.addEventListener('resize', () =>{
@@ -237,7 +237,7 @@ function Consume(){
             console.log(error)
         })
     }
-    // 获取搜索类别值
+    // 获取支出搜索类别值
     function typeChange(value,current){
         if(value === undefined){
             consumeType.current = '';
@@ -329,6 +329,7 @@ function Consume(){
 
     // 编辑支出记录按钮操作
     function handleEdit(row) {
+        console.log('支出编辑',row)
         setAddFlag(false);
         if (isAddFlag === false) {
             //  console.log(isAddFlag,2222)
@@ -445,7 +446,7 @@ function Consume(){
                     time: values.time.format('YYYY-MM-DD'),//consumeTime.current
                     description: values.description,
                     paymentId: values.paymentId,//addPaymentType.current
-                    amount: values.amount,
+                    amount: parseInt(values.amount),
                     note: values.note
                 };
                 addTableRow(params).then((res) => {
@@ -499,16 +500,16 @@ function Consume(){
                         (current) => {
                             // 选择今天及今天之前的日期
                             return current && current > moment().startOf('day');
-                        }} />
+                        }}  allowClear />
                     </Form.Item>
                     <Form.Item label="月份选择"  >
-                        <DatePicker defaultValue={moment()} format='YYYY-MM' picker="month" onChange={getMonthChange} />
+                        <DatePicker defaultValue={moment()} format='YYYY-MM' picker="month" onChange={getMonthChange}placeholder="请选择月份" allowClear  />
                     </Form.Item>
                     <Form.Item label="年份选择" >
-                        <DatePicker format='YYYY'    picker="year"  onChange={getYearChange} />
+                        <DatePicker format='YYYY'    picker="year"  onChange={getYearChange} placeholder="请选择年份" allowClear />
                     </Form.Item>
                     <Form.Item label="类别">
-                        <Select style={{ width: 120 }} onChange={typeChange} allowClear={true}>
+                        <Select style={{ width: 120 }} onChange={typeChange} placeholder="请选择类别" allowClear >
                                 {
                                     selectedTypeArray.map( (item,index,arr) => (
                                         <Option key={item.id} value={item.id}>
@@ -519,7 +520,7 @@ function Consume(){
                         </Select>
                     </Form.Item>
                     <Form.Item  label="支付方式">
-                        <Select  style={{ width: 120 }} onChange={paymentTypeChange} allowClear={true}>
+                        <Select  style={{ width: 120 }} onChange={paymentTypeChange} placeholder="请选择支付方式" allowClear >
                                 {
                                 paymentTypeArray.map( (item,index,arr) => (
                                 
@@ -568,7 +569,7 @@ function Consume(){
                         <Form   name="consumeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                             <Form.Item  label="支出类别" >
                                 <Form.Item  name="typeId"  rules={[ {required:true,message:'请选择支出类别'}, ]} noStyle>
-                                    <Select className='consumeTypeSelect'  onChange={addTypeChange} placeholder="请选择" allowClear >
+                                    <Select className='consumeTypeSelect'  onChange={addTypeChange} placeholder="请选择支出类别" allowClear >
                                             {
                                                 selectedTypeArray.map( (item,index,arr) => (
                                                     <Option key={item.id} value={item.id}>
@@ -585,21 +586,21 @@ function Consume(){
                                         {required:true,message:'请选择支出时间'},
                                         
                                     ]}  >
-                                    <DatePicker   format='YYYY-MM-DD' picker="day" style={{ width: 100+'%' }} onChange={getTimeChange}/>
+                                    <DatePicker   format='YYYY-MM-DD' picker="day" style={{ width: 100+'%' }} onChange={getTimeChange} placeholder="请选择支出时间" allowClear />
                             </Form.Item>
                             <Form.Item label="详情" name="description"   
                                     rules={[
                                         {required:true,message:'请输入详情'},
                                         
                                     ]} >
-                                <Input  placeholder="购买了什么，或者去哪玩了"    />
+                                <Input  placeholder="购买了什么，或者去哪玩了" allowClear   />
                             </Form.Item>
                             <Form.Item label="付款方式" name="paymentId"   
                                     rules={[
                                         {required:true,message:'请选择付款方式'},
                                         
                                     ]}> 
-                                <Select   onChange={addPaymentTypeChange} placeholder="请选择" allowClear>
+                                <Select   onChange={addPaymentTypeChange} placeholder="请选择付款方式" allowClear>
                                         {
                                         paymentTypeArray.map( (item,index,arr) => (
                                         
@@ -615,7 +616,7 @@ function Consume(){
                                     {required:true,message:'请输入金额'},
                                 
                                 ]} >
-                                <Input type="number" placeholder="越精确越好，可以写小数"    />
+                                <Input type="number" placeholder="越精确越好，可以写小数"  allowClear  />
                             </Form.Item>
                             <Form.Item label="补充描述" name="note" >
                                 <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
@@ -624,7 +625,7 @@ function Consume(){
                     </section>
                 </AsyncModal>
                 
-                {/* 添加类别弹窗 */}
+                {/* 添加新类别弹窗 */}
                 <AsyncModal title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operTypeFunc} handleOk={handleTypeSubmit}>
                     <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
                         <Form.Item  label="名称" name="typeName"  

@@ -1,4 +1,29 @@
-import  http  from '../utils/http';
+import http from '../utils/http';
+/********************预算模块********************************/ 
+// 获取预算列表
+export function getBudgetList(params){
+    return http('get','/api1/budget/list',params)
+}
+// 获取预算统计数据
+export function getBudgetStatistic(params){
+    return http('get','/api1/budget/statistic',params)
+}
+// 获取单条预算记录
+export function getBudgetDetail(params){
+    return http('get','/api1/budget/details',params)
+}
+// 新增编辑预算
+export function addBudget(data){
+    return http('post','/api1/budget/save',data)
+}
+// 删除预算
+export function deleteBudget(data) {
+    return http('post','/api1/budget/delete',data)
+}
+// 关闭预算
+export function closeBudget(data) {
+    return http('post','/api1/budget/close',data)
+}
 /********************支出模块*********************************/
 // 支出页面获取支出列表信息
 export function getConsumeList(params){

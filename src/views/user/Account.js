@@ -369,13 +369,13 @@ function Account(){
                 <section >
                     <Form   name="accountForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off">
                         <Form.Item label="名称" name="name"   rules={[ {required:true,message:'请输入账户名称'}, ]}  >
-                            <Input  placeholder="请输入账户名称"    />
+                            <Input  placeholder="请输入账户名称"   allowClear />
                         </Form.Item>
                         <Form.Item label="金额(圆整)" name="amount"  rules={[{ required: true, message: '请输入金额' },]}>
-                            <Input type="number" placeholder="越精确越好，可以写小数"    />
+                            <Input type="number" placeholder="越精确越好，可以写小数"  allowClear  />
                         </Form.Item>
                         <Form.Item label="账户类型" name="types"  rules={[{ required: true, message: '请选择账户类型' },]} style={{ position: 'relative' }} initialValue={'1'}>
-                                <Select placeholder="请选择" onChange={addTypeChange} disabled={typeDisabled}
+                                <Select placeholder="请选择账户类型" allowClear onChange={addTypeChange} disabled={typeDisabled}
                                     options={[ {   value: '1',  label: '储蓄', }, ]}>
                                 </Select>
                         </Form.Item>
@@ -390,7 +390,7 @@ function Account(){
                 <section >
                     <Form   name="softForm"  form={softForm}  labelCol={{span:5}}  size="middle"  autoComplete="off">
                         <Form.Item label="转出账户" name='fromId' rules={[{ required: true, message: '请选择转出账户' },]}>
-                            <Select   allowClear={true}>
+                            <Select   placeholder="请选择转出账户" allowClear >
                                     {
                                     userArray.map( (item,index,arr) => (
                                     
@@ -402,7 +402,7 @@ function Account(){
                             </Select>
                         </Form.Item>
                         <Form.Item label="转入账户" name='toId' rules={[{ required: true, message: '请选择转入账户' },]}>
-                            <Select    allowClear={true}>
+                            <Select    placeholder="请选择转入账户" allowClear >
                                     {
                                     userArray.map( (item,index,arr) => (
                                     
@@ -414,7 +414,7 @@ function Account(){
                             </Select>
                         </Form.Item>
                         <Form.Item label="金额(圆整)" name="amount"  rules={[{ required: true, message: '请输入金额' },]}>
-                            <Input type="number"   />
+                            <Input type="number"  placeholder="越精确越好，可以写小数" allowClear />
                         </Form.Item>
                     </Form>
                 </section>

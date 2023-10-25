@@ -339,7 +339,7 @@ function Income(){
                     time:values.time,//incomeTime.current
                     description:values.description,
                     paymentId:values.paymentId,//addPaymentType.current
-                    amount:values.amount,
+                    amount:parseInt(values.amount),
                     note:values.note
                 };
                 addIncomeTableRow(params).then((res) => {
@@ -441,13 +441,13 @@ function Income(){
         <header className='searchFormHeader'>
             <Form  className="incomeWrap" layout="inline" name="Income"  size="small"  >
                     <Form.Item label="月份选择"  >
-                        <DatePicker  format='YYYY-MM' picker="month" onChange={getMonthChange} />
+                        <DatePicker  format='YYYY-MM' picker="month" onChange={getMonthChange} placeholder="请选择月份" allowClear />
                     </Form.Item>
                     <Form.Item label="年份选择" >
-                        <DatePicker defaultValue={moment()} format='YYYY' picker="year"  onChange={getYearChange} />
+                        <DatePicker defaultValue={moment()} format='YYYY' picker="year"  onChange={getYearChange} placeholder="请选择年份" allowClear />
                     </Form.Item>
                     <Form.Item label="类别">
-                        <Select style={{ width: 120 }} onChange={typeChange} allowClear={true}>
+                        <Select style={{ width: 120 }} onChange={typeChange} placeholder="请选择类别" allowClear >
                                 {
                                     selectedTypeArray.map( (item,index,arr) => (
                                         <Option key={item.id} value={item.id}>
@@ -505,7 +505,7 @@ function Income(){
                       <Form   name="incomeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                           <Form.Item  label="收入类别">
                                  <Form.Item  name="typeId"  rules={[ {required:true,message:'请选择收入类别'},]} noStyle>
-                                    <Select  className='incomeTypeSelect' onChange={addTypeChange} placeholder="请选择" allowClear >
+                                    <Select  className='incomeTypeSelect' onChange={addTypeChange} placeholder="请选择收入类别" allowClear >
                                         {
                                         selectedTypeArray.map( (item,index,arr) => (
                                         
@@ -524,21 +524,21 @@ function Income(){
                                     {required:true,message:'请选择收入时间'},
                                     
                                 ]}  >
-                                <DatePicker  format='YYYY-MM-DD' picker="day" onChange={getTimeChange} style={{ width: 100+'%' }} />
+                                <DatePicker  format='YYYY-MM-DD' picker="day" onChange={getTimeChange} style={{ width: 100+'%' }} placeholder="请选择收入时间" allowClear  />
                           </Form.Item>
                           <Form.Item label="详情" name="description"   
                                 rules={[
                                     {required:true,message:'请输入详情'},
                                     
                                 ]} >
-                              <Input  placeholder="购买了什么，或者去哪玩了"    />
+                              <Input  placeholder="购买了什么，或者去哪玩了" allowClear   />
                           </Form.Item>
                           <Form.Item label="付款方式" name="paymentId"   
                                 rules={[
                                     {required:true,message:'请选择付款方式'},
                                     
                                 ]}> 
-                            <Select   onChange={addPaymentTypeChange} placeholder="请选择" allowClear>
+                            <Select   onChange={addPaymentTypeChange} placeholder="请选择付款方式" allowClear>
                                     {
                                     paymentTypeArray.map( (item,index,arr) => (
                                     
@@ -554,7 +554,7 @@ function Income(){
                                 {required:true,message:'请输入金额'},
                             
                             ]} >
-                              <Input type="number" placeholder="越精确越好，可以写小数"    />
+                              <Input type="number" placeholder="越精确越好，可以写小数"   allowClear />
                           </Form.Item>
                           <Form.Item label="补充描述" name="note"  >
                               <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
@@ -572,7 +572,7 @@ function Income(){
                                         
                             ]}
                             >
-                            <Input type="text" />
+                            <Input type="text" placeholder="请输入名称" allowClear />
                         </Form.Item>
                         <Form.Item  label="描述"  name="description"  >
                             <TextArea row={1} />

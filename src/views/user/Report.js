@@ -347,7 +347,7 @@ function Report(){
                     </Form.Item>
                     <Form.Item label="统计粒度" >
                         <Form.Item name="countNum" noStyle>
-                            <Select style={{ width: 120 }}  onChange={countChange} allowClear={true}>
+                            <Select style={{ width: 120 }}  onChange={countChange} placeholder="请选择统计粒度" allowClear>
                                     {
                                         selectedTypeArray.map( (item,index,arr) => (
                                             <Option key={item.key} value={item.key}>
