@@ -512,11 +512,7 @@ function Budge() {
                                 ]} >
                                 <Input type="number" placeholder="越精确越好，可以写小数"    />
                             </Form.Item>
-                            <Form.Item label="详情" name="description"   
-                                    rules={[
-                                        {required:true,message:'请输入详情'},
-                                        
-                                    ]} >
+                            <Form.Item label="详情" name="description" >
                                 <Input  placeholder="购买了什么，或者去哪玩了"  allowClear  />
                             </Form.Item>
                         </Form>
