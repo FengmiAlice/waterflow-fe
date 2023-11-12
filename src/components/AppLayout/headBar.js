@@ -19,12 +19,31 @@ function HeadBar () {
     const navigate = useNavigate();
     const [infoVisible, setInfoVisible] = useState(false);
     const [resetVisible, setResetVisible] = useState(false);
-    
+    const [displayHour,setDisplayHour] = useState(null);
     useEffect(() => {
-    if(infoVisible){
-        //使用setFieldsValue回显表格数据
-        form.setFieldsValue(userInfo)
-    }
+        if(infoVisible){
+            //使用setFieldsValue回显表格数据
+            form.setFieldsValue(userInfo)
+        }
+        // 获取当前时间小时数
+        let hour = new Date().getHours();
+        // console.log('获取当前时间小时数',hour)
+        // 判断当前时间是早上、上午、中午还是下午、傍晚、晚上等
+        if (hour > 5 && hour < 10) {
+            setDisplayHour("早上好");
+        } else if (hour >= 10 && hour < 12) {
+            setDisplayHour("上午好");
+        } else if (hour >= 12 && hour < 13) {
+            setDisplayHour("中午好");
+        } else if (hour >= 13 && hour < 17) {
+            setDisplayHour("下午好");
+        } else if (hour >= 17 && hour < 19) {
+            setDisplayHour("傍晚好");
+        } else if (hour >= 19 && hour < 23) {
+            setDisplayHour("晚上好");
+        } else {
+            setDisplayHour("夜深了");
+        }
     },[form,pwdForm,userInfo,infoVisible,resetVisible])
     // 弹出个人信息页弹框
     function turnToUserInfo() {
@@ -154,7 +173,7 @@ function HeadBar () {
                         </Menu.Item>
                         </Menu>
                     } */}
-                    <div>{userInfo.name}<DownOutlined className="iconArrowDown" /></div>
+                    <div><span>{ displayHour}，</span>{userInfo.name}<DownOutlined className="iconArrowDown" /></div>
                 </Dropdown>
         </div>
         {/* 个人信息弹窗 */}

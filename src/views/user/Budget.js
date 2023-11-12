@@ -323,7 +323,7 @@ function Budge() {
                         timeFormat: budgetMonthTime.current,
                         description: values.description,
                         scopeLevel: values.scopeLevel,
-                        amount: parseInt(values.amount),
+                        amount: values.amount,
                     }
                 }
                 if (values.scopeLevel === 1) {
@@ -332,7 +332,7 @@ function Budge() {
                         timeFormat: budgetYearTime.current,
                         description: values.description,
                         scopeLevel: values.scopeLevel,
-                        amount: parseInt(values.amount),
+                        amount: values.amount,
                     }
                 }
                 addBudget(params).then((res) => {

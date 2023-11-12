@@ -232,7 +232,7 @@ function Account(){
                     id: rowId,
                     name:values.name,
                     types:addAccountType.current,
-                    amount:parseInt(values.amount),
+                    amount:values.amount,
                     note:values.note
                 };
                 addAccount(params).then((res) => {
@@ -288,7 +288,7 @@ function Account(){
                 let params = {
                     fromId:values.fromId,
                     toId:values.toId,
-                    amount:parseInt(values.amount),
+                    amount:values.amount,
                 };
                 transformAccount(params).then((res) => {
                     if(res.data.success === true){

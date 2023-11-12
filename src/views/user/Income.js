@@ -339,7 +339,7 @@ function Income(){
                     time:values.time,//incomeTime.current
                     description:values.description,
                     paymentId:values.paymentId,//addPaymentType.current
-                    amount:parseInt(values.amount),
+                    amount:values.amount,
                     note:values.note
                 };
                 addIncomeTableRow(params).then((res) => {

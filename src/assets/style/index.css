@@ -116,6 +116,9 @@ code {
       right:0;
       top:-10px;
     }
+    .miniBtnBox{
+      display: block;
+    }
   
 }
 @media screen and (min-width:576px) and (max-width:760px){
@@ -155,9 +158,15 @@ code {
     float: none!important;
     display: block;
   }
-
+    .miniBtnBox{
+      display: none;
+    }
 }
-
+@media screen and (min-width:760px) and (max-width:1200px){
+    .miniBtnBox{
+      display: none;
+    }
+}
  @media screen and (min-width: 1200px) {
     html,body {
       font-size: 18px!important;

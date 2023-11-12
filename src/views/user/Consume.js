@@ -329,7 +329,7 @@ function Consume(){
 
     // 编辑支出记录按钮操作
     function handleEdit(row) {
-        console.log('支出编辑',row)
+        // console.log('支出编辑',row)
         setAddFlag(false);
         if (isAddFlag === false) {
             //  console.log(isAddFlag,2222)
@@ -446,7 +446,7 @@ function Consume(){
                     time: values.time.format('YYYY-MM-DD'),//consumeTime.current
                     description: values.description,
                     paymentId: values.paymentId,//addPaymentType.current
-                    amount: parseInt(values.amount),
+                    amount: values.amount,
                     note: values.note
                 };
                 addTableRow(params).then((res) => {
