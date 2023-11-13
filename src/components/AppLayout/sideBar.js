@@ -72,6 +72,10 @@ function SideBar () {
                 if (item.children) {
                         // 转化为{label:'',path:'',children:[]}格式
                     let child = item.children.map((v, i) => {
+                            // 在左侧菜单栏隐藏
+                            if (v.hidden === true) {
+                                return null;
+                            }
                             return {
                                 key:v.path,
                                 label: v.meta.title,

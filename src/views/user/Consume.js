@@ -197,13 +197,15 @@ function Consume(){
     }
 
     // 获取月份日期值
-    function getMonthChange(date,dateString){
+    function getMonthChange(date, dateString) {
+        // 非空判断
+        dateString =dateString || '';
         month.current = dateString; 
     }
     // 获取支出记录时间
     function getTimeChange(date, dateString) {
-        // console.log(date)
-        // console.log(dateString)
+        // 非空判断
+        dateString =dateString || '';
         consumeTime.current = dateString;
     }
     // 获取年份日期值
@@ -586,7 +588,7 @@ function Consume(){
                                         {required:true,message:'请选择支出时间'},
                                         
                                     ]}  >
-                                    <DatePicker   format='YYYY-MM-DD' picker="day" style={{ width: 100+'%' }} onChange={getTimeChange} placeholder="请选择支出时间" allowClear />
+                                    <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getTimeChange} placeholder="请选择支出时间" allowClear />
                             </Form.Item>
                             <Form.Item label="详情" name="description"   
                                     rules={[

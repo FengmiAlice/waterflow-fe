@@ -54,6 +54,7 @@ const routes = [
             },
             {
                 path: '/index/accountReport',
+                hidden: true,
                 meta:{
                     title: '账户统计',
                 },
@@ -96,6 +97,8 @@ const routes = [
     //        },
     //     ]
     // },
+    
+      
    
     {
         path:'/signIn',

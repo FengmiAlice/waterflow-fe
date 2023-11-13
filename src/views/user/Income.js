@@ -138,6 +138,7 @@ function Income(){
     const tableRef=useRef(null);//设置表格的ref
     let curTime= moment().format("YYYY-MM-DD");
     const incomeTime = useRef(curTime);//设置收入记录默认时间
+    const [isAddFlag,setAddFlag] = useState(false)//标识是否是新增
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行,传一个空数组，只执行一次）
     useEffect(()=>{
         // if(!initFlag ){
@@ -180,14 +181,15 @@ function Income(){
         month.current = dateString; 
     }
     // 获取收入时间事件
-    function getTimeChange(date,dateString){
-        // console.log(dateString)
+    function getTimeChange(date, dateString) {
+        // 非空判断
+        dateString =dateString || '';
         incomeTime.current = dateString;
     }
    // 获取年份日期值
-   function getYearChange(date,dateString){
+    function getYearChange(date, dateString) {
         // 非空判断
-        // dateString = dateString || '';
+        dateString =dateString || '';
         year.current = dateString;
     }
      // 获取搜索类别值
@@ -278,6 +280,10 @@ function Income(){
         // 置空表单数据
         addConsumeType.current = '';
         addPaymentType.current = '';
+         setAddFlag(true);
+        if (isAddFlag === true) {
+            incomeTime.current = moment().format("YYYY-MM-DD")
+        }
         form.resetFields();
         setIncomeTitle('添加收入记录');
         setIsModalType('common');
@@ -286,9 +292,12 @@ function Income(){
     }
     // 编辑支出记录按钮操作
     function handleEdit(row){
-        // console.log(row)
+         setAddFlag(false);
+        if (isAddFlag === false) {
+            incomeTime.current = row.timeStr;
+        }
         // 将返回的时间转换为moment格式用于编辑显示在时间组件上
-        row.time = moment(row.time)
+        row.time = moment(row.time);
         addConsumeType.current = row.typeId;
         addPaymentType.current = row.paymentId;
         form.setFieldsValue(row); 
@@ -331,12 +340,13 @@ function Income(){
             // if(values.time !== undefined){
             //     times = values.time.format('YYYY-MM-DD');
             // }
-            // console.log('收入信息',values)
+            // console.log('收入信息', values)
+
             if (values) {
                 let params = {
                     id:rowId,
                     typeId:values.typeId,//addConsumeType.current
-                    time:values.time,//incomeTime.current
+                    time:values.time.format('YYYY-MM-DD'),//incomeTime.current
                     description:values.description,
                     paymentId:values.paymentId,//addPaymentType.current
                     amount:values.amount,
@@ -524,7 +534,7 @@ function Income(){
                                     {required:true,message:'请选择收入时间'},
                                     
                                 ]}  >
-                                <DatePicker  format='YYYY-MM-DD' picker="day" onChange={getTimeChange} style={{ width: 100+'%' }} placeholder="请选择收入时间" allowClear  />
+                                <DatePicker  format='YYYY-MM-DD'  onChange={getTimeChange} style={{ width: 100+'%' }} placeholder="请选择收入时间" allowClear  />
                           </Form.Item>
                           <Form.Item label="详情" name="description"   
                                 rules={[
