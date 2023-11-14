@@ -105,6 +105,8 @@ function Budge() {
     const typeFooter = useState(true);//设置新类别弹窗是否显示底部按钮
     const [budgetTypeArray, setBudgetTypeArray] = useState([]);//设置新增、编辑预算类别列表
     const [selectedTypeArray, setSelectedTypeArray] = useState([]);//设置搜索预算类别列表
+    const [rowId, setRowId] = useState('');//设置新增或删除需要传递的行id
+
     let initParamsData = {
         month:month.current,
         year:year.current,
@@ -286,7 +288,8 @@ function Budge() {
         form.resetFields();
 
         setBudgetTitle('添加预算记录');
-        setIsModalType('common')
+        setIsModalType('common');
+         setRowId('');
         operDialogFunc(true);  
     }
     // 编辑预算按钮事件
@@ -306,7 +309,8 @@ function Budge() {
         }
         form.setFieldsValue(row);
         setBudgetTitle('编辑预算记录');
-        setIsModalType('common')
+        setIsModalType('common');
+        setRowId(row.id);
         operDialogFunc(true);  
     }
 
@@ -319,6 +323,7 @@ function Budge() {
                 let params;
                 if (values.scopeLevel === 0) {
                     params = {
+                        id:rowId,
                         type: values.type,
                         timeFormat: budgetMonthTime.current,
                         description: values.description,
@@ -328,6 +333,7 @@ function Budge() {
                 }
                 if (values.scopeLevel === 1) {
                     params = {
+                        id:rowId,
                         type: values.type,
                         timeFormat: budgetYearTime.current,
                         description: values.description,
