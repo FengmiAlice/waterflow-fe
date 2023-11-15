@@ -255,6 +255,15 @@ margin:10px 0;
   display: inline-block;
   margin-left:6px;
 }
+
+.echartsMoneyItem{
+    width:300px;
+    height:340px;
+    margin: 20px auto;
+}
+.analysisForm{
+    text-align: center;
+}
 /* 报告页面样式 */
 .pieContainer, .barContainer{
   display: flex;
@@ -268,7 +277,7 @@ margin:10px 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top:60px;
+    padding:60px 0;
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
@@ -299,6 +308,7 @@ margin:10px 0;
   display: flex;
   justify-content: space-between;
 }
+
 .echartsPieItem{
   width:300px;
   height:340px;

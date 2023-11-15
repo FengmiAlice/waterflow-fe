@@ -1,10 +1,11 @@
 import React, {useEffect,useState,useRef} from 'react';
 import ArgTable from '../../components/Table';
 import AsyncModal from '../../components/Modal';
+import ArgPieEcharts from '../../components/Echarts/pie';
 import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip} from 'antd';
 import moment from 'moment';
-import { getConsumeList, getConsumeTypeList, getPaymentTypeList, addTableRow, deleteTableRow, deleteTableRowArray, exportConsumeTable, addType } from '../../api/user';
+import { getConsumeList, getConsumeTypeList, getPaymentTypeList, addTableRow, deleteTableRow, deleteTableRowArray, exportConsumeTable, addType,addConsumeAnalysis } from '../../api/user';
 const {  RangePicker } = DatePicker; 
 const { Option } = Select;
 const {confirm} = Modal;
@@ -116,32 +117,32 @@ function Consume(){
     const [form] = Form.useForm();
     // 使用useForm创建新增支出类别form实例
     const [typeForm] = Form.useForm();
-
-    
     const consumeFooter = useState(true);//设置添加编辑支出类弹窗是否显示底部按钮
     const typeFooter = useState(true);//设置新类别弹窗是否显示底部按钮
     const [isModalVisible, setIsModalVisible] = useState(false)//设置是否显示添加编辑支出类弹窗
-    const [isTypeVisible,setTypeVisible] = useState(false);//设置新类别弹窗
+    const [isTypeVisible, setTypeVisible] = useState(false);//设置是否显示新类别弹窗
+    const [isAnalysisVisible, setAnalysisVisible] = useState(false);//设置是否显示分析弹窗
+    const [accountTitle,setAccountTitle] = useState('');//设置分析弹窗title值
     const [consumeTitle,setConsumeTitle] = useState('');//设置添加编辑弹窗title值
     const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
-
     const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
     const [totalAmount,setTotalAmounts] = useState(0);//设置表格总花费
     const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
-
-
+    const [words, setWords] = useState([]);//设置支出统计分析弹窗关键词字符串数组
+    const [moneyData, setMoneyData] = useState(null); // 设置各类支出金额占比饼图数据
+    const [timer,setTimer]=useState(null);//设置刷新各类支出金额占比饼图标识
     // 搜索条件的一些参数获取
-    const month = useRef();//设置月份
-    const year = useRef();//设置年份
-    const times = useRef();//设置时间选择
+    const month = useRef('');//设置月份
+    const year = useRef('');//设置年份
+    const times = useRef('');//设置时间选择
     const consumeType= useRef('');//设置搜索支出类别值
     const paymentType = useRef('');//设置搜索支付方式值
     const keyword = useRef('');//设置搜索关键字值
     const addConsumeType= useRef('');//设置新增支出记录类别值
     const addPaymentType= useRef('');//设置新增支出记录支付方式值
-
     const tableIds = useRef('consume_report');//获取支出列表table id
-    const tableRef=useRef(null);//设置表格的ref
+    const tableRef = useRef(null);//设置表格的ref
+    const searchWords = useRef('');//设置支出统计分析弹窗关键词
 
     let curTime= moment().format("YYYY-MM-DD");
     const consumeTime = useRef(curTime);//设置支出记录默认时间
@@ -151,18 +152,7 @@ function Consume(){
             month.current = moment().format("YYYY-MM");//初始化赋值当前月份
             getTypeList();
             getPaymentList();
-            window.addEventListener('resize', () =>{
-                if(document.activeElement.tagName === 'INPUT' ||
-                    document.activeElement.tagName === 'TEXTAREA'||document.activeElement.tagName === 'ant-picker-input') {
-                    window.setTimeout(() => {
-                        if('scrollIntoView' in document.activeElement) {
-                            document.activeElement.scrollIntoView();
-                        } else {
-                            document.activeElement.scrollIntoViewIfNeeded();
-                        }
-                    }, 0);
-                }
-            });
+
        },[])
  
     // 设置表格总花费方法
@@ -467,6 +457,15 @@ function Consume(){
             console.log('validate failed',error)
         }
     }
+    // 表格上方支出分析按钮事件
+    const handleAnalysis = () => { 
+        operAnalyFunc(true);
+        setIsModalType('special');
+        setWords([]);
+        searchWords.current = '';
+        setTimer(null);
+        setAccountTitle('暂无数据');
+    }
 
     // 设置新增编辑支出弹窗显示隐藏事件
     const operDialogFunc = (flag)=>{
@@ -476,7 +475,43 @@ function Consume(){
     const operTypeFunc = (flag)=>{
         setTypeVisible(flag)
     }
-
+    // 设置分析弹窗显示隐藏事件
+    const operAnalyFunc = (flag) => {
+        setAnalysisVisible(flag)
+    }
+    // 设置分析弹窗关键词输入事件
+    const wordsChange = (e) => {
+        searchWords.current = e.target.value;
+        let tempArray = e.target.value.split(' ');
+        //  console.log('字符串空格数组----',tempArray)
+        setWords(tempArray);
+    }
+      // 设置分析弹窗确认按钮事件
+    const closeConfirmAnalysis = () => {
+        operAnalyFunc(false);
+        setTimer(null);
+        setAccountTitle('暂无数据');
+    }
+    // 分析弹窗里的统计按钮事件
+    async function analysisCountClick() {
+        try {
+            let params = {
+                times: times.current,
+                month: month.current,
+                year: year.current,
+                typeId: consumeType.current,
+                paymentId: paymentType.current,
+                keywordList:words
+            }
+            const response = await addConsumeAnalysis(params)
+            // console.log('各类支出金额占比---', response)
+            setAccountTitle('各类支出金额占比图');
+            setTimer(new Date().getTime());
+            setMoneyData(response.data);
+        } catch (error) {
+             console.log(error)
+        }
+    }
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
@@ -551,6 +586,7 @@ function Consume(){
                 <Tooltip title="删除你勾选的所有记录，不要随便点哦，删除就没啦" placement="top">
                     <Button size="small" type="danger"  className="deleteConsumeBtn" onClick={handleDeleteRow} >删除 </Button>
                 </Tooltip>
+                <Button size="small" type="primary" className="addConsumeBtn"  onClick={handleAnalysis} >统计分析</Button>
                 <span className='totalStyle'>总计 {totalAmount}￥ </span>
 
                 <ArgTable 
@@ -642,6 +678,21 @@ function Consume(){
                             <TextArea row={1} />
                         </Form.Item>
                     </Form>      
+                </AsyncModal>
+
+                {/* 支出统计分析弹窗 */}
+                <AsyncModal  title="支出记录统计分析" modalType={isModalType} vis={isAnalysisVisible} isClosable={false} isFooter={null} operDialogFunc={operAnalyFunc} handleOk={closeConfirmAnalysis}>
+                        <Form name="analysisForm" labelCol={{span:4}}   autoComplete="off" >
+                            <Form.Item  label="关键词">
+                                <Input type="text" value={searchWords.current} allowClear onChange={(e)=>wordsChange(e)} placeholder='多个关键词使用空格隔开'/>
+                                <Button size="small" type="primary" onClick={analysisCountClick} >统计分析</Button>
+                            </Form.Item>
+                            <Form.Item>
+                            <div className="echartsMoneyItem">
+                                    <ArgPieEcharts  key={timer} id="consumeMoneyPie" title={accountTitle} sourceData={moneyData} />
+                            </div>
+                            </Form.Item>
+                        </Form>
                 </AsyncModal>
         </section>
     </div>

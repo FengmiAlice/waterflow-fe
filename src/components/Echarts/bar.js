@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect,useCallback} from "react";
 import * as echarts from 'echarts'
 /**
  *  @description：封装全局通用echarts 柱状图组件
@@ -12,12 +12,7 @@ import * as echarts from 'echarts'
 */
 const useBarEcharts = (props)=>{
     const {id,title,xData,seriesData,barType} = props;//legendData
-
-    useEffect(()=>{
-        drawMultipleBar();
-    })
-
-    function drawMultipleBar() {
+    const drawMultipleBar = useCallback(()=>{
         // console.log(barType)
         // let myBarChartDom = echarts.init(document.getElementById(id));
 
@@ -165,8 +160,12 @@ const useBarEcharts = (props)=>{
                 barChart.resize()
             })
         }
-    }
-
+    }, [id,title,xData,seriesData,barType]) 
+    
+    useEffect(()=>{
+        drawMultipleBar();
+    }, [drawMultipleBar])
+    
     return (
         <div id={id} title={title} style={{width:100+'%',height:100+'%'}}>
 

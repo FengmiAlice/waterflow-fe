@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect,useCallback} from "react";
 import * as echarts from 'echarts'
 /**
  *  @description：封装全局通用echarts 折线图组件
@@ -12,12 +12,7 @@ import * as echarts from 'echarts'
 */
 const useLineEcharts = (props)=>{
     const {id,title,xData,seriesData} = props;//legendData
-
-    useEffect(()=>{
-        drawMultipleLine();
-    })
-
-    function drawMultipleLine() {
+    const drawMultipleLine = useCallback(()=>{
         // let lineCharts = echarts.init(document.getElementById(id));
          // 获取DOM id
         let lineChartDom = document.getElementById(id);
@@ -135,8 +130,13 @@ const useLineEcharts = (props)=>{
         window.addEventListener('resize',()=>{         
             lineChart.resize()
         })
-    }
+    },[id,title,xData,seriesData]) 
 
+    useEffect(()=>{
+        drawMultipleLine();
+    },[drawMultipleLine])
+
+  
     return(
         <div id={id} title={title} style={{width:100+'%',height:100+'%'}}></div>
     )

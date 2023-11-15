@@ -1,6 +1,6 @@
 
 
-import React, {useEffect,useState,useRef, useCallback} from 'react';
+import React, {useEffect,useState,useRef} from 'react';
 import { DatePicker,Form,Button,Statistic,Select, message  } from 'antd';
 import AsyncModal from '../../components/Modal';
 import ArgPieEcharts from '../../components/Echarts/pie';
@@ -12,8 +12,8 @@ const { Option } = Select;
 
 function Report(){
      // 搜索条件的一些参数获取
-    const month = useRef();//设置月份
-    const year = useRef();//设置年份  
+    const month = useRef('');//设置月份
+    const year = useRef('');//设置年份  
 
     // const reportFooter = useState(false);
     const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
@@ -33,7 +33,6 @@ function Report(){
     const [barTitle,setBarTitle] = useState('');//最近半年收支柱状图title
     const [barXData,setBarXData] = useState([]);//最近半年收支柱状图x轴数据
     const [barData,setBarData] = useState([]);//最近半年收支柱状图series数据
-   
 
     const [multipleBarTitle,setMultipleBarTitle] = useState(''); //最近3个月支出柱状图title
     const [multipleBarLenData,setMultipleBarLenData] = useState([]); //最近3个月支出柱状图legend数据
@@ -64,11 +63,15 @@ function Report(){
         }
         ];
     //  获取月份日期值
-     function getMonthChange(date,dateString){
+    function getMonthChange(date, dateString) {
+          // 非空判断
+        dateString =dateString || '';
          month.current = dateString
      }
     //  获取年份日期值
-    const getYearChange = (date,dateString)=>{
+    const getYearChange = (date, dateString) => {
+         // 非空判断
+        dateString =dateString || '';
         year.current = dateString
     }
 
@@ -95,7 +98,6 @@ function Report(){
             return;
        }
         endDate.current = dateString;
-       
     }
  
     // 获取统计粒度
@@ -106,13 +108,37 @@ function Report(){
             statisticType.current = value;
         }
     }
-    //各类收入开支饼图柱状图搜索按钮事件
-    const buttonSearch = useCallback(
-        (params={
+
+    useEffect(()=>{
+        // 设置支出收入余额搜索参数默认值
+        let forwardYear = moment().subtract(1, 'year').format('YYYY-MM-DD');
+        startDate.current = forwardYear;
+        endDate.current = moment().format("YYYY-MM-DD");//格式化当前日期
+        
+        buttonLineSearch();
+        getLaterlyBarData();
+        getThreeConsumeData();
+        // 初始化调用buttonSearch内的各个函数，给各类收入、各类开支、各类支付方式饼图，概览数据赋值
+        getReportAccount();
+        getConsumePieData();
+        getConsumePieTypeData();
+        getIncomeData();
+
+    },[])
+    
+    // 各类收入、各类开支、各类支付方式饼图搜索按钮事件
+    function buttonSearch() {
+        getReportAccount();
+        getConsumePieData();
+        getConsumePieTypeData();
+        getIncomeData();
+    }
+    // 获取顶部概览填充数据
+    function getReportAccount() {
+        let params={
             month:month.current,
             year:year.current,
-        })=>{
-       
+        }
         getOverview(params).then((res)=>{
             if(res.data.success === true){
                 setConsumeAcount(res.data.obj.totalConsume);
@@ -122,26 +148,9 @@ function Report(){
                 setReportText(res.data.obj.report.text);
             }
         }).catch((error)=>{
-            console.log(error)
+            console.log('----',error)
         })
-        getConsumePieData();
-        getConsumePieTypeData();
-        getIncomeData();
-    },[])
-
-    useEffect(()=>{
-        // 设置支出收入余额搜索参数默认值
-        let forwardYear = moment().subtract(1, 'year').format('YYYY-MM-DD');
-        startDate.current = forwardYear;
-        endDate.current = moment().format("YYYY-MM-DD");//格式化当前日期
-
-        buttonSearch();
-        buttonLineSearch();
-        getLaterlyBarData();
-        getThreeConsumeData();
-      
-    },[buttonSearch])
-    
+    }
     // 获取各类开支占比图数据
     function getConsumePieData(){
         let params={

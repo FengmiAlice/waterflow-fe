@@ -23,8 +23,8 @@ function AccountReport() {
     }
     return (
         <div className="accountReportContainer">
-        <div className='echartsPieItem'>
-            <ArgPieEcharts id="consumeTypePie" title="各类财富余额占比图" sourceData={pieData} />
+            <div className='echartsPieItem'>
+                <ArgPieEcharts id="accountPie" title="各类财富余额占比图" sourceData={pieData} />
             </div>
         </div>
     )

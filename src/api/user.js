@@ -61,6 +61,13 @@ export function exportConsumeTable(pars,data){
 export function addType(data){
     return http('post','/api1/type/add',data)
 }
+// 支出页面统计分析
+export function addConsumeAnalysis(data) {
+    return http('post','/api1/report/statistics/pieChart/consumeSearchAmount',data)
+}
+
+
+
 /******************收入模块***********************************/
 // 收入页面获取收入列表信息
 export function getIncomeList(params){
