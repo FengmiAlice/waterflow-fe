@@ -436,7 +436,7 @@ function TestOne(props){
     return(
         <div>
             <header className='searchFormHeader'>
-                <Form  className="consumeWrap" layout="inline" name="Consume"  size="small"  >
+                <Form  className="testWrap" layout="inline" name="Consume"  size="small"  >
                         <Form.Item  label="日期选择" >
                             <RangePicker  onChange={getRangeValue}  disabledDate={
                             (current) => {

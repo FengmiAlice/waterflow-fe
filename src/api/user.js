@@ -66,8 +66,6 @@ export function addConsumeAnalysis(data) {
     return http('post','/api1/report/statistics/pieChart/consumeSearchAmount',data)
 }
 
-
-
 /******************收入模块***********************************/
 // 收入页面获取收入列表信息
 export function getIncomeList(params){
@@ -89,7 +87,7 @@ export function deleteIncomeTableRow(data){
 export function addIncomeType(data){
     return http('post','/api1/type/add',data)
 }
-/**************账户模块************************/
+/**************账户模块**************************************/
 
 // 账户页面获取账户统计信息
 export function getStatistics(params){
@@ -114,4 +112,25 @@ export function addAccount(data){
 // 转账
 export function transformAccount(data){
     return http('post','/api1/account/transform',data)
+}
+/***********************债务模块*****************************/
+// 获取债务列表
+export function getDebtList(params) { 
+    return http('get',"/api1/debt/list",params)
+}
+// 添加债务记录
+export function addDebt(data) {
+    return http('post',"/api1/debt/save",data)
+}
+// 删除债务记录
+export function deleteDebt(data) {
+    return http('post',"/api1/debt/delete",data)
+}
+// 添加偿还债务记录
+export function addDebtRecord(data) {
+    return http('post',"/api1/debt/repay/save",data)
+}
+// 偿还债务记录删除
+export function deleteDebtRecord(data) {
+    return http('post',"/api1/debt/repay/delete",data)
 }

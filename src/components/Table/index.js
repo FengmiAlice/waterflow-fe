@@ -23,7 +23,7 @@ const useAsyncTable = forwardRef( (props,ref) => {
     getId:传递table ID方法
     setTotalAmount:统计表格总花费金额方法
     */
-    const { owncolumns,queryAction,params, baseProps,initMethod,getRowKeys,setTotalAmount,tableType,} = props;
+    const { owncolumns,queryAction,params, baseProps,initMethod,getRowKeys,setTotalAmount,tableType} = props;
     const [initFlag,setInitFlag] = useState(false);//初始渲染标识
     const [selectedRowKeys,setSelectedRowKeys] = useState([]);//表格全选
     const [tableId,setTableId] = useState('');//设置表格动态id
@@ -107,7 +107,7 @@ const useAsyncTable = forwardRef( (props,ref) => {
     // useCallback缓存请求，减少不必要的渲染，优化组件性能
     const fetchDataWarp = useCallback(
         fetchData,
-        [params, state.pagination.current,state.pagination.pageSize]
+        [params, state.pagination.current, state.pagination.pageSize]
     )
     
     useEffect(() => {
@@ -123,6 +123,9 @@ const useAsyncTable = forwardRef( (props,ref) => {
             }
             if(tableType === 'account'){
                 setTableId('account_report')
+            }
+            if(tableType === 'debt'){
+                setTableId('debt_report')
             }
 
 
@@ -151,7 +154,7 @@ const useAsyncTable = forwardRef( (props,ref) => {
         if (res.data.success === true) {
             const list = res.data.page.list;
             const  totalcounts = res.data.page.total;
-            if(tableType === 'consume' || tableType === 'income'){
+            if(tableType === 'consume' || tableType === 'income' || tableType === 'debt'){
                 setTotalAmount(res.data.extraData.totalAmount);
             }
            

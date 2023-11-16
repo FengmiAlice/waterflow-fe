@@ -1,6 +1,6 @@
 
 import store from '../store'
-import { UserOutlined,HomeOutlined} from '@ant-design/icons';
+import { HomeOutlined} from '@ant-design/icons';//UserOutlined
 import AppLayout from '../components/AppLayout';
 
 const routes = [
@@ -27,7 +27,6 @@ const routes = [
                 path:'/index/budget',
                 meta:{
                     title:'预算',
-                    icon:<UserOutlined />
                 },
                 component: () => import('../views/user/Budget'),
             },
@@ -44,6 +43,21 @@ const routes = [
                     title:'收入',
                 },
                 component: () => import('../views/user/Income'),
+            },
+            {
+                path:'/index/debt',
+                meta:{
+                    title:'债务',
+                },
+                component: () => import('../views/user/Debt'),
+            },
+            {
+                path: '/index/debt/detail',
+                 hidden: true,
+                meta:{
+                    title:'债务详情',
+                },
+                component: () => import('../views/user/DebtDetail'),
             },
             {
                 path:'/index/account',

@@ -323,7 +323,7 @@ function Account(){
     return(
     <div>
         <header className='searchFormHeader'>
-            <Form  className="consumeWrap" layout="inline" name="Consume"  size="small">
+            <Form  className="accountWrap" layout="inline" name="Consume"  size="small">
                     <Form.Item label="类别" name="types" initialValue={''}>
                         <Select style={{ width: 120 }}  onChange={typeChange} allowClear={true} >
                                 {
