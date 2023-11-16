@@ -1,6 +1,7 @@
 import React, {useEffect,useState,useRef} from 'react';
 import { getBudgetList, getConsumeTypeList, getBudgetStatistic,addType,addBudget,deleteBudget,closeBudget} from '../../api/user';
-import { DatePicker,Form,Button,Input,message,Select,Space,Tooltip,Modal } from 'antd';
+import { DatePicker, Form, Button, Input, message, Select, Space, Tooltip, Modal } from 'antd';
+import {debounce} from '../../utils/appTools';
 import ArgTable from '../../components/Table';
 import AsyncModal from '../../components/Modal';
 import moment from 'moment';
@@ -314,6 +315,8 @@ function Budge() {
         operDialogFunc(true);  
     }
 
+    // 使用防抖函数来限制表单提交的频率
+    const debounceBudgetSubmit = debounce(handleSubmit,1000);
     // 添加或编辑预算弹窗确定按钮提交事件
     async function handleSubmit() {
         try {
@@ -412,6 +415,8 @@ function Budge() {
             console.log(error)
         })
     }
+    // 设置搜索防抖功能
+     const debounceBudgetSearch = debounce(buttonSearch,1000);
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
@@ -456,7 +461,7 @@ function Budge() {
                             <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                         </Form.Item>
                         <Form.Item  >
-                            <Button size="small" type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
+                            <Button size="small" type="primary" className="searchBtn" onClick={debounceBudgetSearch} > 搜索</Button>
                         </Form.Item>
                 </Form>
             </header>
@@ -478,7 +483,7 @@ function Budge() {
                     
                 />         
                 {/* 添加或编辑预算记录弹窗 */}
-                <AsyncModal title={budgetTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={budgetFooter} operDialogFunc={operDialogFunc} handleOk={handleSubmit}>
+                <AsyncModal title={budgetTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={budgetFooter} operDialogFunc={operDialogFunc} handleOk={debounceBudgetSubmit}>
                     <section >
                         <Form name="budgetForm"  form={form} initialValues={{'scopeLevel':0,'timeFormat':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                             <Form.Item  label="预算类别" >

@@ -5,6 +5,7 @@ import {useNavigate} from 'react-router-dom';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal} from 'antd';
 import moment from 'moment';
 import { getDebtList, addDebt, getPaymentTypeList, deleteDebt } from '../../api/user';
+import {debounce} from '../../utils/appTools';
 const { Option } = Select;
 const {confirm} = Modal;
 const {TextArea} = Input;
@@ -234,7 +235,8 @@ function Debt() {
             }
         });
     }
-
+    // 使用防抖函数来限制表单提交的频率
+    const debounceDebtSubmit = debounce(handleSubmit, 1000);
     // 添加编辑债务记录弹窗信息确认操作
     async function handleSubmit() {
         try {
@@ -275,6 +277,8 @@ function Debt() {
         setIsModalVisible(flag);
     }
 
+     // 设置搜索防抖功能
+     const debounceDebtSearch = debounce(buttonSearch,1000);
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
@@ -307,7 +311,7 @@ function Debt() {
                         <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                     </Form.Item>
                     <Form.Item  >
-                        <Button size="small" type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
+                        <Button size="small" type="primary" className="searchBtn" onClick={debounceDebtSearch} > 搜索</Button>
                     </Form.Item>
             </Form>
         </header>
@@ -330,7 +334,7 @@ function Debt() {
                 />                           
                 {/* getRowKeys={handleKeys} */}
                 {/* 添加或编辑支出记录弹窗 */}
-                <AsyncModal title={debtTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={debtFooter} operDialogFunc={operDialogFunc} handleOk={handleSubmit}>
+                <AsyncModal title={debtTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={debtFooter} operDialogFunc={operDialogFunc} handleOk={debounceDebtSubmit}>
                     <section >
                         <Form   name="debtForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
                             <Form.Item style={{clear:'both'}} label="创建时间" name="time"  

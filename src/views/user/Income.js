@@ -5,6 +5,7 @@ import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
 import moment from 'moment';
 import { getIncomeList,getConsumeTypeList, getPaymentTypeList,addIncomeTableRow,deleteIncomeTableRow,exportIncomeTable,addIncomeType} from '../../api/user';
+import {debounce} from '../../utils/appTools';
 const { Option } = Select;
 const {confirm} = Modal;
 const {TextArea} = Input;
@@ -331,6 +332,8 @@ function Income(){
            
         });
     }
+     // 使用防抖函数来限制表单提交的频率
+    const debounceIncomeSubmit = debounce(handleSubmit, 1000);
     // 添加收入记录弹窗信息确认操作
     async function handleSubmit() {
         try {
@@ -407,10 +410,14 @@ function Income(){
     const operDialogFunc = (flag)=>{
         setIsModalVisible(flag);
     }
+
     // 设置新增类别弹窗显示隐藏事件
     const operTypeFunc = (flag)=>{
         setIsTypeVisible(flag);
     }
+
+    // 设置搜索防抖功能
+    const debounceIncomeSearch = debounce(buttonSearch,1000);
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
@@ -471,7 +478,7 @@ function Income(){
                         <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                     </Form.Item>
                     <Form.Item  >
-                        <Button size="small" type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
+                        <Button size="small" type="primary" className="searchBtn" onClick={debounceIncomeSearch} > 搜索</Button>
                     </Form.Item>
             </Form>
         </header>
@@ -510,7 +517,7 @@ function Income(){
                 /> */}
 
                  {/* 添加或编辑收入记录弹窗 */}
-                 <AsyncModal title={incomeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={incomeFooter} operDialogFunc={operDialogFunc} handleOk={handleSubmit}>
+                 <AsyncModal title={incomeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={incomeFooter} operDialogFunc={operDialogFunc} handleOk={debounceIncomeSubmit}>
                  <section >
                       <Form   name="incomeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                           <Form.Item  label="收入类别">

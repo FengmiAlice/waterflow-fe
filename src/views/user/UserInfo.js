@@ -4,6 +4,7 @@ import { UserOutlined, LockOutlined,ExclamationCircleOutlined } from '@ant-desig
 import {useNavigate} from 'react-router-dom';
 import { updateUserInfo } from '../../api/login';
 import { useStore } from '../../hooks/storeHook';
+import {debounce} from '../../utils/appTools';
 import { Modal} from 'antd';
 const {confirm} = Modal;
 
@@ -15,6 +16,8 @@ function UserInfo(){
     form.setFieldsValue(userInfo)
 
     const navigate = useNavigate();
+    // 使用防抖函数来限制表单提交的频率
+     const debounceUserInfoSubmit = debounce(handleSubmit,1000);
     // 提交表单数据
     function handleSubmit(){
         confirm({
@@ -108,7 +111,7 @@ function UserInfo(){
                         <Input  type="text" placeholder="请输入邮箱，用于找回密码，选填"  />
                     </Form.Item>
                     <Form.Item  >
-                        <Button type="primary" className="userInfoBtn" onClick={handleSubmit}>提交</Button>
+                        <Button type="primary" className="userInfoBtn" onClick={debounceUserInfoSubmit}>提交</Button>
                         <Button type="primary" className="backBtn" onClick={handleBack}>返回</Button>
                     </Form.Item>
                 </Form>

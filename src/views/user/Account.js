@@ -4,6 +4,7 @@ import AsyncModal from '../../components/Modal';
 import {useNavigate} from 'react-router-dom';
 import { Form,Button,Input,Select,Space,message,Modal} from 'antd';
 import { getStatistics,getAccountList,deleteAccountById,addAccount,transformAccount} from '../../api/user';
+import {debounce} from '../../utils/appTools';
 const { Option } = Select;
 const {confirm} = Modal;
 const {TextArea} = Input;
@@ -220,7 +221,8 @@ function Account(){
             }
         });
     }
-
+    // 使用防抖函数来限制表单提交的频率
+    const debounceAccountSubmit = debounce(handleSubmit, 1000);
     // 添加账户弹窗信息确认操作
     async function handleSubmit() {
         try {
@@ -307,6 +309,8 @@ function Account(){
         }
     }
 
+     // 设置搜索防抖功能
+     const debounceAccountSearch = debounce(buttonSearch,1000);
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
@@ -339,7 +343,7 @@ function Account(){
                         <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                     </Form.Item>
                     <Form.Item  >
-                        <Button size="small" type="primary" onClick={buttonSearch} > 搜索</Button>
+                        <Button size="small" type="primary" onClick={debounceAccountSearch} > 搜索</Button>
                     </Form.Item>
             </Form>
         </header>
@@ -365,7 +369,7 @@ function Account(){
             />                           
             {/* getRowKeys={handleKeys} */}
             {/* 添加或编辑账户弹窗 */}
-            <AsyncModal title={accountTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOk={handleSubmit}>
+            <AsyncModal title={accountTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOk={debounceAccountSubmit}>
                 <section >
                     <Form   name="accountForm"  form={form}  labelCol={{span:5}}  size="middle"  autoComplete="off">
                         <Form.Item label="名称" name="name"   rules={[ {required:true,message:'请输入账户名称'}, ]}  >

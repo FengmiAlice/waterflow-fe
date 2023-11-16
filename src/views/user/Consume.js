@@ -6,7 +6,8 @@ import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip} from 'antd';
 import moment from 'moment';
 import { getConsumeList, getConsumeTypeList, getPaymentTypeList, addTableRow, deleteTableRow, deleteTableRowArray, exportConsumeTable, addType,addConsumeAnalysis } from '../../api/user';
-const {  RangePicker } = DatePicker; 
+import {debounce} from '../../utils/appTools';
+const { RangePicker } = DatePicker; 
 const { Option } = Select;
 const {confirm} = Modal;
 const {TextArea} = Input;
@@ -425,7 +426,8 @@ function Consume(){
             console.log(error)
         })
     }
-
+    // 使用防抖函数来限制表单提交的频率
+    const debounceConsumeSubmit = debounce(handleSubmit, 1000);
     // 添加支出记录弹窗信息确认操作
     async function handleSubmit() {
         try {
@@ -512,6 +514,8 @@ function Consume(){
              console.log(error)
         }
     }
+      // 设置搜索防抖功能
+     const debounceConsumeSearch = debounce(buttonSearch,1000);
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
@@ -572,7 +576,7 @@ function Consume(){
                         <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                     </Form.Item>
                     <Form.Item  >
-                        <Button size="small" type="primary" className="searchBtn" onClick={buttonSearch} > 搜索</Button>
+                        <Button size="small" type="primary" className="searchBtn" onClick={debounceConsumeSearch} > 搜索</Button>
                     </Form.Item>
             </Form>
         </header>
@@ -602,7 +606,7 @@ function Consume(){
                 />                           
 
                 {/* 添加或编辑支出记录弹窗 */}
-                <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOk={handleSubmit}>
+                <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOk={debounceConsumeSubmit}>
                     <section >
                         <Form   name="consumeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                             <Form.Item  label="支出类别" >

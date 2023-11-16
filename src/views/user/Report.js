@@ -7,6 +7,7 @@ import ArgPieEcharts from '../../components/Echarts/pie';
 import ArgBarEcharts from '../../components/Echarts/bar';
 import ArgLineEcharts from '../../components/Echarts/line';
 import {getOverview,getConsumePie,getConsumePieType,getIncome,getConsumeIncomeLately,getThreeConsumeLately,getLineConsumeData} from '../../api/report';
+import {debounce} from '../../utils/appTools';
 import moment from 'moment';
 const { Option } = Select;
 
@@ -126,6 +127,8 @@ function Report(){
 
     },[])
     
+   // 设置搜索防抖功能
+    const debounceReportSearch = debounce(buttonSearch,1000);
     // 各类收入、各类开支、各类支付方式饼图搜索按钮事件
     function buttonSearch() {
         getReportAccount();
@@ -255,6 +258,7 @@ function Report(){
         })
     }
 
+    const debounceLineSearch = debounce(buttonLineSearch, 1000);
     // 支出收入余额折线图搜索按钮
     function buttonLineSearch(){
         let params={
@@ -309,7 +313,7 @@ function Report(){
                         <DatePicker format='YYYY'    picker="year"  onChange={getYearChange} />
                     </Form.Item>
                     <Form.Item  >
-                        <Button type="primary" size="small" className="reportSearchBtn" onClick={buttonSearch} > 搜索</Button>
+                        <Button type="primary" size="small" className="reportSearchBtn" onClick={debounceReportSearch} > 搜索</Button>
                         <Button type="primary" size="small" className="reportSearchBtn" onClick={detailReport}> 详细报告</Button>
                     </Form.Item>
             </Form>
@@ -367,7 +371,7 @@ function Report(){
                             </Select>
                         </Form.Item>
                         {/* defaultValue={statisticType.current} */}
-                        <Button type="primary" size="small" className="reportSearchLineBtn" onClick={buttonLineSearch} > 搜索</Button>
+                        <Button type="primary" size="small" className="reportSearchLineBtn" onClick={debounceLineSearch} > 搜索</Button>
                     </Form.Item>
                 </Form>
                 <div className='echartsLineItem'>
