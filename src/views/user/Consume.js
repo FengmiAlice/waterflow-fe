@@ -274,6 +274,7 @@ function Consume(){
         typeForm.resetFields();
        
     }
+    const debounceTypeSubmit = debounce(handleTypeSubmit, 500);
     // 添加类别弹窗提交按钮事件
     async function handleTypeSubmit() {
         try {
@@ -301,7 +302,6 @@ function Consume(){
             console.log('validate failed',err)
         }
     }
-
 
     // 添加支出按钮事件
     function handleAdd(){
@@ -668,7 +668,7 @@ function Consume(){
                 </AsyncModal>
                 
                 {/* 添加新类别弹窗 */}
-                <AsyncModal title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operTypeFunc} handleOk={handleTypeSubmit}>
+                <AsyncModal title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operTypeFunc} handleOk={debounceTypeSubmit}>
                     <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
                         <Form.Item  label="名称" name="typeName"  
                             rules={[

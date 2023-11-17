@@ -276,6 +276,8 @@ function Account(){
         navigate('/index/accountReport')
     }
 
+    // 设置转账按钮防抖功能
+    const debounceTurnSubmit = debounce(handleTurnSubmit,1000);
     // 转账弹窗信息确认操作
     async function handleTurnSubmit() {
           try {
@@ -390,7 +392,7 @@ function Account(){
                 </section>
             </AsyncModal>
             {/* 转账弹窗 */}
-            <AsyncModal title="转出余额?"  modalType={softModal} vis={softVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operSoftDialogFunc} handleOk={handleTurnSubmit}>
+            <AsyncModal title="转出余额?"  modalType={softModal} vis={softVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operSoftDialogFunc} handleOk={debounceTurnSubmit}>
                 <section >
                     <Form   name="softForm"  form={softForm}  labelCol={{span:5}}  size="middle"  autoComplete="off">
                         <Form.Item label="转出账户" name='fromId' rules={[{ required: true, message: '请选择转出账户' },]}>

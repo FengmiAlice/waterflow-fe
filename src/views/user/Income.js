@@ -378,6 +378,7 @@ function Income(){
         setIsModalType('special');
         typeForm.resetFields();
     }
+    const debounceTypeSubmit = debounce(handleTypeSubmit,1000);
     // 添加新类别弹窗提交按钮事件
     async function handleTypeSubmit() {
         try {
@@ -581,7 +582,7 @@ function Income(){
                  </AsyncModal>
 
               {/* 新增和编辑收入页面添加类别弹窗 */}
-              <AsyncModal  title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={incomeTypeFooter}  operDialogFunc={operTypeFunc} handleOk={handleTypeSubmit}>
+              <AsyncModal  title='添加类型' modalType={isModalType} vis={isTypeVisible} isClosable={false} isFooter={incomeTypeFooter}  operDialogFunc={operTypeFunc} handleOk={debounceTypeSubmit}>
                     <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
                         <Form.Item  label="名称" name="name"  
                             rules={[

@@ -361,6 +361,7 @@ function Budge() {
             console.log('validate failed',error)
         }
     }
+    const debounceTypeSubmit = debounce(handleTypeSubmit,1000);
     // 添加新类别弹窗确定按钮事件
     async function handleTypeSubmit() {
               try {
@@ -530,7 +531,7 @@ function Budge() {
                     </section>
                 </AsyncModal>
                  {/* 添加新类别弹窗 */}
-                <AsyncModal title='添加类型' modalType={isSpecialType} vis={isTypeVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operTypeFunc} handleOk={handleTypeSubmit}>
+                <AsyncModal title='添加类型' modalType={isSpecialType} vis={isTypeVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operTypeFunc} handleOk={debounceTypeSubmit}>
                     <Form  name="typeForm" form={typeForm}  labelCol={{span:4}}  size="middle"  autoComplete="off">
                         <Form.Item  label="名称" name="typeName"  
                             rules={[
