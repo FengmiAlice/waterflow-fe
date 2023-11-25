@@ -494,10 +494,8 @@ function Income(){
                 <ArgTable 
                     ref={tableRef}
                     tableType={'income'}
-                
                     owncolumns = {columns()}
                     queryAction={getIncomeList}
-                    baseProps={{ rowKey: record => record.id }}
                     params = {searchData} 
                     getRowKeys={handleKeys}
                     initMethod={initFunc}
@@ -549,7 +547,7 @@ function Income(){
                                     {required:true,message:'请输入详情'},
                                     
                                 ]} >
-                              <Input  placeholder="购买了什么，或者去哪玩了" allowClear   />
+                              <Input  placeholder="请输入详情" allowClear   />
                           </Form.Item>
                           <Form.Item label="付款方式" name="paymentId"   
                                 rules={[

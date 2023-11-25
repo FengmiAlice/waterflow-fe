@@ -91,7 +91,7 @@ function Debt() {
     const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
     const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
     const [totalAmount,setTotalAmounts] = useState(0);//设置表格总花费
-    // const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
+    const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
    
     // 搜索条件的一些参数获取
     const status = useRef('');//设置搜索状态值
@@ -101,7 +101,8 @@ function Debt() {
     const createTime = useRef(currentTime);//添加新债务记录创建时间初始值
     const endTime = useRef('');//添加新债务记录结束时间
     const [isAddFlag, setAddFlag] = useState(false)//标识是否是新增
-    
+    const navigate = useNavigate();
+
     //设置债务状态列表
     const selectedStatusArray=[
         {name:'全部',value:''},
@@ -127,10 +128,12 @@ function Debt() {
     function setMount(k){   
         setTotalAmounts(k);
     }
+
     // 设置表格选择的数据
-    // function handleKeys(val){
-    //     setRowKeys(val)
-    // }
+    function handleDebtKeys(val){
+        setRowKeys(val)
+    }
+
     // 设置查询条件初始化
     function initFunc(){
         // console.log('父组件执行初始化')  
@@ -143,6 +146,7 @@ function Debt() {
             status.current = value;
         }
     }
+
     // 获取支出方式列表
     function getPaymentList(){
         getPaymentTypeList().then( (res) => {
@@ -154,23 +158,27 @@ function Debt() {
             console.log(error)
         })
     }
+
     // 债务记录输入框事件
     function inputChange(e){
         keyword.current = e.target.value
     }
-      // 添加债务记录弹窗创建时间事件
+
+    // 添加债务记录弹窗创建时间事件
     function getTimeChange(date, dateString) {
         // 非空判断
         dateString =dateString || '';
         createTime.current = dateString;
     }
-     // 添加债务记录弹窗结束时间事件
-      function getEndTimeChange(date, dateString) {
+
+    // 添加债务记录弹窗结束时间事件
+    function getEndTimeChange(date, dateString) {
         // 非空判断
         dateString =dateString || '';
         endTime.current = dateString;
     }
-    // 添加支出按钮事件
+
+    // 添加债务记录按钮事件
     function handleAdd(){
         // 置空表单数据
         setAddFlag(true);
@@ -185,7 +193,7 @@ function Debt() {
         operDialogFunc(true);  
     }
 
-    // 编辑支出记录按钮操作
+    // 编辑债务记录按钮操作
     function handleEdit(row) {
         // console.log('债务记录编辑',row)
         setAddFlag(false);
@@ -198,17 +206,21 @@ function Debt() {
         row.time = moment(row.time);
         row.endTime = moment(row.endTime);
         // 将表单数据设置为表格行数据
-        form.setFieldsValue(row) 
+        form.setFieldsValue(row); 
         setDebtTitle('编辑债务记录');
         setIsModalType('common');
         setRowId(row.id);
         operDialogFunc(true);
     }
-    let navigate = useNavigate();
+   
     // 查看偿还债务详情按钮操作
     function handleLook(row) {
-        // url传参navigate(`/index/debt/detail?id=${id}`) 
-        navigate('/index/debt/detail',{state:{row}} );//路由事件跳转，传的参数放入state中,相当于sessionStorage
+        // console.log('债务查看---', row);
+        let rowParam = JSON.stringify(row);
+        // // searchParams传参
+        // navigate(`/index/debt/detail?row=${rowParam}`);
+        // state传参、路由事件跳转，传的参数放入state中,相当于sessionStorage
+        navigate('/index/debt/detail',{state:{rowParam}} );
     }
 
     // 删除表格中的一行数据
@@ -235,6 +247,7 @@ function Debt() {
             }
         });
     }
+    
     // 使用防抖函数来限制表单提交的频率
     const debounceDebtSubmit = debounce(handleSubmit, 1000);
     // 添加编辑债务记录弹窗信息确认操作
@@ -326,14 +339,13 @@ function Debt() {
                     tableType={'debt'}            
                     owncolumns = {columns()}
                     queryAction={getDebtList}
-                    baseProps={{ rowKey: record => record.id }}
                     params = {searchData} 
-                    
+                    getRowKeys={handleDebtKeys}
                     initMethod={initFunc}
                     setTotalAmount = {setMount}
                 />                           
-                {/* getRowKeys={handleKeys} */}
-                {/* 添加或编辑支出记录弹窗 */}
+               
+                {/* 添加或编辑债务记录弹窗 */}
                 <AsyncModal title={debtTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={debtFooter} operDialogFunc={operDialogFunc} handleOk={debounceDebtSubmit}>
                     <section >
                         <Form   name="debtForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >

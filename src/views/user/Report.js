@@ -81,7 +81,7 @@ function Report(){
         let startVal = moment(date).valueOf();
         let endVal= new Date(endDate.current).getTime();
         if(startVal > endVal){
-            lineForm.setFieldsValue({startField:null});
+            lineForm.setFieldsValue({'startField':null});
             startDate.current = "";
             message.info('请选择小于结束日期的开始日期');
             return; 
@@ -93,7 +93,7 @@ function Report(){
         let startVal= new Date(startDate.current).getTime();
         let endVal = moment(date).valueOf();
        if(endVal < startVal){
-            lineForm.setFieldsValue({endField:null});
+            lineForm.setFieldsValue({'endField':null});
             endDate.current = '';
             message.info('请选择大于开始日期的结束日期');
             return;
@@ -112,9 +112,9 @@ function Report(){
 
     useEffect(()=>{
         // 设置支出收入余额搜索参数默认值
-        let forwardYear = moment().subtract(1, 'year').format('YYYY-MM-DD');
+        let forwardYear = moment().subtract(1, 'year').format('YYYY-MM-DD');//开始日期与结束日期相差1年
         startDate.current = forwardYear;
-        endDate.current = moment().format("YYYY-MM-DD");//格式化当前日期
+        endDate.current = moment().format("YYYY-MM-DD");//结束日期
         
         buttonLineSearch();
         getLaterlyBarData();
@@ -151,7 +151,7 @@ function Report(){
                 setReportText(res.data.obj.report.text);
             }
         }).catch((error)=>{
-            console.log('----',error)
+            console.log(error)
         })
     }
     // 获取各类开支占比图数据

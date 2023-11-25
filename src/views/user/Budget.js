@@ -121,7 +121,8 @@ function Budge() {
     const [isModalVisible, setIsModalVisible] = useState(false);//设置是否显示添加编辑预算弹窗
     const [isTypeVisible, setTypeVisible] = useState('');//设置添加新类别弹窗是否显示
     const [isSpecialType, setIsSpecialType] = useState('');//设置添加新类别弹窗输出类型
-
+    const [rowKeys, setRowKeys] = useState([]);//设置表格选择的数据
+    
     useEffect(() => {
             getBudgetTypeList();//获取预算类别数据
             getStatistics();//获取表格上方的统计金额数据
@@ -416,6 +417,11 @@ function Budge() {
             console.log(error)
         })
     }
+    // 设置表格选择的数据
+    function handleKeys(val){
+        setRowKeys(val)
+    }
+
     // 设置搜索防抖功能
      const debounceBudgetSearch = debounce(buttonSearch,1000);
     // 根据筛选条件搜索表格数据
@@ -478,8 +484,8 @@ function Budge() {
                     tableType={'budget'}
                     owncolumns = {columns()}
                     queryAction={getBudgetList}
-                    baseProps={{ rowKey: record => record.id }}
-                    params = {searchData} 
+                    params={searchData}
+                    getRowKeys={handleKeys}
                     initMethod={initFunc}
                     
                 />         
@@ -525,7 +531,7 @@ function Budge() {
                                 <Input type="number" placeholder="越精确越好，可以写小数"    />
                             </Form.Item>
                             <Form.Item label="详情" name="description" >
-                                <Input  placeholder="购买了什么，或者去哪玩了"  allowClear  />
+                                <Input  placeholder="请输入详情"  allowClear  />
                             </Form.Item>
                         </Form>
                     </section>

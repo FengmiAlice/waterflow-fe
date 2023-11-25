@@ -598,13 +598,12 @@ function Consume(){
                     tableType={'consume'}            
                     owncolumns = {columns()}
                     queryAction={getConsumeList}
-                    baseProps={{ rowKey: record => record.id }}
                     params = {searchData} 
                     getRowKeys={handleKeys}
                     initMethod={initFunc}
                     setTotalAmount = {setMount}
                 />                           
-
+                {/* baseProps={{ rowKey: record => record.id }} */}
                 {/* 添加或编辑支出记录弹窗 */}
                 <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOk={debounceConsumeSubmit}>
                     <section >
@@ -635,7 +634,7 @@ function Consume(){
                                         {required:true,message:'请输入详情'},
                                         
                                     ]} >
-                                <Input  placeholder="购买了什么，或者去哪玩了" allowClear   />
+                                <Input  placeholder="请输入详情" allowClear   />
                             </Form.Item>
                             <Form.Item label="付款方式" name="paymentId"   
                                     rules={[

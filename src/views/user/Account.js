@@ -87,7 +87,7 @@ function Account(){
     const [totalOther,settotalOther ] = useState(0);//统计账户其他
     const [totalAmount, setTotalAmount] = useState(0);//统计账户总计
     const [typeDisabled, setTypeDisabled] = useState(false);//编辑账户时是否设置禁选
-    // const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
+    const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
     const [softModal, setSoftModal] = useState('');//设置转账弹窗输出类型
     const [softVisible, setSoftVisible] = useState(false);//设置转账弹窗是否显示
     const [userArray, setUserArray] = useState([]);//设置支出账户列表
@@ -108,15 +108,16 @@ function Account(){
  
 
     // 设置表格选择的数据
-    // function handleKeys(val){
-    //     setRowKeys(val)
-    // }
-    
+    function handleAccountKeys(val){
+        setRowKeys(val)
+    }
+
     // 设置查询条件初始化
     function initFunc(){
         // console.log('父组件执行初始化')
         
     }
+
     // 获取账户统计数据
     function getStatisticData(){
         let params={};
@@ -153,7 +154,8 @@ function Account(){
     function typeChange(value, current) {
         accountType.current = value;
     }
-     // 获取账户类别值
+
+    // 获取账户类别值
     function addTypeChange(value, current) {
         addAccountType.current = value;
     }
@@ -172,6 +174,7 @@ function Account(){
         setRowId('');
         operDialogFunc(true);  
     }
+    
     // 编辑账户按钮操作
     function handleEdit(row) {
         // console.log('编辑账户',row)
@@ -363,8 +366,8 @@ function Account(){
                 tableType={'account'}            
                 owncolumns = {columns()}
                 queryAction={getAccountList}
-                baseProps={{ rowKey: record => record.id }}
-                params = {searchData} 
+                params={searchData} 
+                getRowKeys={handleAccountKeys}
                 initMethod={initFunc}
          
                 

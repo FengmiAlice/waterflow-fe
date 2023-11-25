@@ -24,6 +24,7 @@ export function deleteBudget(data) {
 export function closeBudget(data) {
     return http('post','/api1/budget/close',data)
 }
+
 /********************支出模块*********************************/
 // 支出页面获取支出列表信息
 export function getConsumeList(params){
@@ -87,8 +88,8 @@ export function deleteIncomeTableRow(data){
 export function addIncomeType(data){
     return http('post','/api1/type/add',data)
 }
-/**************账户模块**************************************/
 
+/**************账户模块**************************************/
 // 账户页面获取账户统计信息
 export function getStatistics(params){
     return http('get','/api1/account/statistic',params)
@@ -113,6 +114,7 @@ export function addAccount(data){
 export function transformAccount(data){
     return http('post','/api1/account/transform',data)
 }
+
 /***********************债务模块*****************************/
 // 获取债务列表
 export function getDebtList(params) { 
@@ -133,4 +135,50 @@ export function addDebtRecord(data) {
 // 偿还债务记录删除
 export function deleteDebtRecord(data) {
     return http('post',"/api1/debt/repay/delete",data)
+}
+
+/***********************理财模块*****************************/
+// 获取理财统计数据
+export function getInvestedStatistic(params) {
+    return http('get', "/api1/invest/statistic", params)
+}
+// 获取理财列表数据
+export function getInvestedList(params) {
+    return http('get', "/api1/invest/list", params)
+}
+// 添加理财记录
+export function addInvested(data) {
+    return http('post', "/api1/invest/save", data)
+}
+// 删除理财记录
+export function deleteInvested(data) {
+    return http('post', "/api1/invest/delete", data)
+}
+// 添加单条投资明细买入或卖出
+export function addSingleInvest(data) {
+    return http('post', "/api1/invest/single/save", data)
+}
+// 删除单条投资明细买入或卖出
+export function deleteSingleInvest(data) {
+    return http('post', "/api1/invest/single/delete", data)
+}
+// 添加分红记录
+export function addDividend(data) {
+    return http('post', "/api1/invest/addDivident", data)
+}
+// 更新收益
+export function updateInvestCurrent(data) {
+    return http('post', "/api1/invest/updateCurrent", data)
+}
+// 各类投资金额占比图数据
+export function typePieInvestAmount(params) {
+    return http('get', '/api1/report/statistics/pieChart/investAmount', params)
+}
+// 各类投入余额占比图数据
+export function typePieInvestCurrent(params) {
+    return http('get', '/api1/report/statistics/pieChart/investCurrent', params)
+}
+// 各类投资金额、累计收益等占比折线数据
+export function typeLineInvestAmount(data) {
+    return http('post', '/api1/report/statistics/multiData/invest', data)
 }

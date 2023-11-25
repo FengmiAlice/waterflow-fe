@@ -44,6 +44,13 @@ const routes = [
                 },
                 component: () => import('../views/user/Income'),
             },
+               {
+                path:'/index/invest',
+                meta:{
+                    title:'理财',
+                },
+                component: () => import('../views/user/Invest'),
+            },
             {
                 path:'/index/debt',
                 meta:{
@@ -73,6 +80,14 @@ const routes = [
                     title: '账户统计',
                 },
                 component: () => import('../views/user/AccountReport'),
+            },
+             {
+                path: '/index/investReport',
+                hidden: true,
+                meta:{
+                    title: '理财统计',
+                },
+                component: () => import('../views/user/InvestReport'),
             },
             {
                 path:'/index/report',

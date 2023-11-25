@@ -331,6 +331,32 @@ margin:10px 0;
 .reportSearchLineBtn{
   margin-left:6px;
 }
+/* 理财页面样式 */
+.investRedBtn{
+    color: #fff;
+    background-color: #f56c6c;
+    border-color:#f56c6c;
+    border-radius: 4px;
+}
+.investProfitBtn{
+    color: #fff;
+    background-color: #e6a23c;
+    border-color: #e6a23c;
+}
+.investReportContainer{
+     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:60px 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+
+}
+.echartsInvestPieItem{
+    width:600px;
+    height:400px;
+}
 
 
 

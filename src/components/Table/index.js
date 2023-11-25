@@ -22,12 +22,13 @@ const useAsyncTable = forwardRef( (props,ref) => {
     getRowKeys:全选选中的数据方法
     getId:传递table ID方法
     setTotalAmount:统计表格总花费金额方法
+    tableType:表格类型,
     */
-    const { owncolumns,queryAction,params, baseProps,initMethod,getRowKeys,setTotalAmount,tableType} = props;
+    const { owncolumns,queryAction,params,initMethod,getRowKeys,setTotalAmount,tableType,title} = props;
     const [initFlag,setInitFlag] = useState(false);//初始渲染标识
     const [selectedRowKeys,setSelectedRowKeys] = useState([]);//表格全选
-    const [tableId,setTableId] = useState('');//设置表格动态id
-
+    const [tableId, setTableId] = useState('');//设置表格动态id
+    
     // 使用ref时，useImperativeHandle 暴露给父组件实例值和方法
     useImperativeHandle(ref, () => ({
         resetPage
@@ -128,7 +129,6 @@ const useAsyncTable = forwardRef( (props,ref) => {
                 setTableId('debt_report')
             }
 
-
             // const tableIds = document.getElementById(tableId)
             // // 传递给父组件table id
             // getId(tableIds)
@@ -179,12 +179,13 @@ const useAsyncTable = forwardRef( (props,ref) => {
     return (
         <Table
             id={tableId}
+            title={title}
             rowSelection={rowSelection}
             columns={owncolumns}
             pagination={state.pagination}
             dataSource={state.dataSource}
             onChange={handleTableChange}
-            {...baseProps}
+            rowKey={record => record.id}
         />
     )
 })
