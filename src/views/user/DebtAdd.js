@@ -93,9 +93,9 @@ function DebtAdd() {
     }
 
     return (
-        <div>
-            <section className='debtSection'>
-                <Form   name="debtForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
+        <div className='debtSectionContainer'>
+            <section className='recordFormBox'>
+                <Form   name="debtForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:4}}  size="middle"  autoComplete="off" >
                     <Form.Item style={{clear:'both'}} label="创建时间" name="time"  
                             rules={[
                                 {required:true,message:'请选择创建时间'},

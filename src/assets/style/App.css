@@ -357,15 +357,24 @@ margin:10px 0;
     width:600px;
     height:400px;
 }
-.debtSection{
-    width:80%;
-    margin:20px auto;
+.debtSectionContainer{
+    width:90%;
+    margin:20px 0;
 }
 .debtSubmitBtnItem{
     text-align: center;
 }
 .backBtn{
     margin-left:20px;
+}
+.recordFormBox{
+    margin:40px 0;
+}
+.recordTableBox{
+   margin: 0 0 60px 60px;
+}
+.recordBtn{
+    text-align: right;
 }
 
 

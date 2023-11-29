@@ -114,58 +114,58 @@ function DebtRecordEdit() {
     }
 
     return (
-        <div>
-               <section >
-                        <Form   name="debtEditRecordForm"  form={debtEditRecordForm} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
-                            <Form.Item style={{clear:'both'}} label="时间" name="time"  
-                                    rules={[
-                                        {required:true,message:'请选择时间'},
-                                        
-                                    ]}  >
-                                    <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getSingleTimeChange} placeholder="请选择创建时间" allowClear />
-                            </Form.Item>
-                            <Form.Item style={{clear:'both'}} label="所属债务" name="debtName"  >
-                                    <Input disabled />
-                            </Form.Item>
-                                <Form.Item label="详情" name="description"   
-                                    rules={[
-                                        {required:true,message:'请输入详情描述'},
-                                        
-                                    ]} >
-                                <Input   allowClear   />
-                            </Form.Item>
-                            <Form.Item label="偿还金额(收债为正)" name="amount"   
-                                    rules={[
-                                        {required:true,message:'请输入'},
-                                        
-                                    ]} >
-                                <Input  type="number" allowClear   />
-                            </Form.Item>
-                            <Form.Item label="支付方式" name="paymentId"   
-                                    rules={[
-                                        {required:true,message:'请选择支付方式'},
-                                        
-                                    ]}> 
-                                <Select  placeholder="请选择" allowClear>
-                                        {
-                                        paymentTypeArray.map( (item,index,arr) => (
-                                        
-                                            <Option key={item.id} value={item.id}>
-                                                {item.name}
-                                            </Option>
-                                        ))
-                                        }
-                                </Select>
-                            </Form.Item>
-                            <Form.Item label="补充描述" name="note" >
-                                <TextArea row={1} placeholder="请输入附加描述" />
-                            </Form.Item>
-                            <Form.Item className='debtSubmitBtnItem'>
-                                <Button type="primary" onClick={debounceDebtRecordSubmit}>提交</Button>
-                                <Button className='backBtn' onClick={backGo}>返回</Button>
-                            </Form.Item>
-                        </Form>
-                    </section>
+        <div className='debtSectionContainer'>
+            <section className='recordFormBox'>
+                <Form   name="debtEditRecordForm"  form={debtEditRecordForm} initialValues={{'time':moment()}} labelCol={{span:4}}  size="middle"  autoComplete="off" >
+                    <Form.Item style={{clear:'both'}} label="时间" name="time"  
+                            rules={[
+                                {required:true,message:'请选择时间'},
+                                
+                            ]}  >
+                            <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getSingleTimeChange} placeholder="请选择创建时间" allowClear />
+                    </Form.Item>
+                    <Form.Item style={{clear:'both'}} label="所属债务" name="debtName"  >
+                            <Input disabled />
+                    </Form.Item>
+                        <Form.Item label="详情" name="description"   
+                            rules={[
+                                {required:true,message:'请输入详情描述'},
+                                
+                            ]} >
+                        <Input   allowClear   />
+                    </Form.Item>
+                    <Form.Item label="偿还金额(收债为正)" name="amount"   
+                            rules={[
+                                {required:true,message:'请输入'},
+                                
+                            ]} >
+                        <Input  type="number" allowClear   />
+                    </Form.Item>
+                    <Form.Item label="支付方式" name="paymentId"   
+                            rules={[
+                                {required:true,message:'请选择支付方式'},
+                                
+                            ]}> 
+                        <Select  placeholder="请选择" allowClear>
+                                {
+                                paymentTypeArray.map( (item,index,arr) => (
+                                
+                                    <Option key={item.id} value={item.id}>
+                                        {item.name}
+                                    </Option>
+                                ))
+                                }
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label="补充描述" name="note" >
+                        <TextArea row={1} placeholder="请输入附加描述" />
+                    </Form.Item>
+                    <Form.Item className='debtSubmitBtnItem'>
+                        <Button type="primary" onClick={debounceDebtRecordSubmit}>提交</Button>
+                        <Button className='backBtn' onClick={backGo}>返回</Button>
+                    </Form.Item>
+                </Form>
+            </section>
         </div>
     )
  }

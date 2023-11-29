@@ -239,9 +239,9 @@ function DebtEdit() {
     }
 
     return (
-        <div>
-            <section className='debtSection'>
-                <Form name="debtForm" form={form} labelCol={{ span: 6 }} size="middle" autoComplete="off" >
+        <div className='debtSectionContainer'>
+            <section className='recordFormBox'>
+                <Form name="debtForm" form={form} labelCol={{ span: 4 }} size="middle" autoComplete="off" >
                     <Form.Item style={{ clear: 'both' }} label="创建时间" name="time"
                             rules={[
                                 {required:true,message:'请选择创建时间'},
@@ -321,7 +321,11 @@ function DebtEdit() {
                         <Button className='backBtn' onClick={backGo}>返回</Button>
                     </Form.Item>
                 </Form>
-                <Button onClick={handleSingleDebt} type="primary"> 添加新偿还记录</Button>
+            </section> 
+            <section className='recordTableBox'>
+                <div className='recordBtn'>
+                    <Button onClick={handleSingleDebt} type="primary"> 添加新偿还记录</Button>
+                </div>
                 <ArgTable 
                         ref={debtRecordRef}
                         title={recordTitle}
@@ -330,7 +334,7 @@ function DebtEdit() {
                         queryAction={getDebtList} 
                         getRowKeys={handleRecordKeys}
                         initMethod={initFunc} />
-            </section> 
+            </section>
         </div>
     )
 }

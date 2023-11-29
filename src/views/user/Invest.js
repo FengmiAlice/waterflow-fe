@@ -647,25 +647,25 @@ function Invest() {
                 {/* baseProps={{ rowKey: record => record.id }} */}
             </section>
             {/* 添加理财记录抽屉 */}
-                <Drawer
-                        title={investTitle}
-                        placement="right"
-                        closable={false}
-                        onClose={onClose}
-                        visible={investOpen}
-                        width={520}
-                        bodyStyle={{ padding: 40,}}
-                       
-                        extra={
-                            <Space>
-                                <Button onClick={debounceInvestSubmit} type="primary"> 提交</Button>
-                                <Button onClick={handleRed} className="investRedBtn">分红</Button>
-                                {isAddFlag ===false && <Button onClick={handleProfit} className="investProfitBtn">更新收益</Button>}
-                            </Space>
-                        }
-                    >
+            <Drawer
+                    title={investTitle}
+                    placement="right"
+                    closable={false}
+                    onClose={onClose}
+                    visible={investOpen}
+                    width={520}
+                    bodyStyle={{ padding: 40,}}
+                    
+                    extra={
+                        <Space>
+                            <Button onClick={debounceInvestSubmit} type="primary"> 提交</Button>
+                            <Button onClick={handleRed} className="investRedBtn">分红</Button>
+                            {isAddFlag ===false && <Button onClick={handleProfit} className="investProfitBtn">更新收益</Button>}
+                        </Space>
+                    }
+                >
 
-                    <Form  name="investForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
+                <Form  name="investForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
                         <Form.Item style={{clear:'both'}} label="创建时间" name="time"  
                                     rules={[
                                         {required:true,message:'请选择创建时间'},
@@ -700,121 +700,117 @@ function Invest() {
                 {isAddFlag === false && <Button onClick={handleSingleInvest} type="primary"> 买入或卖出</Button>}
            
                 {isAddFlag === false && 
-                    <ArgTable 
-                        ref={singleInvestRef}
-                        title={defaultTitle}
-                        tableType={'invest'}            
-                        owncolumns = {singleInvestColumns()}
-                        queryAction={getInvestedList} 
-                        getRowKeys={handleSingleKeys}
-                        initMethod={initFunc} />
+                <ArgTable 
+                    ref={singleInvestRef}
+                    title={defaultTitle}
+                    tableType={'invest'}            
+                    owncolumns = {singleInvestColumns()}
+                    queryAction={getInvestedList} 
+                    getRowKeys={handleSingleKeys}
+                    initMethod={initFunc} />
                 }
-                
-                   
-                    {/* 嵌套买入卖出抽屉 */}
-                    <Drawer
-                        title={investSingleTitle}
-                        placement="right"
-                        closable={false}
-                        onClose={onChildrenClose}
-                        visible={investChildrenOpen}
-                        width={320}
-                        forceRender
-                        bodyStyle={{ padding: 40, }}
-                        extra={
-                            <Space>
-                                <Button onClick={debounceInvestSingleSubmit} type="primary"> 提交</Button>
-                            </Space>
-                        }>
+                {/* 嵌套买入卖出抽屉 */}
+                <Drawer
+                    title={investSingleTitle}
+                    placement="right"
+                    closable={false}
+                    onClose={onChildrenClose}
+                    visible={investChildrenOpen}
+                    width={320}
+                    forceRender
+                    bodyStyle={{ padding: 40, }}
+                    extra={
+                        <Space>
+                            <Button onClick={debounceInvestSingleSubmit} type="primary"> 提交</Button>
+                        </Space>
+                    }>
 
-                        <Form  name="investSingleForm"  form={investSingleForm} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
-                            <Form.Item style={{clear:'both'}} label="时间" name="time"  
-                                        rules={[
-                                            {required:true,message:'请选择时间'},
-                                            
-                                        ]}  >
-                                        <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getInvestTimeChange} placeholder="请选择创建时间" allowClear />
-                                </Form.Item>
-                                <Form.Item label="投资项目" name="investName"  >
-                                    <Input disabled />
-                                    {/* value={inputVal} */}
-                                </Form.Item>
-                                <Form.Item label="操作" name="type" >
-                                    <Select placeholder="请选择"
-                                        options={[{ value: 1, label: '买入' }, { value: 0, label: '卖出' }]} allowClear />
-                                </Form.Item>
-                                <Form.Item label="金额" name="amount"  rules={[  {required:true,message:'请输入金额'}, ]}>
-                                        <Input type="number"  />
-                                </Form.Item>
-                                <Form.Item label="支付方式" name="paymentId" >
-                                        <Select   onChange={paymentSingleTypeChange} placeholder="请选择" allowClear>
-                                                    {
-                                                    paymentTypeArray.map( (item,index,arr) => (
-                                                    
-                                                        <Option key={item.id} value={item.id}>
-                                                            {item.name}
-                                                        </Option>
-                                                    ))
-                                                    }
-                                            </Select>
-                                </Form.Item>
-                                <Form.Item label="补充描述" name="note" >
-                                        <TextArea row={1} placeholder="请输入附加描述" />
-                                </Form.Item>
-                        </Form>
-                    </Drawer>
-
-
-                    {/* 添加分红记录弹窗 */}
-                    <AsyncModal title='添加分红记录' modalType={isModalType} vis={isRedVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operRedFunc} handleOk={debounceRedSubmit}>
-                        <Form  name="redForm" form={redForm} initialValues={{'time':moment(),"dividentType":"CASH_OUT"}} labelCol={{span:4}}  size="middle"  autoComplete="off">
-                            <Form.Item  label="分红方式" name="dividentType"  rules={[
-                                            {required:true,message:'请选择分红方式'},
-                                            
-                                        ]} 
-                                >
-                                <Select  style={{ width: 100+'%' }} onChange={redChange} placeholder="请选择分红方式" allowClear >
+                    <Form  name="investSingleForm"  form={investSingleForm} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
+                        <Form.Item style={{clear:'both'}} label="时间" name="time"  
+                                    rules={[
+                                        {required:true,message:'请选择时间'},
+                                        
+                                    ]}  >
+                                    <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getInvestTimeChange} placeholder="请选择创建时间" allowClear />
+                            </Form.Item>
+                            <Form.Item label="投资项目" name="investName"  >
+                                <Input disabled />
+                                {/* value={inputVal} */}
+                            </Form.Item>
+                            <Form.Item label="操作" name="type" >
+                                <Select placeholder="请选择"
+                                    options={[{ value: 1, label: '买入' }, { value: 0, label: '卖出' }]} allowClear />
+                            </Form.Item>
+                            <Form.Item label="金额" name="amount"  rules={[  {required:true,message:'请输入金额'}, ]}>
+                                    <Input type="number"  />
+                            </Form.Item>
+                            <Form.Item label="支付方式" name="paymentId" >
+                                    <Select   onChange={paymentSingleTypeChange} placeholder="请选择" allowClear>
+                                                {
+                                                paymentTypeArray.map( (item,index,arr) => (
+                                                
+                                                    <Option key={item.id} value={item.id}>
+                                                        {item.name}
+                                                    </Option>
+                                                ))
+                                                }
+                                        </Select>
+                            </Form.Item>
+                            <Form.Item label="补充描述" name="note" >
+                                    <TextArea row={1} placeholder="请输入附加描述" />
+                            </Form.Item>
+                    </Form>
+                </Drawer>
+                {/* 添加分红记录弹窗 */}
+                <AsyncModal title='添加分红记录' modalType={isModalType} vis={isRedVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operRedFunc} handleOk={debounceRedSubmit}>
+                    <Form  name="redForm" form={redForm} initialValues={{'time':moment(),"dividentType":"CASH_OUT"}} labelCol={{span:4}}  size="middle"  autoComplete="off">
+                        <Form.Item  label="分红方式" name="dividentType"  rules={[
+                                        {required:true,message:'请选择分红方式'},
+                                        
+                                    ]} 
+                            >
+                            <Select  style={{ width: 100+'%' }} onChange={redChange} placeholder="请选择分红方式" allowClear >
+                                    {
+                                        redTypeArray.map( (item) => (
+                                            <Option key={item.value} value={item.value}>
+                                                {item.name}
+                                            </Option>
+                                        ))
+                                    }
+                            </Select>
+                    </Form.Item>
+                    {
+                        redType === 'CASH_OUT' && ( <Form.Item label="分红日期" name="time"  
+                                    rules={[
+                                        {required:true,message:'请选择分红日期'},
+                                        
+                                    ]}  >
+                                    <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getRedTimeChange} placeholder="请选择分红日期" allowClear />
+                    </Form.Item>) }
+                    {
+                        redType === 'CASH_OUT' && (<Form.Item label="接收账户" name="paymentId"   rules={[ {required:true,message:'请选择'}, ]}> 
+                                <Select   onChange={paymentTypeChange} placeholder="请选择" allowClear>
                                         {
-                                            redTypeArray.map( (item) => (
-                                                <Option key={item.value} value={item.value}>
-                                                    {item.name}
-                                                </Option>
-                                            ))
+                                        paymentTypeArray.map( (item,index,arr) => (
+                                        
+                                            <Option key={item.id} value={item.id}>
+                                                {item.name}
+                                            </Option>
+                                        ))
                                         }
                                 </Select>
-                        </Form.Item>
-                        {
-                            redType === 'CASH_OUT' && ( <Form.Item label="分红日期" name="time"  
-                                        rules={[
-                                            {required:true,message:'请选择分红日期'},
-                                            
-                                        ]}  >
-                                        <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getRedTimeChange} placeholder="请选择分红日期" allowClear />
-                        </Form.Item>) }
-                        {
-                            redType === 'CASH_OUT' && (<Form.Item label="接收账户" name="paymentId"   rules={[ {required:true,message:'请选择'}, ]}> 
-                                    <Select   onChange={paymentTypeChange} placeholder="请选择" allowClear>
-                                            {
-                                            paymentTypeArray.map( (item,index,arr) => (
-                                            
-                                                <Option key={item.id} value={item.id}>
-                                                    {item.name}
-                                                </Option>
-                                            ))
-                                            }
-                                    </Select>
-                        </Form.Item>)}
-                       {redType === 'CASH_OUT' && ( <Form.Item label="金额" name="amount"  ><Input type="number" placeholder="请输入" allowClear /></Form.Item>)}
-                       {redType === 'RE_INVEST' &&(<Form.Item label="最新余额" name="latestAmount"  ><Input type="number" placeholder="请输入" allowClear /></Form.Item>)}
-                        </Form>      
-                    </AsyncModal>
-                    {/* 更新收益弹窗 */}
-                    <AsyncModal title='更新收益' modalType={isProfitType} vis={isProfitVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operProfitFunc} handleOk={debounceProfitSubmit}>
-                        <Form name="profitForm" form={profitForm} labelCol={{ span: 4 }} size="middle" autoComplete="off">
-                            <Form.Item label="最新余额" name="newCurrent"  ><Input type="number" placeholder="请输入" allowClear /></Form.Item>
-                        </Form>
-                    </AsyncModal>
-                </Drawer>
+                    </Form.Item>)}
+                    {redType === 'CASH_OUT' && ( <Form.Item label="金额" name="amount"  ><Input type="number" placeholder="请输入" allowClear /></Form.Item>)}
+                    {redType === 'RE_INVEST' &&(<Form.Item label="最新余额" name="latestAmount"  ><Input type="number" placeholder="请输入" allowClear /></Form.Item>)}
+                    </Form>      
+                </AsyncModal>
+                {/* 更新收益弹窗 */}
+                <AsyncModal title='更新收益' modalType={isProfitType} vis={isProfitVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operProfitFunc} handleOk={debounceProfitSubmit}>
+                    <Form name="profitForm" form={profitForm} labelCol={{ span: 4 }} size="middle" autoComplete="off">
+                        <Form.Item label="最新余额" name="newCurrent"  ><Input type="number" placeholder="请输入" allowClear /></Form.Item>
+                    </Form>
+                </AsyncModal>
+            </Drawer>
         </div>
     )
     

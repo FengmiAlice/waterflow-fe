@@ -226,123 +226,122 @@ function Debt() {
     <div>
         <header className='searchFormHeader'>
             <Form  className="debtWrap" layout="inline" name="Debt"  size="small"  >
-                    <Form.Item  label="状态">
-                        <Select  style={{ width: 190 }} onChange={statusChange} placeholder="请选择" allowClear >
-                                {
-                                    selectedStatusArray.map( (item) => (
-                                    
-                                        <Option key={item.value} value={item.value}>
-                                            {item.name}
-                                        </Option>
-                                    ))
-                                }
-                        </Select>
-                    </Form.Item>
-                    <Form.Item  label="关键字" >
-                        <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
-                    </Form.Item>
-                    <Form.Item  >
-                        <Button size="small" type="primary" className="searchBtn" onClick={debounceDebtSearch} > 搜索</Button>
-                    </Form.Item>
+                <Form.Item  label="状态">
+                    <Select  style={{ width: 190 }} onChange={statusChange} placeholder="请选择" allowClear >
+                            {
+                                selectedStatusArray.map( (item) => (
+                                
+                                    <Option key={item.value} value={item.value}>
+                                        {item.name}
+                                    </Option>
+                                ))
+                            }
+                    </Select>
+                </Form.Item>
+                <Form.Item  label="关键字" >
+                    <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
+                </Form.Item>
+                <Form.Item  >
+                    <Button size="small" type="primary" className="searchBtn" onClick={debounceDebtSearch} > 搜索</Button>
+                </Form.Item>
             </Form>
         </header>
         <section>
-              
-                <Button size="small" type="primary" className="addConsumeBtn"  onClick={handleAdd} >添加新债务记录</Button>
-                {/* <Button size="small" type="danger"  className="deleteConsumeBtn" onClick={handleDeleteRow} >删除 </Button> */}
-                <span className='totalStyle'>总计 {totalAmount}￥ </span>
+            <Button size="small" type="primary" className="addConsumeBtn"  onClick={handleAdd} >添加新债务记录</Button>
+            {/* <Button size="small" type="danger"  className="deleteConsumeBtn" onClick={handleDeleteRow} >删除 </Button> */}
+            <span className='totalStyle'>总计 {totalAmount}￥ </span>
 
-                <ArgTable 
-                    ref={tableRef}
-                    tableType={'debt'}            
-                    owncolumns = {columns()}
-                    queryAction={getDebtList}
-                    params = {searchData} 
-                    getRowKeys={handleDebtKeys}
-                    initMethod={initFunc}
-                    setTotalAmount = {setMount}
-                />                           
-               
-                {/* 添加或编辑债务记录弹窗 */}
-                {/* <AsyncModal title={debtTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={debtFooter} operDialogFunc={operDialogFunc} handleOk={debounceDebtSubmit}>
-                    <section >
-                        <Form   name="debtForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
-                            <Form.Item style={{clear:'both'}} label="创建时间" name="time"  
-                                    rules={[
-                                        {required:true,message:'请选择创建时间'},
+            <ArgTable 
+                ref={tableRef}
+                tableType={'debt'}            
+                owncolumns = {columns()}
+                queryAction={getDebtList}
+                params = {searchData} 
+                getRowKeys={handleDebtKeys}
+                initMethod={initFunc}
+                setTotalAmount = {setMount}
+            />                           
+            
+            {/* 添加或编辑债务记录弹窗 */}
+            {/* <AsyncModal title={debtTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={debtFooter} operDialogFunc={operDialogFunc} handleOk={debounceDebtSubmit}>
+                <section >
+                    <Form   name="debtForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
+                        <Form.Item style={{clear:'both'}} label="创建时间" name="time"  
+                                rules={[
+                                    {required:true,message:'请选择创建时间'},
+                                    
+                                ]}  >
+                                <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getTimeChange} placeholder="请选择创建时间" allowClear />
+                        </Form.Item>
+                        <Form.Item style={{clear:'both'}} label="结束时间" name="endTime"  
+                                rules={[
+                                    {required:true,message:'请选择结束时间'},
+                                    
+                                ]}  >
+                                <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getEndTimeChange} placeholder="请选择结束时间" allowClear />
+                        </Form.Item>
+                            <Form.Item label="详情" name="description"   
+                                rules={[
+                                    {required:true,message:'请输入详情描述'},
+                                    
+                                ]} >
+                            <Input   allowClear   />
+                        </Form.Item>
+                        <Form.Item label="相关人" name="owner"   
+                                rules={[
+                                    {required:true,message:'请输入相关人'},
+                                    
+                                ]} >
+                            <Input   allowClear   />
+                        </Form.Item>
+                            <Form.Item label="金额(借出为正)" name="amount"   
+                                rules={[
+                                    {required:true,message:'请输入金额'},
+                                    
+                                ]} >
+                            <Input  type="number" allowClear   />
+                        </Form.Item>
+                            <Form.Item label="已还金额" name="repay"   
+                                rules={[
+                                    {required:true,message:'请输入已偿还金额'},
+                                    
+                                ]} >
+                            <Input type="number"  allowClear   />
+                        </Form.Item>
+                        <Form.Item label="付款方式" name="paymentId"   
+                                rules={[
+                                    {required:true,message:'请选择付款方式'},
+                                    
+                                ]}> 
+                            <Select  placeholder="请选择付款方式" allowClear>
+                                    {
+                                    paymentTypeArray.map( (item,index,arr) => (
+                                    
+                                        <Option key={item.id} value={item.id}>
+                                            {item.name}
+                                        </Option>
+                                    ))
+                                    }
+                            </Select>
+                        </Form.Item>
+                        <Form.Item  label="状态" name="status">
+                            <Select  placeholder="请选择" allowClear >
+                                    {
+                                        chooseStatusArray.map( (item) => (
                                         
-                                    ]}  >
-                                    <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getTimeChange} placeholder="请选择创建时间" allowClear />
-                            </Form.Item>
-                            <Form.Item style={{clear:'both'}} label="结束时间" name="endTime"  
-                                    rules={[
-                                        {required:true,message:'请选择结束时间'},
-                                        
-                                    ]}  >
-                                    <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getEndTimeChange} placeholder="请选择结束时间" allowClear />
-                            </Form.Item>
-                             <Form.Item label="详情" name="description"   
-                                    rules={[
-                                        {required:true,message:'请输入详情描述'},
-                                        
-                                    ]} >
-                                <Input   allowClear   />
-                            </Form.Item>
-                            <Form.Item label="相关人" name="owner"   
-                                    rules={[
-                                        {required:true,message:'请输入相关人'},
-                                        
-                                    ]} >
-                                <Input   allowClear   />
-                            </Form.Item>
-                             <Form.Item label="金额(借出为正)" name="amount"   
-                                    rules={[
-                                        {required:true,message:'请输入金额'},
-                                        
-                                    ]} >
-                                <Input  type="number" allowClear   />
-                            </Form.Item>
-                             <Form.Item label="已还金额" name="repay"   
-                                    rules={[
-                                        {required:true,message:'请输入已偿还金额'},
-                                        
-                                    ]} >
-                                <Input type="number"  allowClear   />
-                            </Form.Item>
-                            <Form.Item label="付款方式" name="paymentId"   
-                                    rules={[
-                                        {required:true,message:'请选择付款方式'},
-                                        
-                                    ]}> 
-                                <Select  placeholder="请选择付款方式" allowClear>
-                                        {
-                                        paymentTypeArray.map( (item,index,arr) => (
-                                        
-                                            <Option key={item.id} value={item.id}>
+                                            <Option key={item.value} value={item.value}>
                                                 {item.name}
                                             </Option>
                                         ))
-                                        }
-                                </Select>
-                            </Form.Item>
-                            <Form.Item  label="状态" name="status">
-                                <Select  placeholder="请选择" allowClear >
-                                        {
-                                            chooseStatusArray.map( (item) => (
-                                            
-                                                <Option key={item.value} value={item.value}>
-                                                    {item.name}
-                                                </Option>
-                                            ))
-                                        }
-                                </Select>
-                            </Form.Item>
-                            <Form.Item label="补充描述" name="note" >
-                                <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
-                            </Form.Item>
-                        </Form>
-                    </section>
-                </AsyncModal> */}
+                                    }
+                            </Select>
+                        </Form.Item>
+                        <Form.Item label="补充描述" name="note" >
+                            <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
+                        </Form.Item>
+                    </Form>
+                </section>
+            </AsyncModal> */}
         </section>
     </div>
     )
