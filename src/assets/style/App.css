@@ -357,6 +357,16 @@ margin:10px 0;
     width:600px;
     height:400px;
 }
+.debtSection{
+    width:80%;
+    margin:20px auto;
+}
+.debtSubmitBtnItem{
+    text-align: center;
+}
+.backBtn{
+    margin-left:20px;
+}
 
 
 

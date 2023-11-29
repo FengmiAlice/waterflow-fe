@@ -59,12 +59,36 @@ const routes = [
                 component: () => import('../views/user/Debt'),
             },
             {
-                path: '/index/debt/detail',
-                 hidden: true,
+                 path: '/index/debt/debtAdd',
+                  hidden: true,
                 meta:{
-                    title:'债务详情',
+                    title:'债务新增',
                 },
-                component: () => import('../views/user/DebtDetail'),
+                component: () => import('../views/user/DebtAdd'),
+            },
+            {
+                 path: '/index/debt/debtEdit',
+                  hidden: true,
+                meta:{
+                    title:'债务编辑',
+                },
+                component: () => import('../views/user/DebtEdit'),
+            },
+            {
+                path: '/index/debt/debtRecordAdd',
+                hidden: true,
+                meta:{
+                    title:'债务偿还记录新增',
+                },
+                component: () => import('../views/user/DebtRecordAdd'),
+            },
+            {
+                path: '/index/debt/debtRecordEdit',
+                hidden: true,
+                meta:{
+                    title:'债务偿还记录编辑',
+                },
+                component: () => import('../views/user/DebtRecordEdit'),
             },
             {
                 path:'/index/account',

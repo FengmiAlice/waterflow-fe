@@ -1,14 +1,12 @@
 import React, {useEffect,useState,useRef} from 'react';
 import ArgTable from '../../components/Table';
-import AsyncModal from '../../components/Modal';
 import {useNavigate} from 'react-router-dom';
-import { DatePicker,Form,Button,Input,Select,Space,message,Modal} from 'antd';
-import moment from 'moment';
-import { getDebtList, addDebt, getPaymentTypeList, deleteDebt } from '../../api/user';
+import {Form,Button,Input,Select,Space,message,Modal} from 'antd';
+import { getDebtList, deleteDebt } from '../../api/user';
 import {debounce} from '../../utils/appTools';
 const { Option } = Select;
 const {confirm} = Modal;
-const {TextArea} = Input;
+
 
 function Debt() {
     // 表格列设置
@@ -62,12 +60,10 @@ function Debt() {
                         <Space size="middle" >
                             <div className='largeBtnBox'>
                                 <Button size="small" type="primary" onClick={() => handleEdit(record)}>编辑</Button>
-                                <Button size="small" type="primary"  onClick={ ()=> handleLook(record)}>查看</Button>
                                 <Button size="small" type="danger"   onClick={ ()=> handleDelete(record)}>删除</Button>
                             </div>
                             <div className="miniBtnBox">
                                 <Button size="small" type="text"  className='miniPrimaryBtn' onClick={ ()=> handleEdit(record)}>编辑</Button>
-                                <Button size="small" type="text"  onClick={ ()=> handleLook(record)}>查看</Button>
                                 <Button size="small" type="text" danger onClick={() => handleDelete(record)}>删除</Button>
                             </div>
                         </Space>
@@ -82,14 +78,6 @@ function Debt() {
             keyword:'',
     }
     const [searchData,setSearchData] = useState(initSearchData);//设置初始传参列表
-    const [paymentTypeArray,setPaymentTypeArray] = useState([]);//设置支付方式列表
-    // 使用useForm创建新增支出记录form实例
-    const [form] = Form.useForm();
-    const debtFooter = useState(true);//设置是否显示债务记录弹窗底部按钮
-    const [isModalVisible, setIsModalVisible] = useState(false)//设置是否显示添加编辑债务记录弹窗
-    const [debtTitle,setDebtTitle] = useState('');//设置添加编辑债务记录弹窗title值
-    const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
-    const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
     const [totalAmount,setTotalAmounts] = useState(0);//设置表格总花费
     const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
    
@@ -97,10 +85,6 @@ function Debt() {
     const status = useRef('');//设置搜索状态值
     const keyword = useRef('');//设置搜索关键字值
     const tableRef = useRef(null);//设置表格的ref
-    let currentTime= moment().format("YYYY-MM-DD");
-    const createTime = useRef(currentTime);//添加新债务记录创建时间初始值
-    const endTime = useRef('');//添加新债务记录结束时间
-    const [isAddFlag, setAddFlag] = useState(false)//标识是否是新增
     const navigate = useNavigate();
 
     //设置债务状态列表
@@ -111,19 +95,23 @@ function Debt() {
         {name:'呆账',value:2},
         {name:'坏账',value:3},
     ]
-    const chooseStatusArray=[
-        {name:'全部',value:''},
-        {name:'偿还中',value:'偿还中'},
-        {name:'已偿还',value:'已偿还'},
-        {name:'呆账',value:'呆账'},
-        {name:'坏账',value:'坏账'},
-    ]
+   
 
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
        useEffect(()=>{
-               getPaymentList();
+            //    getPaymentList();
        },[])
- 
+    
+     // 获取支出方式列表
+    // function getPaymentList(){
+    //     getPaymentTypeList().then( (res) => {
+    //         if(res.data.success === true){
+    //             setPaymentTypeArray(res.data.page.list)
+    //         }
+    //     }).catch((error)=>{
+    //         console.log(error)
+    //     })
+    // }
     // 设置表格总花费方法
     function setMount(k){   
         setTotalAmounts(k);
@@ -138,6 +126,7 @@ function Debt() {
     function initFunc(){
         // console.log('父组件执行初始化')  
     }
+
     // 状态选择事件
     function statusChange(value){
         if(value === undefined){
@@ -147,80 +136,51 @@ function Debt() {
         }
     }
 
-    // 获取支出方式列表
-    function getPaymentList(){
-        getPaymentTypeList().then( (res) => {
-            if(res.data.success === true){
-                setPaymentTypeArray(res.data.page.list)
-             
-            }
-        }).catch((error)=>{
-            console.log(error)
-        })
-    }
-
     // 债务记录输入框事件
     function inputChange(e){
         keyword.current = e.target.value
     }
 
-    // 添加债务记录弹窗创建时间事件
-    function getTimeChange(date, dateString) {
-        // 非空判断
-        dateString =dateString || '';
-        createTime.current = dateString;
-    }
-
-    // 添加债务记录弹窗结束时间事件
-    function getEndTimeChange(date, dateString) {
-        // 非空判断
-        dateString =dateString || '';
-        endTime.current = dateString;
-    }
-
     // 添加债务记录按钮事件
-    function handleAdd(){
+    function handleAdd() {
+        navigate('/index/debt/debtAdd');
         // 置空表单数据
-        setAddFlag(true);
-        if (isAddFlag === true) {
-            // console.log(isAddFlag,1111)
-            createTime.current = moment().format("YYYY-MM-DD")
-        }
-        form.resetFields();
-        setDebtTitle('添加债务记录');
-        setIsModalType('common');
-        setRowId('');
-        operDialogFunc(true);  
+        // setAddFlag(true);
+        // if (isAddFlag === true) {
+        //     // console.log(isAddFlag,1111)
+        //     createTime.current = moment().format("YYYY-MM-DD")
+        // }
+        // form.resetFields();
+        // setDebtTitle('添加债务记录');
+        // setIsModalType('common');
+        // setRowId('');
+        // operDialogFunc(true);  
     }
 
     // 编辑债务记录按钮操作
     function handleEdit(row) {
-        // console.log('债务记录编辑',row)
-        setAddFlag(false);
-        if (isAddFlag === false) {
-            //  console.log(isAddFlag,2222)
-            // createTime.current = row.timeStr;
-            // endTime.current = row.endTimeStr;
-        }
-        // 将返回的时间转换为moment格式用于编辑显示在时间组件上
-        row.time = moment(row.time);
-        row.endTime = moment(row.endTime);
-        // 将表单数据设置为表格行数据
-        form.setFieldsValue(row); 
-        setDebtTitle('编辑债务记录');
-        setIsModalType('common');
-        setRowId(row.id);
-        operDialogFunc(true);
-    }
-   
-    // 查看偿还债务详情按钮操作
-    function handleLook(row) {
-        // console.log('债务查看---', row);
+        // console.log('债务记录编辑', row);
         let rowParam = JSON.stringify(row);
-        // // searchParams传参
-        // navigate(`/index/debt/detail?row=${rowParam}`);
+        // searchParams传参
+        navigate(`/index/debt/debtEdit?debtRow=${rowParam}`);
         // state传参、路由事件跳转，传的参数放入state中,相当于sessionStorage
-        navigate('/index/debt/detail',{state:{rowParam}} );
+        // navigate('/index/debt/debtEdit',{state:{rowParam}} );
+        
+        // setAddFlag(false);
+        // if (isAddFlag === false) {
+        //     //  console.log(isAddFlag,2222)
+        //     // createTime.current = row.timeStr;
+        //     // endTime.current = row.endTimeStr;
+        // }
+        // // 将返回的时间转换为moment格式用于编辑显示在时间组件上
+        // row.time = moment(row.time);
+        // row.endTime = moment(row.endTime);
+        // // 将表单数据设置为表格行数据
+        // form.setFieldsValue(row); 
+        // setDebtTitle('编辑债务记录');
+        // setIsModalType('common');
+        // setRowId(row.id);
+        // operDialogFunc(true);
     }
 
     // 删除表格中的一行数据
@@ -247,51 +207,9 @@ function Debt() {
             }
         });
     }
-    
-    // 使用防抖函数来限制表单提交的频率
-    const debounceDebtSubmit = debounce(handleSubmit, 1000);
-    // 添加编辑债务记录弹窗信息确认操作
-    async function handleSubmit() {
-        try {
-            const values = await form.validateFields();
-            // console.log('债务记录提交', values)
-            if (values) {
-                let params = {
-                    id: rowId,
-                    time: values.time.format('YYYY-MM-DD'),
-                    endTime: values.endTime.format('YYYY-MM-DD'),
-                    description: values.description,
-                    owner:values.owner,
-                    amount: values.amount,
-                    repay: values.repay,
-                    paymentId: values.paymentId,
-                    status: values.status,
-                    note: values.note
-                };
-                addDebt(params).then((res) => {
-                    if (res.data.success === true) {
-                        buttonSearch();//重新掉接口刷新表格数据
-                        message.success(res.data.message);
-                        operDialogFunc(false);
-                    } else {
-                        operDialogFunc(true)
-                    }
-                }).catch((error) => {
-                    console.log(error)
-                })    
-            }
-        } catch (error) {
-            console.log('validate failed',error)
-        }
-    }
 
-    // 设置新增编辑债务记录弹窗显示隐藏事件
-    const operDialogFunc = (flag)=>{
-        setIsModalVisible(flag);
-    }
-
-     // 设置搜索防抖功能
-     const debounceDebtSearch = debounce(buttonSearch,1000);
+    // 设置搜索防抖功能
+    const debounceDebtSearch = debounce(buttonSearch,1000);
     // 根据筛选条件搜索表格数据
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
@@ -346,7 +264,7 @@ function Debt() {
                 />                           
                
                 {/* 添加或编辑债务记录弹窗 */}
-                <AsyncModal title={debtTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={debtFooter} operDialogFunc={operDialogFunc} handleOk={debounceDebtSubmit}>
+                {/* <AsyncModal title={debtTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={debtFooter} operDialogFunc={operDialogFunc} handleOk={debounceDebtSubmit}>
                     <section >
                         <Form   name="debtForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
                             <Form.Item style={{clear:'both'}} label="创建时间" name="time"  
@@ -424,7 +342,7 @@ function Debt() {
                             </Form.Item>
                         </Form>
                     </section>
-                </AsyncModal>
+                </AsyncModal> */}
         </section>
     </div>
     )

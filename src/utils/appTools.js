@@ -237,6 +237,20 @@ function getCookie(name){
 function removeCookie(name){
     setCookie(name,1,-1)
 }
+// 获取url?后面的参数
+function getQueryParams() {
+    var url = decodeURI(window.location.search); //获取地址栏url"?"符后的字符串
+    let result = new Object();
+    if (url.indexOf("?") !== -1) {
+        var str = url.substring(1);
+        var urlCode = str.split('&');
+        for (let i = 0; i < urlCode.length; i++) {
+            result[urlCode[i].split('=')[0]] = decodeURIComponent(urlCode[i].split('=')[1]);
+        }
+    }
+   
+    return result;
+}
 
 export {
   getRouteMetaMap,
@@ -249,5 +263,6 @@ export {
   throttle,
   setCookie,
   getCookie,
-  removeCookie
+  removeCookie,
+  getQueryParams
 }

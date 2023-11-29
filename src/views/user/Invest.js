@@ -487,7 +487,7 @@ function Invest() {
             // console.log(isSingleFlag,2222)
             singleTime.current = row.time;
         }
-         // 将返回的时间转换为moment格式用于编辑显示在时间组件上
+        // 将返回的时间转换为moment格式用于编辑显示在时间组件上
         row.time = moment(row.time);
         investSingleForm.setFieldsValue(row);
         setInvestSingleTitle('编辑投资明细记录');
@@ -736,8 +736,8 @@ function Invest() {
                                         <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getInvestTimeChange} placeholder="请选择创建时间" allowClear />
                                 </Form.Item>
                                 <Form.Item label="投资项目" name="investName"  >
-                            <Input disabled />
-                            {/* value={inputVal} */}
+                                    <Input disabled />
+                                    {/* value={inputVal} */}
                                 </Form.Item>
                                 <Form.Item label="操作" name="type" >
                                     <Select placeholder="请选择"
