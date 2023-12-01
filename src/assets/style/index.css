@@ -79,7 +79,7 @@ code {
       flex-basis: 100%;
     }
     .toggleIcon{
-      display: none;
+      display: none!important;
     }
     .sideBarCol{
       min-height: 50px;
@@ -95,11 +95,13 @@ code {
     }
     .appMain{
         margin-left:0!important;
+        padding:10px!important;
     }
     .ant-layout-sider{
         flex: 0 0 0px!important;
         width: 100%!important;
         max-width: 100%!important;
+        height: 200px!important;
     }
     .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
       padding:4px;
@@ -152,7 +154,24 @@ code {
     .miniBtnBox{
       display: block;
     }
-  
+    .recordTableBox{
+        margin:0!important;
+    }
+    .recordBtn{
+        text-align: center!important;
+    }
+    .investReportContainer{
+        display: block!important;
+        padding: 20px 0!important;
+    }
+    .echartsInvestPieItem{
+        width:100%!important;
+        float: none!important;
+        display: block;
+    }
+    .debtSectionContainer{
+        width: 100% !important;
+    }
 }
 @media screen and (min-width:576px) and (max-width:760px){
   html,body {
@@ -172,7 +191,7 @@ code {
     min-height:0!important;
   }
   .toggleIcon{
-    display: none;
+    display: none!important;
   }
   .pieContainer, .barContainer{
     display: block!important;

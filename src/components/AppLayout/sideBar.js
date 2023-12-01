@@ -101,8 +101,8 @@ function SideBar () {
     return(
         <div className={sideBarCollapsed === false ? 'c-PageLayout-sideBar' : 'c-PageLayout-collapseSideBar'}>
                 <Sider trigger={null} collapsible   collapsed={sideBarCollapsed}>
-                    <Menu  theme="dark" mode="inline"   defaultSelectedKeys={['/index']} defaultOpenKeys={['/index']} items={menuItems} onClick={e=>menuItemClick(e)} />
-                    {/* {menuList}  selectedKeys={[pathname]}*/}
+                    <Menu  theme="dark" mode="inline"   defaultSelectedKeys={['/index/consume']} defaultOpenKeys={['/index']} selectedKeys={[pathname]} items={menuItems} onClick={e=>menuItemClick(e)} />
+                    {/* {menuList}  */}
                     <div className="toggleIcon" onClick={onToggle}>
                         {sideBarCollapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
                     </div>

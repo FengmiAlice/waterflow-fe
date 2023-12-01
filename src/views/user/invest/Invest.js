@@ -403,9 +403,11 @@ function Invest() {
 
     // 编辑理财记录
     function handleEdit(row) {
-        // console.log('理财记录编辑---', row)
+        // console.log('理财记录编辑---', row);
         setAddFlag(false);
         setIsRedFlag(false);
+        // setInputVal(row.description);//给投资明细抽屉项目名称赋值
+        investSingleForm.setFieldsValue({ 'investName': row.description });
         if (isAddFlag === false) {
             //  console.log(isAddFlag,2222)
             investTime.current = row.timeStr;
@@ -413,8 +415,7 @@ function Invest() {
         // 将返回的时间转换为moment格式用于编辑显示在时间组件上
         row.time = moment(row.time);
         form.setFieldsValue(row);
-        // setInputVal(row.description);//给投资明细抽屉项目名称赋值
-        investSingleForm.setFieldsValue({ 'investName': row.description });
+
         setInvestTitle('编辑理财记录');
         setRowId(row.id);
         setInvestOpen(true);
@@ -646,16 +647,15 @@ function Invest() {
                 /> 
                 {/* baseProps={{ rowKey: record => record.id }} */}
             </section>
-            {/* 添加理财记录抽屉 */}
+            {/* 添加理财记录抽屉  width={520}
+                    bodyStyle={{ padding: 40,}}*/}
             <Drawer
                     title={investTitle}
                     placement="right"
                     closable={false}
                     onClose={onClose}
                     visible={investOpen}
-                    width={520}
-                    bodyStyle={{ padding: 40,}}
-                    
+                   
                     extra={
                         <Space>
                             <Button onClick={debounceInvestSubmit} type="primary"> 提交</Button>
@@ -709,16 +709,15 @@ function Invest() {
                     getRowKeys={handleSingleKeys}
                     initMethod={initFunc} />
                 }
-                {/* 嵌套买入卖出抽屉 */}
+                {/* 嵌套买入卖出抽屉    width={320}
+                    bodyStyle={{ padding: 40, }} */}
                 <Drawer
                     title={investSingleTitle}
                     placement="right"
                     closable={false}
                     onClose={onChildrenClose}
                     visible={investChildrenOpen}
-                    width={320}
                     forceRender
-                    bodyStyle={{ padding: 40, }}
                     extra={
                         <Space>
                             <Button onClick={debounceInvestSingleSubmit} type="primary"> 提交</Button>
