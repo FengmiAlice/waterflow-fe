@@ -58,12 +58,14 @@
 .appMain {
     min-height:calc(100vh - 50px);
     padding: 12px 30px;
+    transition: margin-left 0.28s;
     margin-left: 200px;
 }
 
 .hideAppMain{
     min-height:calc(100vh - 50px);
     padding: 12px 30px;
+    transition: margin-left 0.28s;
     margin-left:80px;
 }
 /* 顶部菜单*/
@@ -132,8 +134,8 @@
  /* 收缩菜单后的c-PageLayout-sideBar样式 */
 .c-PageLayout-collapseSideBar{
     width:80px;
-     height: 100vh;
-    overflow: auto;
+    height: 100vh;
+    overflow:hidden;
     position: fixed;
     font-size: 0px;
     top: 50px;
@@ -144,9 +146,10 @@
     box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
 }
 .c-PageLayout-sideBar {
+    transition: width 0.28s;
     width: 200px;
     height: 100vh;
-    overflow: auto;
+    overflow:hidden;
     position: fixed;
     font-size: 0px;
     top: 50px;
@@ -156,12 +159,18 @@
     -webkit-box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
     box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
 }
+.c-PageLayout-sideBar:hover{
+    overflow-y: auto;
+}
+.c-PageLayout-collapseSideBar:hover{
+    overflow-y: auto;
+}
 .ant-layout-sider{
     height: 100vh;
 }
-.c-PageLayout-sideBar ::-webkit-scrollbar {
+/* .c-PageLayout-sideBar ::-webkit-scrollbar {
   display: none;
-}
+} */
 
 .v-signIn-index, .v-signUp-index{
   min-height: 100vh;
@@ -189,7 +198,8 @@
     position: absolute;
     bottom: 50px;
     left: 0;
-    background: rgba(255, 255, 255, 0.65);
+    /* background: rgba(255, 255, 255, 0.65); */
+    background: rgb(0 21 41);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -198,6 +208,7 @@
 
 .toggleIcon > .anticon {
   font-size: 18px;
+  color: #fff;
 }
 .ant-table-wrapper{
   margin-top:20px;
