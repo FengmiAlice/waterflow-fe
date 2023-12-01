@@ -1,50 +1,76 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';//useLocation、useSearchParams
 import { DatePicker, Form, Button, Input, Select,message } from 'antd';
-import { getPaymentTypeList, addDebtRecord } from '../../api/user';
-import { debounce } from '../../utils/appTools';
+import { getPaymentTypeList, addDebtRecord } from '../../../api/user';
+import { debounce } from '../../../utils/appTools';
 import moment from 'moment';
 const { Option } = Select;
 const { TextArea } = Input;
 
-export default function DebtRecordAdd() {
-  // 使用useForm创建新增债务记录form实例
-    const [debtAddRecordForm] = Form.useForm();
-    const navigate = useNavigate(); 
+
+function DebtRecordEdit() {
+    // 使用useForm创建新增债务记录form实例
+    const [debtEditRecordForm] = Form.useForm();
+    // let location = useLocation();//获取navaigate中传递的state信息
+    // console.log('navaigate中传递的params', location);
+    const navigate = useNavigate();
     let currentTime= moment().format("YYYY-MM-DD");
     const debtRecordTime = useRef(currentTime);//设置偿还债务记录默认时间
     const [debtId, setDebtId] = useState('');//设置债务记录行id
+    const [recordId, setRecordId] = useState('');//设置偿还记录的行id
     const [paymentTypeArray, setPaymentTypeArray] = useState([]);//设置支付方式列表
-    const [initFlag,setInitFlag] = useState(false);//设置初始化标识
     useEffect(() => {
         getPaymentList();
-        if(!initFlag){
-            setInitFlag(true);
-            // console.log('初始渲染111')
-            let searchParams = new URLSearchParams(window.location.search);
-            if (searchParams) {
-                let id = searchParams.get('id');
-                let des = searchParams.get('recordDes');
-                setDebtId(id);//设置债务id
-                debtAddRecordForm.setFieldsValue({ 'debtName':des });//给所属债务项赋值
-            }
-        } else {
-            // console.log('不是初始渲染222')
+        // 给偿还记录所属债务表单项赋值
+         // 获取查询参数
+        const searchParams = new URLSearchParams(window.location.search);//获取url参数
+        let id = searchParams.get('id');
+        let des = searchParams.get('recordDes');
+        // console.log('债务id---', id);
+        setDebtId(id);//设置债务id
+        debtEditRecordForm.setFieldsValue({ 'debtName': des });//给所属债务项赋值
+        
+        const queryData = {};
+        // 遍历查询参数，并将其赋值给表单数据
+        for (const [key, value] of searchParams.entries()) {
+            queryData[key] = value;
         }
-    },[debtAddRecordForm,initFlag])
-     // 获取支出方式列表
+        // console.log('1111----', queryData)
+        if (queryData) {
+            let data = JSON.parse(queryData.recordRow);
+            setRecordId(data.id);
+             let startDate;
+            // 解决日期组件出现NaN问题
+            if (data.time === null) {
+                startDate = moment();
+            } else {
+                startDate = moment(data.time);
+            }
+            // console.log('2222----', data)
+            //在组件挂载后，将查询参数赋值给表单数据
+            debtEditRecordForm.setFieldsValue({
+                'time': startDate,
+                'description':data.description,
+                // 'debtName':data.debtName,
+                'amount': data.amount,
+                'paymentId': data.paymentId,
+                'note': data.note,
+            });
+        }
+    }, [debtEditRecordForm])
+    
+    // 获取支出方式列表
     function getPaymentList(){
         getPaymentTypeList().then( (res) => {
             if(res.data.success === true){
-                setPaymentTypeArray(res.data.page.list)
-             
+                setPaymentTypeArray(res.data.page.list);
             }
         }).catch((error)=>{
             console.log(error)
         })
     }
 
-        // 偿还记录时间选择事件
+    // 偿还记录时间选择事件
     function getSingleTimeChange(date, dateString){
         // 非空判断
         dateString = dateString || '';
@@ -55,15 +81,16 @@ export default function DebtRecordAdd() {
     const backGo = () => {
         navigate(-1);//返回上一个路由
     }
-            // 添加偿还记录弹窗信息确认操作
+
+    // 编辑偿还记录弹窗信息确认操作
     const debounceDebtRecordSubmit = debounce(handleRecordSubmit, 1000);
     async function handleRecordSubmit() {
         try {
-            const values = await debtAddRecordForm.validateFields();
-            // console.log('新增偿还记录---',values)
+            const values = await debtEditRecordForm.validateFields();
+            // console.log('编辑偿还记录---',values)
             if (values) {
                 let params = {
-                    id: '',//偿还记录表的id
+                    id: recordId,//偿还记录表的id
                     debtId:debtId,//编辑的债务id
                     time: values.time.format('YYYY-MM-DD'),
                     debtName:values.debtName,
@@ -74,8 +101,8 @@ export default function DebtRecordAdd() {
                 };
                 addDebtRecord(params).then((res) => {
                     if (res.data.success === true) {
-                         message.success(res.data.message);
-                         navigate(-1);
+                        message.success(res.data.message);
+                        navigate(-1);
                     } 
                 }).catch((error) => {
                     console.log(error)
@@ -89,7 +116,7 @@ export default function DebtRecordAdd() {
     return (
         <div className='debtSectionContainer'>
             <section className='recordFormBox'>
-                <Form   name="debtAddRecordForm"  form={debtAddRecordForm} initialValues={{'time':moment()}} labelCol={{span:4}}  size="middle"  autoComplete="off" >
+                <Form   name="debtEditRecordForm"  form={debtEditRecordForm} initialValues={{'time':moment()}} labelCol={{span:4}}  size="middle"  autoComplete="off" >
                     <Form.Item style={{clear:'both'}} label="时间" name="time"  
                             rules={[
                                 {required:true,message:'请选择时间'},
@@ -100,7 +127,7 @@ export default function DebtRecordAdd() {
                     <Form.Item style={{clear:'both'}} label="所属债务" name="debtName"  >
                             <Input disabled />
                     </Form.Item>
-                    <Form.Item label="详情" name="description"   
+                        <Form.Item label="详情" name="description"   
                             rules={[
                                 {required:true,message:'请输入详情描述'},
                                 
@@ -141,4 +168,5 @@ export default function DebtRecordAdd() {
             </section>
         </div>
     )
-}
+ }
+export default DebtRecordEdit;

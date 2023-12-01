@@ -1,11 +1,11 @@
 import React, {useEffect,useState,useRef} from 'react';
-import ArgTable from '../../components/Table';
-import AsyncModal from '../../components/Modal';
+import ArgTable from '../../../components/Table';
+import AsyncModal from '../../../components/Modal';
 import {useNavigate} from 'react-router-dom';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Drawer} from 'antd';
 import moment from 'moment';
-import { getInvestedList, getInvestedStatistic,getPaymentTypeList, addInvested,deleteInvested,addDividend,updateInvestCurrent,addSingleInvest,deleteSingleInvest} from '../../api/user';
-import {debounce} from '../../utils/appTools';
+import { getInvestedList, getInvestedStatistic,getPaymentTypeList, addInvested,deleteInvested,addDividend,updateInvestCurrent,addSingleInvest,deleteSingleInvest} from '../../../api/user';
+import {debounce} from '../../../utils/appTools';
 
 const { Option } = Select;
 const {confirm} = Modal;
@@ -421,7 +421,7 @@ function Invest() {
     }
     // 统计图表按钮事件
     function turnInvestSoft() {
-          navigate('/index/investReport')
+          navigate('/index/invest/investReport')
     }
 
     // 关闭理财记录抽屉事件

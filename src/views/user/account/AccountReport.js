@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
-import ArgPieEcharts from '../../components/Echarts/pie';
-import { typePieAccount } from '../../api/user';
+import ArgPieEcharts from '../../../components/Echarts/pie';
+import { typePieAccount } from '../../../api/user';
 
 function AccountReport() {
 

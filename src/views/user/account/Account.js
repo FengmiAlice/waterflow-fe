@@ -1,10 +1,10 @@
 import React, {useEffect,useState,useRef} from 'react';
-import ArgTable from '../../components/Table';
-import AsyncModal from '../../components/Modal';
+import ArgTable from '../../../components/Table';
+import AsyncModal from '../../../components/Modal';
 import {useNavigate} from 'react-router-dom';
 import { Form,Button,Input,Select,Space,message,Modal} from 'antd';
-import { getStatistics,getAccountList,deleteAccountById,addAccount,transformAccount} from '../../api/user';
-import {debounce} from '../../utils/appTools';
+import { getStatistics,getAccountList,deleteAccountById,addAccount,transformAccount} from '../../../api/user';
+import {debounce} from '../../../utils/appTools';
 const { Option } = Select;
 const {confirm} = Modal;
 const {TextArea} = Input;
@@ -276,7 +276,7 @@ function Account(){
 
     // 余额按钮事件
     function turnSoft() {
-        navigate('/index/accountReport')
+        navigate('/index/account/accountReport')
     }
 
     // 设置转账按钮防抖功能

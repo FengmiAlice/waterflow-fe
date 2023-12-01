@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {useNavigate,useSearchParams} from 'react-router-dom';
 import { DatePicker, Form, Button, Input, Select,Space,message,Modal } from 'antd';
-import ArgTable from '../../components/Table';
+import ArgTable from '../../../components/Table';
 import moment from 'moment';
-import { getDebtList, addDebt, getPaymentTypeList, deleteDebtRecord } from '../../api/user';
-import {debounce} from '../../utils/appTools';
+import { getDebtList, addDebt, getPaymentTypeList, deleteDebtRecord } from '../../../api/user';
+import {debounce} from '../../../utils/appTools';
 const { Option } = Select;
 const { TextArea } = Input;
 const { confirm } = Modal;

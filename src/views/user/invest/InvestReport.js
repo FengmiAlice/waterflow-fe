@@ -1,10 +1,10 @@
  
 import React, { useEffect, useState,useRef} from 'react';
 import { DatePicker,Form,Button,Select, message  } from 'antd';
-import ArgPieEcharts from '../../components/Echarts/pie';
-import ArgLineEcharts from '../../components/Echarts/line';
-import { typePieInvestAmount,typePieInvestCurrent,typeLineInvestAmount } from '../../api/user';
-import {debounce} from '../../utils/appTools';
+import ArgPieEcharts from '../../../components/Echarts/pie';
+import ArgLineEcharts from '../../../components/Echarts/line';
+import { typePieInvestAmount,typePieInvestCurrent,typeLineInvestAmount } from '../../../api/user';
+import {debounce} from '../../../utils/appTools';
 import moment from 'moment';
 const { Option } = Select;
 

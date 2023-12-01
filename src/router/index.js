@@ -16,7 +16,7 @@ const routes = [
         redirect: '/index/consume',
     },
     {
-        path:'/index',
+        path: '/index',
         element: <AppLayout />,
         meta:{
             title:"首页",
@@ -24,97 +24,119 @@ const routes = [
         },
         children: [
             {
-                path:'/index/budget',
+                path: '/index/budget',
                 meta:{
                     title:'预算',
                 },
                 component: () => import('../views/user/Budget'),
             },
             {
-                path:'/index/consume',
+                path: '/index/consume',
                 meta:{
                     title:'支出',
                 },
                 component: () => import('../views/user/Consume'),
             },
             {
-                path:'/index/income',
+                path: '/index/income',
                 meta:{
                     title:'收入',
                 },
                 component: () => import('../views/user/Income'),
             },
-               {
-                path:'/index/invest',
+            {
+                path: '/index/invest',
                 meta:{
                     title:'理财',
                 },
-                component: () => import('../views/user/Invest'),
+                children: [
+                    {
+                        path: '/index/invest/list',
+                        meta:{
+                            title:'理财列表',
+                        },
+                        component: () => import('../views/user/invest/Invest'),
+                    },
+                    {
+                        path: '/index/invest/investReport',
+                        hidden: true,
+                        meta:{
+                            title: '理财统计',
+                        },
+                        component: () => import('../views/user/invest/InvestReport'),
+                    },
+                ]
             },
             {
-                path:'/index/debt',
+                path: '/index/debt',
                 meta:{
                     title:'债务',
                 },
-                component: () => import('../views/user/Debt'),
+                children: [
+                    {
+                        path: '/index/debt/list',
+                        meta:{
+                            title:'债务列表',
+                        },
+                         component: () => import('../views/user/debt/Debt'),
+                    },  
+                    {
+                        path: '/index/debt/debtAdd',
+                        meta:{
+                            title:'债务新增',
+                        },
+                        component: () => import('../views/user/debt/DebtAdd'),
+                    },
+                    {
+                        path: '/index/debt/debtEdit',
+                        meta:{
+                            title:'债务编辑',
+                        },
+                        component: () => import('../views/user/debt/DebtEdit'),
+                    },
+                    {
+                        path: '/index/debt/debtRecordAdd',
+                        hidden: true,
+                        meta:{
+                            title:'债务偿还记录新增',
+                        },
+                        component: () => import('../views/user/debt/DebtRecordAdd'),
+                    },
+                    {
+                        path: '/index/debt/debtRecordEdit',
+                        hidden: true,
+                        meta:{
+                            title:'债务偿还记录编辑',
+                        },
+                        component: () => import('../views/user/debt/DebtRecordEdit'),
+                    },
+                ]
             },
             {
-                 path: '/index/debt/debtAdd',
-                  hidden: true,
-                meta:{
-                    title:'债务新增',
-                },
-                component: () => import('../views/user/DebtAdd'),
-            },
-            {
-                 path: '/index/debt/debtEdit',
-                  hidden: true,
-                meta:{
-                    title:'债务编辑',
-                },
-                component: () => import('../views/user/DebtEdit'),
-            },
-            {
-                path: '/index/debt/debtRecordAdd',
-                hidden: true,
-                meta:{
-                    title:'债务偿还记录新增',
-                },
-                component: () => import('../views/user/DebtRecordAdd'),
-            },
-            {
-                path: '/index/debt/debtRecordEdit',
-                hidden: true,
-                meta:{
-                    title:'债务偿还记录编辑',
-                },
-                component: () => import('../views/user/DebtRecordEdit'),
-            },
-            {
-                path:'/index/account',
+                path: '/index/account',
                 meta:{
                     title:'账户',
                 },
-                component: () => import('../views/user/Account'),
-            },
+                children: [
+                    {
+                        path: '/index/account/list',
+                        meta:{
+                            title:'账户列表',
+                        },
+                        component: () => import('../views/user/account/Account'),
+                    },
+                    {
+                        path: '/index/account/accountReport',
+                        hidden: true,
+                        meta:{
+                            title: '账户统计',
+                        },
+                        component: () => import('../views/user/account/AccountReport'),
+                    },
+                ]
+            },    
             {
-                path: '/index/accountReport',
-                hidden: true,
-                meta:{
-                    title: '账户统计',
-                },
-                component: () => import('../views/user/AccountReport'),
-            },
-             {
-                path: '/index/investReport',
-                hidden: true,
-                meta:{
-                    title: '理财统计',
-                },
-                component: () => import('../views/user/InvestReport'),
-            },
-            {
-                path:'/index/report',
+                path: '/index/report',
                 meta:{
                     title:"报告",
                 },
@@ -122,39 +144,8 @@ const routes = [
             },
         ]
     },
-    // {
-    //     path:'/test',
-    //     element: <AppLayout />,
-    //     meta:{
-    //         title:"测试页",
-    //         icon: <HomeOutlined />,
-          
-    //     },
-    //     children:[
-    //        {
-    //            path:'/test/testOne',
-    //            meta:{
-    //             title:"测试1",
-    //             icon:<UserOutlined />
-    //            },
-    //            component: () => import('../views/test/TestOne'),
-    //         //    element:<TestOne />
-    //        },
-    //        {
-    //            path:'/test/testTwo',
-    //            meta:{
-    //             title:'测试2',
-    //             icon:<UserOutlined />
-    //            },
-    //            component: () => import('../views/test/TestTwo'),
-    //        },
-    //     ]
-    // },
-    
-      
-   
     {
-        path:'/signIn',
+        path: '/signIn',
         meta:{
             title:'登录页',
             hideMenu: true,
@@ -164,7 +155,7 @@ const routes = [
         // element:<SignIn />
     },  
     {
-        path:'/signUp',
+        path: '/signUp',
         meta:{
             title:'注册页',
             hideMenu: true,

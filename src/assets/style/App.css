@@ -43,27 +43,29 @@
 }
 /* layout布局样式 */
 .c-PageLayout-index {
-  /* width: 100%;
-  height: 100%;
-  display: flex; */
-  /* box-sizing: content-box; */
+    width: 100%;
+    height: 100%;
+    position: relative;
+    box-sizing: border-box;
 }
 .appMainWrap {
-  /* width:100%;
-  height: 100%;
-  flex: 1;
+  width:100%;
+  min-height: 100%;
   position: relative;
-  display: flex; */
-  margin-top:60px;
+  margin-top:50px;
 }
  
 .appMain {
-    /* height: 100%;
-    overflow: hidden; */
     min-height:calc(100vh - 50px);
     padding: 12px 30px;
+    margin-left: 200px;
 }
 
+.hideAppMain{
+    min-height:calc(100vh - 50px);
+    padding: 12px 30px;
+    margin-left:80px;
+}
 /* 顶部菜单*/
 .c-PageLayout-headBar {
   width: 100%;
@@ -121,38 +123,46 @@
   margin: 0 0 0 8px;
 }
 
+
 /* 侧边栏菜单
  */
  /* .ant-layout.ant-layout-has-sider{
    flex-direction: column!important;
  } */
- .ant-layout-sider{
-    /* width: 100%!important;
-    max-width: 100%!important; */
- }
-.ant-layout-sider-collapsed .c-PageLayout-sideBar{
-    width:80px!important;
+ /* 收缩菜单后的c-PageLayout-sideBar样式 */
+.c-PageLayout-collapseSideBar{
+    width:80px;
+     height: 100vh;
+    overflow: auto;
+    position: fixed;
+    font-size: 0px;
+    top: 50px;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+    -webkit-box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
+    box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
 }
-
 .c-PageLayout-sideBar {
     width: 200px;
-    height: 100%;
+    height: 100vh;
+    overflow: auto;
+    position: fixed;
+    font-size: 0px;
+    top: 50px;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+    -webkit-box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
+    box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
 }
-/* .sideBarCol{
-  min-height:calc(100vh - 50px)
-} */
-
+.ant-layout-sider{
+    height: 100vh;
+}
 .c-PageLayout-sideBar ::-webkit-scrollbar {
   display: none;
 }
-.c-PageLayout-sideBar .sideBarLayout {
-  height: calc(100%);
-  min-height: 100vh;
-  background-color: #001529;
-  user-select: none;
-  flex-direction:column;
-  position: relative;
-}
+
 .v-signIn-index, .v-signUp-index{
   min-height: 100vh;
   background: url(../img/banner.jpg) center center;
@@ -168,18 +178,22 @@
   padding: 0 5px
 }
 
+/* 侧边栏收缩后，toogle icon收缩 */
+.ant-layout-sider-collapsed .toggleIcon{
+    width:80px!important;
+}
+
 .toggleIcon {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  background: rgba(255, 255, 255, 0.65);
-  height: 40px;
-  width:100%;
-  text-align: center;
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
-  cursor: pointer;
+    width:100%;
+    height: 40px;
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    background: rgba(255, 255, 255, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .toggleIcon > .anticon {
@@ -191,6 +205,8 @@
 .reportDialog .ant-modal-title{
   font-size:20px;
 }
+
+
 /* 登录、注册样式 */
 .signInSection, .signUpSection{
   width: 400px;

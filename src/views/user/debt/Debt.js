@@ -1,9 +1,9 @@
 import React, {useEffect,useState,useRef} from 'react';
-import ArgTable from '../../components/Table';
+import ArgTable from '../../../components/Table';
 import {useNavigate} from 'react-router-dom';
 import {Form,Button,Input,Select,Space,message,Modal} from 'antd';
-import { getDebtList, deleteDebt } from '../../api/user';
-import {debounce} from '../../utils/appTools';
+import { getDebtList, deleteDebt } from '../../../api/user';
+import {debounce} from '../../../utils/appTools';
 const { Option } = Select;
 const {confirm} = Modal;
 

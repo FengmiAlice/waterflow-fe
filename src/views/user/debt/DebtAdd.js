@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import {useNavigate} from 'react-router-dom';
 import { DatePicker,Form,Button,Input,Select} from 'antd';
 import moment from 'moment';
-import { addDebt, getPaymentTypeList } from '../../api/user';
-import {debounce} from '../../utils/appTools';
+import { addDebt, getPaymentTypeList } from '../../../api/user';
+import {debounce} from '../../../utils/appTools';
 const { Option } = Select;
 const {TextArea} = Input;
 function DebtAdd() {

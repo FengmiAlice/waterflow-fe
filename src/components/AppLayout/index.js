@@ -7,10 +7,13 @@ import { Outlet,Link,useLocation} from 'react-router-dom';
 import HeadBar from './headBar';
 import SideBar from './sideBar';
 import { getRouteMetaMap } from '../../utils/appTools';
-import {Layout,Breadcrumb,Row,Col } from 'antd';
+import { Layout, Breadcrumb, Row, Col } from 'antd';
+import { useStore, observer} from '../../hooks/storeHook';
 const {  Content } = Layout;
 
-function AppLayout () {
+function AppLayout() {
+      const { commonStore } = useStore();
+    const { sideBarCollapsed } = commonStore;
     /*面包屑功能 */ 
     //获取当前路由
     const location = useLocation();
@@ -36,19 +39,33 @@ function AppLayout () {
   // console.log(extraBreadcrumbItems)//元素集合
   
   return (
-    <div className="c-PageLayout-index">
-      <Row >
-        <Col span={24}>
+      <div className="c-PageLayout-index">
           <HeadBar />
-        </Col>
-      </Row>
-      <div className="appMainWrap">
+          <div className="appMainWrap">
+               <SideBar />
+              <div className={sideBarCollapsed === false?'appMain':'hideAppMain'}>
+                    <Content>
+                  <div>            
+                      <Breadcrumb>
+                          {extraBreadcrumbItems}
+                      </Breadcrumb>
+                  </div>
+                    <Outlet />
+                </Content>
+              </div>
+         </div>
+          
+        {/* <Row >
+            <Col span={24}>
+            <HeadBar />
+            </Col>
+        </Row>
+        <div className="appMainWrap">
           <Row>
-            <Col xs={24} sm={24} md={6} lg={4} xl={3}>
-            {/* .style={{minHeight: 'calc(100vh - 50px)'}} */}
+            <Col xs={24} sm={24} md={6} lg={6} xl={3} >
               <SideBar />
             </Col>
-            <Col xs={24} sm={24} md={18} lg={20} xl={21} className='appMain'>
+            <Col xs={24} sm={24} md={18} lg={18} xl={21}  className={sideBarCollapsed === false?'appMain':'hideAppMain'}>
                 <Content>
                   <div>            
                       <Breadcrumb>
@@ -59,9 +76,10 @@ function AppLayout () {
                 </Content>
             </Col>
           </Row>
-      </div>
+        </div> */}
+          
     </div>
   )
 }
 
-export default AppLayout;
+export default observer(AppLayout);

@@ -10,9 +10,35 @@ html,body {
   height: 100%;
 }
 #root {
-  /* height: 100%;
-  overflow: auto; */
-  overflow: hidden;
+   min-height: 100%;
+   overflow: hidden;
+}
+/*修改默认滚动条样式*/
+html,
+body,
+#app {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    cursor: pointer;
+  }
+
+  /*修改滚动条滑块样式*/
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 0.5 rgba(0, 0, 0, 0.2);
+    background: #8b8b8b;
+    transition: background-color .3s;
+    cursor: pointer;
+  }
+
+  /*修改滚动条里面轨道样式*/
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 0.5 rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background: #ededed;
+    cursor: pointer;
+  }
 }
 
 code {
@@ -59,9 +85,15 @@ code {
     }
     .c-PageLayout-sideBar{
         width: 100%!important;
+        max-height: 200px!important;
+        position: relative!important;
+        top: 0!important;
     }
     .c-PageLayout-sideBar .sideBarLayout{
         min-height: 0!important;
+    }
+    .appMain{
+        margin-left:0!important;
     }
     .ant-layout-sider{
         flex: 0 0 0px!important;
