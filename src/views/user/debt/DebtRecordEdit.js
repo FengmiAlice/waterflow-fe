@@ -161,8 +161,8 @@ function DebtRecordEdit() {
                         <TextArea row={1} placeholder="请输入附加描述" />
                     </Form.Item>
                     <Form.Item className='debtSubmitBtnItem'>
-                        <Button type="primary" onClick={debounceDebtRecordSubmit}>提交</Button>
-                        <Button className='backBtn' onClick={backGo}>返回</Button>
+                        <Button  type="primary" onClick={debounceDebtRecordSubmit}>提交</Button>
+                        <Button  className='backBtn' onClick={backGo}>返回</Button>
                     </Form.Item>
                 </Form>
             </section>

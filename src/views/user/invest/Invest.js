@@ -647,25 +647,23 @@ function Invest() {
                 /> 
                 {/* baseProps={{ rowKey: record => record.id }} */}
             </section>
-            {/* 添加理财记录抽屉  width={520}
-                    bodyStyle={{ padding: 40,}}*/}
+            {/* 添加理财记录抽屉  width={520}bodyStyle={{ padding: 40,}} */}
             <Drawer
                     title={investTitle}
                     placement="right"
-                    closable={false}
                     onClose={onClose}
-                    visible={investOpen}
-                   
+                visible={investOpen}
+                className='investDrawer'
                     extra={
                         <Space>
-                            <Button onClick={debounceInvestSubmit} type="primary"> 提交</Button>
-                            <Button onClick={handleRed} className="investRedBtn">分红</Button>
-                            {isAddFlag ===false && <Button onClick={handleProfit} className="investProfitBtn">更新收益</Button>}
+                            <Button size="small" onClick={debounceInvestSubmit} type="primary"> 提交</Button>
+                            <Button size="small" onClick={handleRed} className="investRedBtn">分红</Button>
+                            {isAddFlag ===false && <Button size="small" onClick={handleProfit} className="investProfitBtn">更新收益</Button>}
                         </Space>
                     }
                 >
 
-                <Form  name="investForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
+                <Form  name="investForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:8}}  size="middle"  autoComplete="off" >
                         <Form.Item style={{clear:'both'}} label="创建时间" name="time"  
                                     rules={[
                                         {required:true,message:'请选择创建时间'},
@@ -680,7 +678,7 @@ function Invest() {
                                     ]} >
                                 <Input  placeholder="请输入" allowClear   />
                         </Form.Item>
-                        <Form.Item label="计划投资总额" name="plan" 
+                        <Form.Item label="计划投资总额" name="plan"
                                 rules={[
                                     {required:true,message:'请输入金额'},
                                 
@@ -697,7 +695,7 @@ function Invest() {
                                 <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
                         </Form.Item>
                 </Form>
-                {isAddFlag === false && <Button onClick={handleSingleInvest} type="primary"> 买入或卖出</Button>}
+                {isAddFlag === false && <Button size="small" onClick={handleSingleInvest} type="primary"> 买入或卖出</Button>}
            
                 {isAddFlag === false && 
                 <ArgTable 
@@ -709,18 +707,16 @@ function Invest() {
                     getRowKeys={handleSingleKeys}
                     initMethod={initFunc} />
                 }
-                {/* 嵌套买入卖出抽屉    width={320}
-                    bodyStyle={{ padding: 40, }} */}
+                {/* 嵌套买入卖出抽屉  width={320}bodyStyle={{ padding: 40, }} */}
                 <Drawer
                     title={investSingleTitle}
                     placement="right"
-                    closable={false}
                     onClose={onChildrenClose}
                     visible={investChildrenOpen}
                     forceRender
                     extra={
                         <Space>
-                            <Button onClick={debounceInvestSingleSubmit} type="primary"> 提交</Button>
+                            <Button size="small" onClick={debounceInvestSingleSubmit} type="primary"> 提交</Button>
                         </Space>
                     }>
 

@@ -233,11 +233,9 @@ function Report(){
                         type: 'bar',
                         name: nameArray[index],
                         label: {
-                            normal: {
-                                show: true,
-                                textBorderColor: '#333',
-                                textBorderWidth: 2
-                            }
+                            show: true,
+                            textBorderColor: '#333',
+                            textBorderWidth: 2
                         },
                         data: yDataArray[index]
                     };
@@ -305,7 +303,7 @@ function Report(){
     return(
     <div>
         <header className='searchFormHeader'>
-            <Form  className="reportWrap" layout="inline" name="Report"  size="small"  >
+            <Form  className="reportWrap" layout="inline" name="searchReport"  size="small"  >
                     <Form.Item label="月份选择"  >
                         <DatePicker format='YYYY-MM' picker="month" onChange={getMonthChange} />
                     </Form.Item>
@@ -347,7 +345,7 @@ function Report(){
                 </div>
            </div>
            <div className="lineContiner">
-                <Form  className="reportWrap" layout="inline" name="Report"  size="small" form={lineForm}  
+                <Form  className="reportWrap" layout="inline" name="lineReport"  size="small" form={lineForm}  
                 //设置初始值
                 initialValues={{'startField':moment().subtract(1, 'year'),'endField':moment(),'countNum':statisticType.current}}>
                     <Form.Item label="开始日期" name="startField" >

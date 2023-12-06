@@ -22,7 +22,7 @@ const useBarEcharts = (props)=>{
         let barChart = echarts.getInstanceByDom(barChartDom);
         // 如果不存在则创建
         if(!barChart){
-            barChart = echarts.init(barChartDom)
+            barChart = echarts.init(barChartDom);
         }
         // 如果是普通类型柱状图
         if(barType === 'single'){
@@ -59,6 +59,9 @@ const useBarEcharts = (props)=>{
                         showDetail: true,// 拖拽时，是否显示详细信息
                     }
                 ],
+                grid: {
+                    containLabel: true
+                },
                 legend: {
                     orient: "horizontal",
                     top: 'bottom',
@@ -105,9 +108,9 @@ const useBarEcharts = (props)=>{
                     // ['总计','基本生活支出','置装开支']
                 },
                 grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
+                    // left: '3%',
+                    // right: '4%',
+                    // bottom: '3%',
                     containLabel: true
                 },
                 xAxis : [
@@ -156,10 +159,10 @@ const useBarEcharts = (props)=>{
                 // ]
             };
             barChart.setOption(multipleOption2);
-            window.addEventListener('resize',()=>{
-                barChart.resize()
-            })
         }
+        window.addEventListener('resize',()=>{
+            barChart.resize();
+        })
     }, [id,title,xData,seriesData,barType]) 
     
     useEffect(()=>{
@@ -167,7 +170,7 @@ const useBarEcharts = (props)=>{
     }, [drawMultipleBar])
     
     return (
-        <div id={id} title={title} style={{width:100+'%',height:100+'%'}}>
+        <div id={id} title={title} style={{width:'100%',height:'100%'}}>
 
         </div>
     )

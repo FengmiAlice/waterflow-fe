@@ -317,14 +317,14 @@ function DebtEdit() {
                         <TextArea row={1}  placeholder="请输入补充描述，记录一段往事供将来回忆" />
                     </Form.Item>
                     <Form.Item className='debtSubmitBtnItem'>
-                        <Button type="primary" onClick={debounceDebtSubmit}>提交</Button>
-                        <Button className='backBtn' onClick={backGo}>返回</Button>
+                        <Button  type="primary" onClick={debounceDebtSubmit}>提交</Button>
+                        <Button  className='backBtn' onClick={backGo}>返回</Button>
                     </Form.Item>
                 </Form>
             </section> 
             <section className='recordTableBox'>
                 <div className='recordBtn'>
-                    <Button onClick={handleSingleDebt} type="primary"> 添加新偿还记录</Button>
+                    <Button  onClick={handleSingleDebt} type="primary"> 添加新偿还记录</Button>
                 </div>
                 <ArgTable 
                         ref={debtRecordRef}

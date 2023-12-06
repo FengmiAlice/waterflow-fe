@@ -68,6 +68,7 @@ function SideBar () {
                     key: route.path,
                     label: route.meta.title,
                     path: route.path,
+                    icon:route.meta.icon
                 };
                 if (route.children && route.children.length > 0) {
                     convertedRoute.children = transformRoutes(route.children);

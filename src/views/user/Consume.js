@@ -149,17 +149,17 @@ function Consume(){
     const consumeTime = useRef(curTime);//设置支出记录默认时间
     const [isAddFlag,setAddFlag] = useState(false)//标识是否是新增
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
-       useEffect(()=>{
-            month.current = moment().format("YYYY-MM");//初始化赋值当前月份
-            getTypeList();
-            getPaymentList();
-
-       },[])
+    useEffect(()=>{
+        month.current = moment().format("YYYY-MM");//初始化赋值当前月份
+        getTypeList();
+        getPaymentList();
+    },[])
  
     // 设置表格总花费方法
     function setMount(k){   
         setTotalAmounts(k);
     }
+
     // 设置表格选择的数据
     function handleKeys(val){
         setRowKeys(val)
@@ -170,6 +170,7 @@ function Consume(){
         // console.log('父组件执行初始化')
         
     }
+
     // 获取日期范围值
     function getRangeValue(date,dateStringArray){
         // 非空判断
@@ -193,18 +194,21 @@ function Consume(){
         dateString =dateString || '';
         month.current = dateString; 
     }
+
     // 获取支出记录时间
     function getTimeChange(date, dateString) {
         // 非空判断
         dateString =dateString || '';
         consumeTime.current = dateString;
     }
+
     // 获取年份日期值
     function getYearChange(date,dateString){
         // 非空判断
         dateString = dateString || '';
         year.current = dateString;
     }
+
     // 获取类别列表
     function getTypeList(){
         let param={
@@ -219,6 +223,7 @@ function Consume(){
             console.log(error)
         })
     }
+
     // 获取支出方式列表
     function getPaymentList(){
         getPaymentTypeList().then( (res) => {
@@ -230,6 +235,7 @@ function Consume(){
             console.log(error)
         })
     }
+
     // 获取支出搜索类别值
     function typeChange(value,current){
         if(value === undefined){
@@ -246,6 +252,7 @@ function Consume(){
             addConsumeType.current = value;
         }
     }
+
     // 获取搜索支出方式值
     function paymentTypeChange(value){
         if(value===undefined){
@@ -254,6 +261,7 @@ function Consume(){
             paymentType.current = value;
         }
     }
+
     // 获取支出记录支出方式值
     function addPaymentTypeChange(value){
         if(value === undefined){
@@ -262,6 +270,7 @@ function Consume(){
             addPaymentType.current = value;
         }
     }
+
     // 获取搜索输入框值
     function inputChange(e){
         keyword.current = e.target.value
@@ -274,6 +283,7 @@ function Consume(){
         typeForm.resetFields();
        
     }
+
     const debounceTypeSubmit = debounce(handleTypeSubmit, 500);
     // 添加类别弹窗提交按钮事件
     async function handleTypeSubmit() {
@@ -426,6 +436,7 @@ function Consume(){
             console.log(error)
         })
     }
+
     // 使用防抖函数来限制表单提交的频率
     const debounceConsumeSubmit = debounce(handleSubmit, 1000);
     // 添加支出记录弹窗信息确认操作
@@ -459,28 +470,32 @@ function Consume(){
             console.log('validate failed',error)
         }
     }
+
     // 表格上方支出分析按钮事件
     const handleAnalysis = () => { 
-        operAnalyFunc(true);
-        setIsModalType('special');
-        setWords([]);
-        searchWords.current = '';
-        setTimer(null);
-        setAccountTitle('暂无数据');
+            operAnalyFunc(true);
+            setIsModalType('special');
+            setWords([]);
+            searchWords.current = '';
+            setTimer(null);
+            setAccountTitle('暂无数据');
     }
 
     // 设置新增编辑支出弹窗显示隐藏事件
     const operDialogFunc = (flag)=>{
         setIsModalVisible(flag);
     }
+
      // 设置新增类别弹窗显示隐藏事件
     const operTypeFunc = (flag)=>{
         setTypeVisible(flag)
     }
+
     // 设置分析弹窗显示隐藏事件
     const operAnalyFunc = (flag) => {
         setAnalysisVisible(flag)
     }
+
     // 设置分析弹窗关键词输入事件
     const wordsChange = (e) => {
         searchWords.current = e.target.value;
@@ -488,12 +503,15 @@ function Consume(){
         //  console.log('字符串空格数组----',tempArray)
         setWords(tempArray);
     }
-      // 设置分析弹窗确认按钮事件
+
+    // 设置分析弹窗确认按钮事件
     const closeConfirmAnalysis = () => {
         operAnalyFunc(false);
         setTimer(null);
         setAccountTitle('暂无数据');
+        setMoneyData([]);
     }
+
     // 分析弹窗里的统计按钮事件
     async function analysisCountClick() {
         try {
@@ -505,11 +523,11 @@ function Consume(){
                 paymentId: paymentType.current,
                 keywordList:words
             }
-            const response = await addConsumeAnalysis(params)
+            const response = await addConsumeAnalysis(params);
             // console.log('各类支出金额占比---', response)
-            setAccountTitle('各类支出金额占比图');
-            setTimer(new Date().getTime());
-            setMoneyData(response.data);
+                setAccountTitle('各类支出金额占比图');
+                setTimer(new Date().getTime());
+                setMoneyData(response.data);
         } catch (error) {
              console.log(error)
         }
@@ -620,7 +638,7 @@ function Consume(){
                                             }
                                     </Select>
                                 </Form.Item>    
-                                <Button  type="primary" onClick={addNewType} className="consumeTypeButton">新类别</Button>   
+                                <Button type="primary" onClick={addNewType} className="consumeTypeButton">新类别</Button>   
                             </Form.Item>
                             <Form.Item style={{clear:'both'}} label="支出时间" name="time"  
                                     rules={[
@@ -685,17 +703,15 @@ function Consume(){
 
                 {/* 支出统计分析弹窗 */}
                 <AsyncModal  title="支出记录统计分析" modalType={isModalType} vis={isAnalysisVisible} isClosable={false} isFooter={null} operDialogFunc={operAnalyFunc} handleOk={closeConfirmAnalysis}>
-                        <Form name="analysisForm" labelCol={{span:4}}   autoComplete="off" >
-                            <Form.Item  label="关键词">
-                                <Input type="text" value={searchWords.current} allowClear onChange={(e)=>wordsChange(e)} placeholder='多个关键词使用空格隔开'/>
-                                <Button size="small" type="primary" onClick={analysisCountClick} >统计分析</Button>
-                            </Form.Item>
-                            <Form.Item>
-                            <div className="echartsMoneyItem">
-                                    <ArgPieEcharts  key={timer} id="consumeMoneyPie" title={accountTitle} sourceData={moneyData} />
-                            </div>
-                            </Form.Item>
-                        </Form>
+                    <Form name="analysisForm" labelCol={{span:4}}   autoComplete="off" >
+                        <Form.Item  label="关键词">
+                            <Input type="text" value={searchWords.current} allowClear onChange={(e)=>wordsChange(e)} placeholder='多个关键词使用空格隔开'/>
+                            <Button size="small" type="primary" onClick={analysisCountClick} >统计分析</Button>
+                        </Form.Item>
+                    </Form>
+                    <div className="echartsMoneyItem">
+                        <ArgPieEcharts key={timer} id="consumeMoneyPie" title={accountTitle} sourceData={moneyData} />
+                    </div>
                 </AsyncModal>
         </section>
     </div>

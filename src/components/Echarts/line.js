@@ -18,47 +18,23 @@ const useLineEcharts = (props)=>{
         let lineChartDom = document.getElementById(id);
         // 获取实例
         let lineChart = echarts.getInstanceByDom(lineChartDom);
-        if(!lineChart){
-            lineChart = echarts.init(lineChartDom)
-        }
-        let legend={};
-        let grid={};
-        // 适配屏幕尺寸
-        if(document.documentElement.clientWidth < 576){
-            legend =  {
-                top:30,
-                right:0,
-                show: true,
-                orient: "horizontal",
-                // data:legendData,
-            };
-
-            grid = {
-                // containLabel: true
-            };
-        }else{
-            legend =  {
-                top:0,
-                right:0,
-                show: true,
-                orient: "horizontal",
-                // data:legendData,
-            };
-
-            grid = {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            };
-        }
         // 如果不存在则创建
+        if (!lineChart) {
+            lineChart = echarts.init(lineChartDom);
+        }
         let lineOption = {
             title: {
                 text: title,
             },
-            grid: [grid],
-            legend:[legend],
+            grid: {
+                 containLabel: true
+            },
+            legend: {
+                top:30,
+                right:0,
+                show: true,
+                orient: "horizontal",
+            },
             tooltip: {
                 trigger: "axis",
                 backgroundColor: "#faeffe",
@@ -80,55 +56,10 @@ const useLineEcharts = (props)=>{
             },
            
             series:seriesData,
-            //  [
-            //     {
-            //         type: "line",
-            //         smooth: true,
-            //         symbol: "circle",
-            //         symbolSize: 8,
-            //         symbolOffset: [0, "-50%"],
-            //         itemStyle: {
-            //             normal: {
-            //                 borderColor: "#facf00",
-            //                 color: "#fff100",
-            //             },
-            //         },
-            //         areaStyle: {
-            //             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            //                 {
-            //                     offset: 0,
-            //                     color: "#f7e0fe",
-            //                 },
-            //                 {
-            //                     offset: 1,
-            //                     color: "rgba(255, 255, 255, 1)",
-            //                 },
-            //             ]),
-            //         },
-            //         lineStyle: {
-            //             color: {
-            //                 type: "linear",
-            //                 colorStops: [
-            //                     {
-            //                         offset: 0,
-            //                         color: "#ffec70", // 0% 处的颜色
-            //                     },
-            //                     {
-            //                         offset: 1,
-            //                         color: "#ff609f", // 100% 处的颜色
-            //                     },
-            //                 ],
-            //                 global: false, // 缺省为 false
-            //             },
-            //         },
-            //         data: seriesData,
-            //     },
-            // ],
         };
-        // lineCharts.clear();
         lineChart.setOption(lineOption);
-        window.addEventListener('resize',()=>{         
-            lineChart.resize()
+        window.addEventListener('resize', () => {   
+                lineChart.resize();
         })
     },[id,title,xData,seriesData]) 
 
@@ -138,7 +69,7 @@ const useLineEcharts = (props)=>{
 
   
     return(
-        <div id={id} title={title} style={{width:100+'%',height:100+'%'}}></div>
+        <div id={id} title={title} style={{width:'100%',height:'100%'}}></div>
     )
 
 }

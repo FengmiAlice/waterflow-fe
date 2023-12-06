@@ -7,15 +7,15 @@ import * as echarts from 'echarts'
  *  @param {array} sourceData 图表数据
  * 
 */
-const usePieEcharts = (props)=>{
+const usePieEcharts = (props) => {
     const { id, title, sourceData } = props;
     const drawMultiplePie = useCallback(()=>{
-         // 获取DOM ID
+         // 获取DOM ID    
         let pieChartDom = document.getElementById(id);
         // 获取实例
-        let pieChart  = echarts.getInstanceByDom(pieChartDom);
-       
-        if(!pieChart ){
+        let pieChart = echarts.getInstanceByDom(pieChartDom);
+        // 如果不存在则创建
+        if (!pieChart) {
             pieChart = echarts.init(pieChartDom);
         }
         let multipleOptions = {
@@ -27,6 +27,9 @@ const usePieEcharts = (props)=>{
                     orient: "horizontal",
                     top: 'bottom',
                     show:false,
+                },
+                grid: {
+                    containLabel: true
                 },
                 tooltip: {
                     trigger: 'item',
@@ -59,20 +62,21 @@ const usePieEcharts = (props)=>{
                     }
                 ]
         };
-      
         pieChart.setOption(multipleOptions);
-        window.addEventListener('resize',()=>{
-            pieChart.resize()
+
+        window.addEventListener('resize', () => {
+            pieChart.resize();
         })
-    },[id,title,sourceData]) 
-       // 监听数据变化，重新渲染图表
-    useEffect(()=>{
-        drawMultiplePie();
+    }, [id, title, sourceData]) 
+    
+    // 监听数据变化，重新渲染图表
+    useEffect(() => {
+        drawMultiplePie(); 
+
     },[drawMultiplePie])
 
-
     return (
-        <div id={id} title={title} style={{width:100+'%',height:100+'%'}}></div>  
+        <div id={id} title={title} style={{ width: '100%', height: '100%' }}></div>  
     )
 }
 export default usePieEcharts;

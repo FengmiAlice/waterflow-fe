@@ -1,6 +1,6 @@
 
 import store from '../store'
-import { HomeOutlined} from '@ant-design/icons';//UserOutlined
+import { HomeOutlined,MoneyCollectOutlined,PayCircleOutlined,RedEnvelopeOutlined,PoundOutlined,AccountBookOutlined,UserAddOutlined,WalletOutlined} from '@ant-design/icons';
 import AppLayout from '../components/AppLayout';
 
 const routes = [
@@ -26,28 +26,32 @@ const routes = [
             {
                 path: '/index/budget',
                 meta:{
-                    title:'预算',
+                    title: '预算',
+                     icon: <MoneyCollectOutlined />,
                 },
                 component: () => import('../views/user/Budget'),
             },
             {
                 path: '/index/consume',
                 meta:{
-                    title:'支出',
+                    title: '支出',
+                    icon:<PayCircleOutlined />,
                 },
                 component: () => import('../views/user/Consume'),
             },
             {
                 path: '/index/income',
                 meta:{
-                    title:'收入',
+                    title: '收入',
+                    icon:<RedEnvelopeOutlined />,
                 },
                 component: () => import('../views/user/Income'),
             },
             {
                 path: '/index/invest',
                 meta:{
-                    title:'理财',
+                    title: '理财',
+                    icon:<PoundOutlined />,
                 },
                 children: [
                     {
@@ -70,7 +74,8 @@ const routes = [
             {
                 path: '/index/debt',
                 meta:{
-                    title:'债务',
+                    title: '债务',
+                    icon:<AccountBookOutlined />,
                 },
                 children: [
                     {
@@ -115,7 +120,8 @@ const routes = [
             {
                 path: '/index/account',
                 meta:{
-                    title:'账户',
+                    title: '账户',
+                    icon:<UserAddOutlined />,
                 },
                 children: [
                     {
@@ -138,7 +144,8 @@ const routes = [
             {
                 path: '/index/report',
                 meta:{
-                    title:"报告",
+                    title: "报告",
+                    icon:<WalletOutlined />,
                 },
                 component: () => import( '../views/user/Report'),
             },

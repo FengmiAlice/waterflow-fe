@@ -533,7 +533,7 @@ function Income(){
                                     </Select>
                                  </Form.Item>
                                 
-                                <Button  type="primary" onClick={addNewType} className="incomeTypeButton">新类别</Button>
+                                <Button type="primary" onClick={addNewType} className="incomeTypeButton">新类别</Button>
                           </Form.Item>
                           <Form.Item style={{clear:'both'}} label="收入时间" name="time"   
                                 rules={[
