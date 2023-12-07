@@ -24,6 +24,26 @@ const useBarEcharts = (props)=>{
         if(!barChart){
             barChart = echarts.init(barChartDom);
         }
+        // 适配移动端<576px的屏幕
+        let fontBySize;
+        let grid = {};
+        if (document.documentElement.clientWidth < 576) { 
+            fontBySize = 16;
+            grid = {
+                // left: '3%',
+                // right: '4%',
+                // bottom: '3%',
+                containLabel: true,
+            };
+        } else {
+            fontBySize = 18;
+            grid = {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true,
+            };
+        }
         // 如果是普通类型柱状图
         if(barType === 'single'){
             let multipleOption1 = {
@@ -31,7 +51,7 @@ const useBarEcharts = (props)=>{
                     text: title,
                     left: 'center',
                     testStyle: {
-                        fontSize: 16,
+                        fontSize:[fontBySize],
                         color: '#343C4F',
                         fontWeight: 'bold',
                     }
@@ -59,9 +79,7 @@ const useBarEcharts = (props)=>{
                         showDetail: true,// 拖拽时，是否显示详细信息
                     }
                 ],
-                grid: {
-                    containLabel: true
-                },
+                grid: [grid],
                 legend: {
                     orient: "horizontal",
                     top: 'bottom',
@@ -93,7 +111,11 @@ const useBarEcharts = (props)=>{
             let multipleOption2={
                 title:{
                     text: title,
-                    left:'center'
+                    left: 'center',
+                     // 主标题文字的字体大小
+                    textStyle: {
+                        fontSize:[fontBySize]
+                    }
                 },
                 tooltip:{
                     trigger: 'axis',
@@ -107,12 +129,7 @@ const useBarEcharts = (props)=>{
                     // data:legendData,
                     // ['总计','基本生活支出','置装开支']
                 },
-                grid: {
-                    // left: '3%',
-                    // right: '4%',
-                    // bottom: '3%',
-                    containLabel: true
-                },
+                grid: [grid],
                 xAxis : [
                     {
                         type : 'category',

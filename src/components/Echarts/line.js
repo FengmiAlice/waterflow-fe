@@ -22,13 +22,40 @@ const useLineEcharts = (props)=>{
         if (!lineChart) {
             lineChart = echarts.init(lineChartDom);
         }
+        // 适配移动端<576px的屏幕
+        let grid={};
+        let fontBySize;
+        if (document.documentElement.clientWidth < 576) {
+            // legend = {
+            //     top: 30,
+            //     right: 0,
+            //     show: true,
+            //     orient: "horizontal",
+            //     // data:legendData,
+            // }
+            grid = {
+                containLabel: true,
+            };
+            fontBySize = 16;
+        } else {
+            grid = {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true,
+            };
+            fontBySize = 18;
+        }
         let lineOption = {
             title: {
                 text: title,
+                // 主标题文字的字体大小
+                textStyle: {
+                    fontSize:[fontBySize]
+                }
+                
             },
-            grid: {
-                 containLabel: true
-            },
+            grid: [grid],
             legend: {
                 top:30,
                 right:0,
@@ -59,7 +86,7 @@ const useLineEcharts = (props)=>{
         };
         lineChart.setOption(lineOption);
         window.addEventListener('resize', () => {   
-                lineChart.resize();
+            lineChart.resize();
         })
     },[id,title,xData,seriesData]) 
 

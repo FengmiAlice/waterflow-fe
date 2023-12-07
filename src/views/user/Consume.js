@@ -131,7 +131,9 @@ function Consume(){
     const [rowKeys,setRowKeys] = useState([]);//设置表格选择的数据
     const [words, setWords] = useState([]);//设置支出统计分析弹窗关键词字符串数组
     const [moneyData, setMoneyData] = useState(null); // 设置各类支出金额占比饼图数据
-    const [timer,setTimer]=useState(null);//设置刷新各类支出金额占比饼图标识
+    const [timer, setTimer] = useState(null);//设置刷新各类支出金额占比饼图标识
+    const [isAddFlag, setAddFlag] = useState(false)//标识是否是新增
+    
     // 搜索条件的一些参数获取
     const month = useRef('');//设置月份
     const year = useRef('');//设置年份
@@ -144,10 +146,9 @@ function Consume(){
     const tableIds = useRef('consume_report');//获取支出列表table id
     const tableRef = useRef(null);//设置表格的ref
     const searchWords = useRef('');//设置支出统计分析弹窗关键词
-
     let curTime= moment().format("YYYY-MM-DD");
     const consumeTime = useRef(curTime);//设置支出记录默认时间
-    const [isAddFlag,setAddFlag] = useState(false)//标识是否是新增
+
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
     useEffect(()=>{
         month.current = moment().format("YYYY-MM");//初始化赋值当前月份
@@ -479,6 +480,9 @@ function Consume(){
             searchWords.current = '';
             setTimer(null);
             setAccountTitle('暂无数据');
+            setMoneyData([]);
+        // 清除上一次分析出来的饼图画布
+        // consumeRef.current.clear();
     }
 
     // 设置新增编辑支出弹窗显示隐藏事件
@@ -510,6 +514,7 @@ function Consume(){
         setTimer(null);
         setAccountTitle('暂无数据');
         setMoneyData([]);
+
     }
 
     // 分析弹窗里的统计按钮事件
@@ -710,7 +715,7 @@ function Consume(){
                         </Form.Item>
                     </Form>
                     <div className="echartsMoneyItem">
-                        <ArgPieEcharts key={timer} id="consumeMoneyPie" title={accountTitle} sourceData={moneyData} />
+                        <ArgPieEcharts key={timer} id="consumeMoneyPie" type="consumeAnalysisType" title={accountTitle} sourceData={moneyData} />
                     </div>
                 </AsyncModal>
         </section>
