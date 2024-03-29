@@ -4,7 +4,14 @@
 import React, {  useEffect, useState } from 'react';
 import { useStore, observer } from '../../hooks/storeHook';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/img/logo.svg';
+import logo from '../../assets/images/logo.svg';
+import sunrise from '../../assets/images/morning.png';
+import sunup from '../../assets/images/later-morning.png';
+import midsun from '../../assets/images/noon.png';
+import aftersun from '../../assets/images/afternoon.png';
+import sunset from '../../assets/images/later-afternoon.png';
+import night from '../../assets/images/night.png';
+import deepnight from '../../assets/images/deep-night.png';
 import { updateUserInfo,updatePassword } from '../../api/login';
 import { Form,Input, Dropdown,Modal,Menu,Space,message } from 'antd';
 import { DownOutlined,UserOutlined,SettingOutlined,LogoutOutlined} from '@ant-design/icons';
@@ -19,7 +26,8 @@ function HeadBar () {
     const navigate = useNavigate();
     const [infoVisible, setInfoVisible] = useState(false);
     const [resetVisible, setResetVisible] = useState(false);
-    const [displayHour,setDisplayHour] = useState(null);
+    const [displayHour, setDisplayHour] = useState(null);
+     const [imageSrc, setImageSrc] = useState('');
     useEffect(() => {
         if(infoVisible){
             //使用setFieldsValue回显表格数据
@@ -31,18 +39,26 @@ function HeadBar () {
         // 判断当前时间是早上、上午、中午还是下午、傍晚、晚上等
         if (hour > 5 && hour < 10) {
             setDisplayHour("早上好");
+            setImageSrc(sunrise);
         } else if (hour >= 10 && hour < 12) {
             setDisplayHour("上午好");
+            setImageSrc(sunup);
         } else if (hour >= 12 && hour < 13) {
             setDisplayHour("中午好");
+            setImageSrc(midsun);
         } else if (hour >= 13 && hour < 17) {
             setDisplayHour("下午好");
+            setImageSrc(aftersun);
         } else if (hour >= 17 && hour < 19) {
             setDisplayHour("傍晚好");
+            setImageSrc(sunset); 
+
         } else if (hour >= 19 && hour < 23) {
             setDisplayHour("晚上好");
+            setImageSrc(night);
         } else {
             setDisplayHour("夜深了");
+            setImageSrc(deepnight);
         }
     },[form,pwdForm,userInfo,infoVisible,resetVisible])
     // 弹出个人信息页弹框
@@ -157,7 +173,8 @@ function HeadBar () {
             {/* logo图标 */}
             <div className="logoWrap"> <img src={logo} className="logo" alt="logo" /></div>
         </div>
-        <div className="headRight">
+            <div className="headRight">
+                <div className='dynamicImgBox'><img src={imageSrc} alt="时间变化图片" /></div>
                 <Dropdown overlay={menuItems}>
                      {/* overlay={
                         <Menu>
@@ -173,7 +190,7 @@ function HeadBar () {
                         </Menu.Item>
                         </Menu>
                     } */}
-                    <div><span>{ displayHour}，</span>{userInfo.name}<DownOutlined className="iconArrowDown" /></div>
+                    <div><span className='dynamicTime'>{ displayHour},</span><span className='dynamicName'>{userInfo.name}</span> <DownOutlined className="iconArrowDown" /></div>
                 </Dropdown>
         </div>
         {/* 个人信息弹窗 */}

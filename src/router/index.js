@@ -87,6 +87,7 @@ const routes = [
                     },  
                     {
                         path: '/index/debt/debtAdd',
+                         hidden: true,
                         meta:{
                             title:'债务新增',
                         },
@@ -94,6 +95,7 @@ const routes = [
                     },
                     {
                         path: '/index/debt/debtEdit',
+                         hidden: true,
                         meta:{
                             title:'债务编辑',
                         },

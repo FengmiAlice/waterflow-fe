@@ -122,7 +122,7 @@ export function getDebtList(params) {
 }
 // 添加债务记录
 export function addDebt(data) {
-    return http('post',"/api1/debt/save",data)
+    return http('post',"/api1/debt/save/json",data)
 }
 // 删除债务记录
 export function deleteDebt(data) {
@@ -130,7 +130,7 @@ export function deleteDebt(data) {
 }
 // 添加偿还债务记录
 export function addDebtRecord(data) {
-    return http('post',"/api1/debt/repay/save",data)
+    return http('post',"/api1/debt/repay/save/json",data)
 }
 // 偿还债务记录删除
 export function deleteDebtRecord(data) {
@@ -148,7 +148,7 @@ export function getInvestedList(params) {
 }
 // 添加理财记录
 export function addInvested(data) {
-    return http('post', "/api1/invest/save", data)
+    return http('post', "/api1/invest/save/json", data)
 }
 // 删除理财记录
 export function deleteInvested(data) {
@@ -156,7 +156,7 @@ export function deleteInvested(data) {
 }
 // 添加单条投资明细买入或卖出
 export function addSingleInvest(data) {
-    return http('post', "/api1/invest/single/save", data)
+    return http('post', "/api1/invest/single/save/json", data)
 }
 // 删除单条投资明细买入或卖出
 export function deleteSingleInvest(data) {
