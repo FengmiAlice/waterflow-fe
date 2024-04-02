@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
-import {useNavigate,useSearchParams} from 'react-router-dom';
+import React, { useEffect, useState, useRef,useCallback } from 'react';
+import {useNavigate} from 'react-router-dom';
 import { DatePicker, Form, Button, Input, Select,Space,message,Modal } from 'antd';
 import ArgTable from '../../../components/Table';
 import moment from 'moment';
-import { getDebtList, addDebt, getPaymentTypeList, deleteDebtRecord } from '../../../api/user';
+import { getDebtRepayList, addDebt, getPaymentTypeList, deleteDebtRecord,getDebtListById } from '../../../api/user';
 import {debounce} from '../../../utils/appTools';
 const { Option } = Select;
 const { TextArea } = Input;
@@ -11,63 +11,63 @@ const { confirm } = Modal;
 
 function DebtEdit() {
     // 偿还记录列表column
-    const debtRecordColumns = () => {  
+    const debtRecordColumns = () => {
         return [
             {
-                    title: '日期',
-                    key:'time',
-                    dataIndex: 'time',
-                },
-                {
-                    title: '内容',
-                    key:'description',
-                    dataIndex: 'description',
-                },
-                {
-                    title: '偿还金额',
-                    key:'amount',
-                    dataIndex: 'amount',
-                    sorter:true
+                title: '日期',
+                key: 'time',
+                dataIndex: 'time',
+            },
+            {
+                title: '内容',
+                key: 'description',
+                dataIndex: 'description',
+            },
+            {
+                title: '偿还金额',
+                key: 'amount',
+                dataIndex: 'amount',
+                sorter: true
             },
             {
                 title: '支付方式',
-                key:'paymentId',
+                key: 'paymentId',
                 dataIndex: 'paymentId',
-                render: record => 
+                render: record =>
                 (
-                <>
-                    {
-                        paymentTypeArray.map(item=>{
-                            if(item.id === record) {
-                                return (
-                                    <Space  key={item.id}>
-                                    {item.name}
-                                    </Space>
-                                )
-                            }
-                            return null;
-                        })
-                    }
-                </>
+                    <>
+                        {
+                            paymentTypeArray.map(item => {
+                                if (item.id === record) {
+                                    return (
+                                        <Space key={item.id}>
+                                            {item.name}
+                                        </Space>
+                                    )
+                                }
+                                return null;
+                            })
+                        }
+                    </>
                 )
             },
             {
                 title: '操作',
                 dataIndex: 'operation',
-                render: (text, record,index) =>{
-                    return(
+                render: (text, record, index) => {
+                    return (
                         <Space size="middle" >
                             <div className='largeBtnBox'>
-                                <Button size="small" type="primary"  onClick={ ()=> handleSingleDebtEdit(record)}>编辑</Button>
-                                <Button size="small" type="danger"   onClick={ ()=> handleSingleDebtDelete(record)}>删除</Button>
+                                <Button size="small" type="primary" onClick={() => handleSingleDebtEdit(record)}>编辑</Button>
+                                <Button size="small" type="danger" onClick={() => handleSingleDebtDelete(record)}>删除</Button>
                             </div>
                             <div className="miniBtnBox">
-                                <Button size="small" type="text"  className='miniPrimaryBtn' onClick={ ()=> handleSingleDebtEdit(record)}>编辑</Button>
-                                <Button size="small" type="text"  danger onClick={ ()=> handleSingleDebtDelete(record)}>删除</Button>
+                                <Button size="small" type="text" className='miniPrimaryBtn' onClick={() => handleSingleDebtEdit(record)}>编辑</Button>
+                                <Button size="small" type="text" danger onClick={() => handleSingleDebtDelete(record)}>删除</Button>
                             </div>
                         </Space>
                     )
-                }    
+                }
             }
         ]
     }
@@ -88,51 +88,90 @@ function DebtEdit() {
         { name: '坏账', value: '坏账' },
     ];
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();   
+    // const [searchParams] = useSearchParams();   
     const [paymentTypeArray, setPaymentTypeArray] = useState([]);//设置支付方式列表
-    const [rowId, setRowId] = useState('');//设置债务记录行id
-    const [recordDes,setRecordDes] = useState('');//设置所属债务
+    const [rowId] = useState(new URLSearchParams(window.location.search).get('debtId'));//设置债务记录行id
+    const [recordDes, setRecordDes] = useState('');//设置所属债务
     const [recordKeys, setRecordRowKeys] = useState([])//设置偿还记录表格选择的数据
-
+    const [repayIdParams, setRepayIdParams] = useState({ id: new URLSearchParams(window.location.search).get('debtId') });//设置偿还记录表格选择的数据
+    
+    const fetchRecordDataWarp = useCallback(
+           updateDebtRecordData,[]
+    )
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
     useEffect(() => {
         getPaymentList();
-        let getRow = searchParams.get("debtRow");
-        // console.log('获取searchParams传递的参数debtRow信息----', getRow)
-        // 在组件挂载后，将查询参数赋值给表单数据
-        if (getRow) {
-            let data = JSON.parse(getRow);
-            setRowId(data.id);
-            setRecordDes(data.description);
-            let startDate, endDate;
-            // 解决日期组件出现NaN问题
-            if (data.time === null || data.endTime === null) {
-                startDate = moment();
-                endDate = moment();
-            } else {
-                startDate = moment(data.time);
-                endDate = moment(data.endTime);
-            }
-            form.setFieldsValue({
-                'time': startDate,
-                'endTime':endDate,
-                'description':data.description,
-                'owner':data.owner,
-                'amount': data.amount,
-                'repay': data.repay,
-                'paymentId': data.paymentId,
-                'status': data.status,
-                'note': data.note,
-            });
+        fetchRecordDataWarp();
 
-        }
-    }, [form,searchParams])
+            // let getRow = searchParams.get("debtRow");
+            // // console.log('获取searchParams传递的参数debtRow信息----', getRow)
+            // // 在组件挂载后，将查询参数赋值给表单数据
+            // if (getRow) {
+            //     let data = JSON.parse(getRow);
+            //     setRowId(data.id);
+            //     setRecordDes(data.description);
+            //     let startDate, endDate;
+            //     // 解决日期组件出现NaN问题
+            //     if (data.time === null || data.endTime === null) {
+            //         startDate = moment();
+            //         endDate = moment();
+            //     } else {
+            //         startDate = moment(data.time);
+            //         endDate = moment(data.endTime);
+            //     }
+            //     form.setFieldsValue({
+            //         'time': startDate,
+            //         'endTime': endDate,
+            //         'description': data.description,
+            //         'owner': data.owner,
+            //         'amount': data.amount,
+            //         'repay': data.repay,
+            //         'paymentId': data.paymentId,
+            //         'status': data.status,
+            //         'note': data.note,
+            //     });
+            // }
+    }, [fetchRecordDataWarp]);
     
     // 获取支出方式列表
     function getPaymentList(){
         getPaymentTypeList().then( (res) => {
             if(res.data.success === true){
                 setPaymentTypeArray(res.data.page.list);
+            }
+        }).catch((error)=>{
+            console.log(error)
+        })
+    }
+    // 获取债务单条数据，更新form表单
+    function updateDebtRecordData() {
+        let params = {
+            id:rowId,
+        }
+        getDebtListById(params).then((res)=>{
+            if (res.data.success === true) {
+                let data = res.data.data;
+                setRecordDes(data.description);
+                let startDate, endDate;
+                // 解决日期组件出现NaN问题
+                if (data.time === null || data.endTime === null) {
+                    startDate = moment();
+                    endDate = moment();
+                } else {
+                    startDate = moment(data.time);
+                    endDate = moment(data.endTime);
+                }
+                form.setFieldsValue({
+                    'time': startDate,
+                    'endTime': endDate,
+                    'description': data.description,
+                    'owner': data.owner,
+                    'amount': data.amount,
+                    'repay': data.repay,
+                    'paymentId': data.paymentId,
+                    'status': data.status,
+                    'note': data.note,
+                });
             }
         }).catch((error)=>{
             console.log(error)
@@ -155,7 +194,7 @@ function DebtEdit() {
 
     // 设置查询条件初始化
     function initFunc(){
-        // console.log('父组件执行初始化')  
+        // console.log('父组件执行初始化')
     }
 
     // 返回按钮事件
@@ -168,7 +207,7 @@ function DebtEdit() {
         setRecordRowKeys(val)
     }
 
-    // 添加偿还记录按钮事件
+    // 添加单条偿还记录按钮事件
     function handleSingleDebt() {
         navigate(`/index/debt/debtRecordAdd?id=${rowId}&recordDes=${recordDes}`);
     }
@@ -195,7 +234,9 @@ function DebtEdit() {
                     id:row.id
                 };
                 deleteDebtRecord(par).then((res)=>{
-                    if(res.data.success === true){
+                    if (res.data.success === true) {
+                        updateDebtRecordData();
+                        refreshRepayData();// 刷新偿还记录列表
                         message.success(res.data.message);
                     }
                 }).catch((error)=>{
@@ -236,6 +277,13 @@ function DebtEdit() {
         } catch (error) {
             console.log('validate failed',error)
         }
+    }
+    // 刷新偿还记录列表
+    function refreshRepayData() {
+        if(debtRecordRef.current){
+            debtRecordRef.current.resetPage();
+        }
+        setRepayIdParams({id:new URLSearchParams(window.location.search).get('debtId')});
     }
 
     return (
@@ -331,8 +379,9 @@ function DebtEdit() {
                         title={recordTitle}
                         tableType={'debtRecord'}            
                         owncolumns = {debtRecordColumns()}
-                        queryAction={getDebtList} 
+                        queryAction={getDebtRepayList} 
                         getRowKeys={handleRecordKeys}
+                        params={repayIdParams} 
                         initMethod={initFunc} />
             </section>
         </div>

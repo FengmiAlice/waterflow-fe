@@ -51,7 +51,6 @@ function DebtRecordEdit() {
             debtEditRecordForm.setFieldsValue({
                 'time': startDate,
                 'description':data.description,
-                // 'debtName':data.debtName,
                 'amount': data.amount,
                 'paymentId': data.paymentId,
                 'note': data.note,

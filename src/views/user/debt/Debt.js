@@ -160,9 +160,10 @@ function Debt() {
     // 编辑债务记录按钮操作
     function handleEdit(row) {
         // console.log('债务记录编辑', row);
-        let rowParam = JSON.stringify(row);
+        // let rowParam = JSON.stringify(row);
         // searchParams传参
-        navigate(`/index/debt/debtEdit?debtRow=${rowParam}`);
+        navigate(`/index/debt/debtEdit?debtId=${row.id}`);
+        // navigate(`/index/debt/debtEdit?debtRow=${rowParam}`);
         // state传参、路由事件跳转，传的参数放入state中,相当于sessionStorage
         // navigate('/index/debt/debtEdit',{state:{rowParam}} );
         

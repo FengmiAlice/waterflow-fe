@@ -120,6 +120,10 @@ export function transformAccount(data){
 export function getDebtList(params) { 
     return http('get',"/api1/debt/list",params)
 }
+// 根据id获取债务单条数据
+export function getDebtListById(params) {
+    return http('get',"/api1/debt/list/getById",params)   
+}
 // 添加债务记录
 export function addDebt(data) {
     return http('post',"/api1/debt/save/json",data)
@@ -127,6 +131,10 @@ export function addDebt(data) {
 // 删除债务记录
 export function deleteDebt(data) {
     return http('post',"/api1/debt/delete",data)
+}
+// 获取偿还债务记录列表
+export function getDebtRepayList(params) {
+    return http('get',"/api1/debt/repay/list",params)
 }
 // 添加偿还债务记录
 export function addDebtRecord(data) {
@@ -146,6 +154,10 @@ export function getInvestedStatistic(params) {
 export function getInvestedList(params) {
     return http('get', "/api1/invest/list", params)
 }
+// 根据id获取理财单条数据
+export function getInvestedListById(params) {
+    return http('get', "/api1/invest/list/getById", params)
+}
 // 添加理财记录
 export function addInvested(data) {
     return http('post', "/api1/invest/save/json", data)
@@ -153,6 +165,10 @@ export function addInvested(data) {
 // 删除理财记录
 export function deleteInvested(data) {
     return http('post', "/api1/invest/delete", data)
+}
+// 获取买入卖出列表数据
+export function getInvestedSingleList(params) {
+    return http('get', "/api1/invest/single/list", params)
 }
 // 添加单条投资明细买入或卖出
 export function addSingleInvest(data) {

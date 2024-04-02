@@ -4,7 +4,7 @@ import AsyncModal from '../../../components/Modal';
 import {useNavigate} from 'react-router-dom';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Drawer} from 'antd';
 import moment from 'moment';
-import { getInvestedList, getInvestedStatistic,getPaymentTypeList, addInvested,deleteInvested,addDividend,updateInvestCurrent,addSingleInvest,deleteSingleInvest} from '../../../api/user';
+import { getInvestedList,getInvestedListById, getInvestedSingleList,getInvestedStatistic,getPaymentTypeList, addInvested,deleteInvested,addDividend,updateInvestCurrent,addSingleInvest,deleteSingleInvest} from '../../../api/user';
 import {debounce} from '../../../utils/appTools';
 
 const { Option } = Select;
@@ -97,6 +97,21 @@ function Invest() {
                     title: '类型',
                     key:'description',
                     dataIndex: 'description',
+                    render: (text, record) => { 
+                        if (record.type === 1) {
+                             return (
+                                    <Space>
+                                        买入
+                                    </Space>
+                                )
+                        } else {
+                                return (
+                                    <Space>
+                                        卖出
+                                    </Space>
+                                    )
+                        }
+                    }
                 },
                 {
                     title: '金额',
@@ -149,11 +164,11 @@ function Invest() {
     const defaultTitle = () => '投资明细';//设置投资明细表格标题
     const navigate = useNavigate();
 
-    // 使用useForm创建新增理财记录form实例
-    const [form] = Form.useForm();
-    const [redForm] = Form.useForm();
-    const [profitForm] = Form.useForm();
-    const [investSingleForm] = Form.useForm();
+    
+    const [form] = Form.useForm();// 使用useForm创建新增理财记录form实例
+    const [redForm] = Form.useForm();// 使用useForm创建分红form实例
+    const [profitForm] = Form.useForm();// 使用useForm创建更新收益form实例
+    const [investSingleForm] = Form.useForm();// 使用useForm创建投资明细form实例
     const tableRef = useRef(null);//设置表格的ref
     const singleInvestRef=useRef(null);//设置理财记录抽屉下投资明细的ref
     const keyword = useRef('');//设置搜索关键字值
@@ -176,12 +191,14 @@ function Invest() {
     let initParamsData = {
         keyword: keyword.current,
     }
-    const [searchData, setSearchData] = useState(initParamsData);//设置初始传参列表
+    const [searchData, setSearchData] = useState(initParamsData);//设置理财列表初始传参
+    const [singleParam, setSingleParam] = useState({});//设置投资明细列表初始传参
+    
     const [investOpen, setInvestOpen] = useState(false);//抽屉是否可见Drawer 是否可见，小于 4.23.0 使用 visible
     const [investChildrenOpen, setInvestChildrenOpen] = useState(false);//投资明细抽屉是否可见Drawer 是否可见
     const [investTitle, setInvestTitle] = useState('');//设置添加理财记录抽屉标题
     const [isAddFlag, setAddFlag] = useState(false);//标识是否是理财记录新增
-    const [rowId,setRowId] = useState('');//设置新增或删除需要传递的行id
+    const [rowId,setRowId] = useState('');//设置新增或删除理财记录的行id
     const [isModalType, setIsModalType] = useState('');//设置分红弹窗输出类型
     const [isProfitType, setProfitType] = useState('');//设置更新收益弹窗类型
     const [isRedVisible, setRedVisible] = useState(false);//设置是否显示分红弹窗
@@ -345,7 +362,8 @@ function Invest() {
                 }
                
                 addDividend(params).then((res) => {
-                    if(res.data.success === true){
+                    if (res.data.success === true) {
+                        buttonSearch();//重新掉接口刷新理财列表数据
                         operRedFunc(false);
                     }else{
                         operRedFunc(true);
@@ -373,7 +391,8 @@ function Invest() {
                 }
                 updateInvestCurrent(params).then((res) => {
                     if (res.data.success === true) {
-                        buttonSearch();//重新掉接口刷新表格数据
+                        updateInvestData();
+                        buttonSearch();//重新掉接口刷新理财列表数据
                         operProfitFunc(false);
                     }else{
                         operProfitFunc(true);
@@ -406,20 +425,49 @@ function Invest() {
         // console.log('理财记录编辑---', row);
         setAddFlag(false);
         setIsRedFlag(false);
-        // setInputVal(row.description);//给投资明细抽屉项目名称赋值
+        setRowId(row.id);
+        updateInvestData(row.id);
+        
         investSingleForm.setFieldsValue({ 'investName': row.description });
         if (isAddFlag === false) {
-            //  console.log(isAddFlag,2222)
             investTime.current = row.timeStr;
         }
         // 将返回的时间转换为moment格式用于编辑显示在时间组件上
         row.time = moment(row.time);
-        form.setFieldsValue(row);
-
+        // form.setFieldsValue(row);
+        
         setInvestTitle('编辑理财记录');
-        setRowId(row.id);
         setInvestOpen(true);
+        // 设置投资明细列表初始化参数
+        setSingleParam({
+            id:row.id,
+        })
+       
     }
+
+    // 获取单理财数据、更新理财记录form表单数据
+    function updateInvestData(rowId){
+            let params = {
+                id:rowId
+            };
+            getInvestedListById(params).then((res)=>{
+                if (res.data.success === true) {
+                    let data = res.data.obj;
+                    // 更新form
+                    form.setFieldsValue({
+                        time: data.time.format('YYYY-MM-DD'),
+                        description: data.description,
+                        plan: data.plan,
+                        amount: data.amount,
+                        current: data.current,
+                        note: data.note
+                     });
+                }
+            }).catch((error)=>{
+                console.log(error)
+            })
+    }
+
     // 统计图表按钮事件
     function turnInvestSoft() {
           navigate('/index/invest/investReport')
@@ -450,7 +498,7 @@ function Invest() {
                 deleteInvested(par).then((res)=>{
                     if(res.data.success === true){
                         message.success(res.data.message);
-                        buttonSearch();//重新掉接口刷新表格数据
+                        buttonSearch();//重新掉接口刷新理财列表数据
                     }
                 }).catch((error)=>{
                     console.log(error)
@@ -464,7 +512,7 @@ function Invest() {
         setInvestChildrenOpen(false);
     }
 
-    // 添加投资明细买入卖出按钮事件
+    // 添加投资明细买入卖出
     function handleSingleInvest() {
         setIsSingleFlag(true);
         if (isSingleFlag === true) {
@@ -480,7 +528,7 @@ function Invest() {
         setSingleId('');
     }
 
-    // 编辑单条投资明细买入卖出
+    // 编辑投资明细买入卖出
     function handleSingleEdit(row) {
         // console.log('投资明细记录编辑---', row)
         setIsSingleFlag(false);
@@ -496,7 +544,7 @@ function Invest() {
         setSingleId(row.id)
     }
 
-    // 删除单条投资明细买入卖出
+    // 删除投资明细买入卖出
     function handleSingleDelete(row) { 
          // confirm弹框
         confirm({
@@ -510,9 +558,10 @@ function Invest() {
                     id:row.id
                 };
                 deleteSingleInvest(par).then((res)=>{
-                    if(res.data.success === true){
+                    if (res.data.success === true) {
+                        updateInvestData();
+                        singleSearch();//刷新投资明细列表数据
                         message.success(res.data.message);
-                     
                     }
                 }).catch((error)=>{
                     console.log(error)
@@ -551,7 +600,8 @@ function Invest() {
                 };
                 addSingleInvest(params).then((res) => {
                     if (res.data.success === true) {
-                        buttonSearch();//重新掉接口刷新表格数据
+                        updateInvestData();
+                        singleSearch();//刷新投资明细列表数据
                         message.success(res.data.message);
                         setInvestChildrenOpen(false);
                     } else {
@@ -585,7 +635,7 @@ function Invest() {
                 };
                 addInvested(params).then((res) => {
                     if (res.data.success === true) {
-                        buttonSearch();//重新掉接口刷新表格数据
+                        buttonSearch();//重新掉接口刷新理财列表数据
                         message.success(res.data.message);
                         setInvestOpen(false);
                     } else {
@@ -600,16 +650,27 @@ function Invest() {
         }
     }
 
-     // 设置搜索防抖功能
-     const debounceInvestSearch = debounce(buttonSearch,1000);
-    // 根据筛选条件搜索表格数据
+    // 设置理财列表搜索防抖功能，刷新理财列表数据
+    const debounceInvestSearch = debounce(buttonSearch,1000);
     function buttonSearch(){
         // 每次翻页查询之后页码，条数重置
         if(tableRef.current){
             tableRef.current.resetPage();
         }
+        // 设置理财列表初始化参数
         setSearchData({
             keyword:keyword.current,
+        })
+
+    }
+    // 刷新投资明细列表数据
+    function singleSearch() {
+        if(singleInvestRef.current){
+            singleInvestRef.current.resetPage();
+        }
+         // 设置投资明细列表初始化参数
+        setSingleParam({
+            id:rowId,
         })
     }
 
@@ -621,12 +682,11 @@ function Invest() {
                             <Input  placeholder="请输入关键字" allowClear  onChange={(e)=>inputChange(e)}  />
                         </Form.Item>
                         <Form.Item  >
-                            <Button size="small" type="primary" className="searchBtn" onClick={debounceInvestSearch} > 搜索</Button>
+                            <Button size="small" type="primary" className="searchBtn" onClick={debounceInvestSearch}> 搜索</Button>
                         </Form.Item>
                 </Form>
             </header>
             <section>
-                
                 <Button size="small" type="primary" className="addInvestBtn"  onClick={handleAdd} >添加新理财项目</Button>
                 <Button size="small" type="primary"    onClick={turnInvestSoft}>统计图表</Button>
                 <span className='totalStyle'>计划投资 {totalPlan}￥ </span>
@@ -643,7 +703,6 @@ function Invest() {
                     getRowKeys={handleKeys}
                     params = {searchData} 
                     initMethod={initFunc}
-                   
                 /> 
                 {/* baseProps={{ rowKey: record => record.id }} */}
             </section>
@@ -652,8 +711,8 @@ function Invest() {
                     title={investTitle}
                     placement="right"
                     onClose={onClose}
-                visible={investOpen}
-                className='investDrawer'
+                    visible={investOpen}
+                    className='investDrawer'
                     extra={
                         <Space>
                             <Button size="small" onClick={debounceInvestSubmit} type="primary"> 提交</Button>
@@ -703,8 +762,9 @@ function Invest() {
                     title={defaultTitle}
                     tableType={'invest'}            
                     owncolumns = {singleInvestColumns()}
-                    queryAction={getInvestedList} 
+                    queryAction={getInvestedSingleList} 
                     getRowKeys={handleSingleKeys}
+                    params = {singleParam} 
                     initMethod={initFunc} />
                 }
                 {/* 嵌套买入卖出抽屉  width={320}bodyStyle={{ padding: 40, }} */}

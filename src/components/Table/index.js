@@ -1,6 +1,6 @@
 /**
  *  @description：封装全局通用table组件
- *  @param {Array} dataSource 表格数据源
+ *  @param {Array} dataSource 表格数据
  *  @param {number} total 表格总条数
  *  @param {number} current 当前页
  *  @param {number} pageSize 每页条数
@@ -13,16 +13,15 @@ import { Table } from 'antd';
 // ref转发
 const useAsyncTable = forwardRef( (props,ref) => {
     /*
-    props的一些参数
+    props参数( baseProps: antd基础props)
     queryAction:获取列表数据api
     params:请求附加参数
-    baseProps: antd基础props,
+    title:表格标题
     owncolumns:表格列数据配置方法
-    initMethod:初始化列表参数方法,
+    initMethod:初始化列表参数方法
     getRowKeys:全选选中的数据方法
-    getId:传递table ID方法
     setTotalAmount:统计表格总花费金额方法
-    tableType:表格类型,
+    tableType:表格类型
     */
     const { owncolumns,queryAction,params,initMethod,getRowKeys,setTotalAmount,tableType,title} = props;
     const [initFlag,setInitFlag] = useState(false);//初始渲染标识
@@ -128,7 +127,6 @@ const useAsyncTable = forwardRef( (props,ref) => {
             if(tableType === 'debt'){
                 setTableId('debt_report')
             }
-
             // const tableIds = document.getElementById(tableId)
             // // 传递给父组件table id
             // getId(tableIds)
@@ -138,8 +136,7 @@ const useAsyncTable = forwardRef( (props,ref) => {
             // console.log('不是初始渲染1111')
         }
        
-        fetchDataWarp()
-       
+        fetchDataWarp();
     }, [fetchDataWarp])
 
     // 获取列表数据
@@ -147,7 +144,6 @@ const useAsyncTable = forwardRef( (props,ref) => {
         // 分页字段名称转换
         const { current: pageNum ,pageSize} = state.pagination;
         let res = await queryAction({ ...params, pageNum, pageSize  }).catch(err => {
-          
             return {}
         })
       
@@ -172,7 +168,6 @@ const useAsyncTable = forwardRef( (props,ref) => {
                     dataSource: list
                 }
             })
-
         }
     }
 
