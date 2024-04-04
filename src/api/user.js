@@ -121,8 +121,8 @@ export function getDebtList(params) {
     return http('get',"/api1/debt/list",params)
 }
 // 根据id获取债务单条数据
-export function getDebtListById(params) {
-    return http('get',"/api1/debt/list/getById",params)   
+export function getDebtDetailById(params) {
+    return http('get',"/api1/debt/details/json",params)   
 }
 // 添加债务记录
 export function addDebt(data) {
@@ -155,8 +155,8 @@ export function getInvestedList(params) {
     return http('get', "/api1/invest/list", params)
 }
 // 根据id获取理财单条数据
-export function getInvestedListById(params) {
-    return http('get', "/api1/invest/list/getById", params)
+export function getInvestedDetailById(params) {
+    return http('get', "/api1/invest/details/json", params)
 }
 // 添加理财记录
 export function addInvested(data) {

@@ -3,7 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import { DatePicker, Form, Button, Input, Select,Space,message,Modal } from 'antd';
 import ArgTable from '../../../components/Table';
 import moment from 'moment';
-import { getDebtRepayList, addDebt, getPaymentTypeList, deleteDebtRecord,getDebtListById } from '../../../api/user';
+import { getDebtRepayList, addDebt, getPaymentTypeList, deleteDebtRecord,getDebtDetailById } from '../../../api/user';
 import {debounce} from '../../../utils/appTools';
 const { Option } = Select;
 const { TextArea } = Input;
@@ -112,13 +112,16 @@ function DebtEdit() {
             //     setRecordDes(data.description);
             //     let startDate, endDate;
             //     // 解决日期组件出现NaN问题
-            //     if (data.time === null || data.endTime === null) {
-            //         startDate = moment();
-            //         endDate = moment();
+            //     if (data.time === null ) {
+            //         startDate = moment();  
             //     } else {
-            //         startDate = moment(data.time);
-            //         endDate = moment(data.endTime);
+            //         startDate = moment(data.time);        
             //     }
+            // if (data.endTime === null) {
+            //     endDate = moment();
+            // } else {
+            //     endDate = moment(data.endTime);
+            // }
             //     form.setFieldsValue({
             //         'time': startDate,
             //         'endTime': endDate,
@@ -148,19 +151,22 @@ function DebtEdit() {
         let params = {
             id:rowId,
         }
-        getDebtListById(params).then((res)=>{
+        getDebtDetailById(params).then((res)=>{
             if (res.data.success === true) {
-                let data = res.data.data;
+                let data = res.data.obj;
                 setRecordDes(data.description);
                 let startDate, endDate;
                 // 解决日期组件出现NaN问题
-                if (data.time === null || data.endTime === null) {
+                if (data.time === null) {
                     startDate = moment();
-                    endDate = moment();
+                   
                 } else {
                     startDate = moment(data.time);
-                    endDate = moment(data.endTime);
                 }
+                if (data.endTime !== null) {
+                    endDate = moment(data.endTime);
+                } 
+                    
                 form.setFieldsValue({
                     'time': startDate,
                     'endTime': endDate,
@@ -248,16 +254,22 @@ function DebtEdit() {
 
     // 使用防抖函数来限制表单提交的频率
     const debounceDebtSubmit = debounce(handleSubmit, 1000);
-    // 添加&编辑债务记录弹窗信息确认操作
+    // 编辑债务记录弹窗信息确认操作
     async function handleSubmit() {
         try {
             const values = await form.validateFields();
             // console.log('编辑债务记录提交', values);
             if (values) {
+                let endT = values.endTime;
+                if (endT) {
+                    endT=endT.format('YYYY-MM-DD');
+                } else {
+                    endT = '';
+                }
                 let params = {
                     id: rowId,
                     time: values.time.format('YYYY-MM-DD'),
-                    endTime: values.endTime.format('YYYY-MM-DD'),
+                    endTime: endT,
                     description: values.description,
                     owner:values.owner,
                     amount: values.amount,
@@ -297,11 +309,7 @@ function DebtEdit() {
                             ]}  >
                             <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getTimeChange} placeholder="请选择创建时间" allowClear />
                     </Form.Item>
-                    <Form.Item style={{clear:'both'}} label="结束时间" name="endTime"  
-                            rules={[
-                                {required:true,message:'请选择结束时间'},
-                                
-                            ]}  >
+                    <Form.Item style={{clear:'both'}} label="结束时间" name="endTime" >
                             <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getEndTimeChange} placeholder="请选择结束时间" allowClear />
                     </Form.Item>
                     <Form.Item label="详情" name="description"  
@@ -325,14 +333,10 @@ function DebtEdit() {
                             ]} >
                         <Input  type="number"  allowClear   />
                     </Form.Item>
-                    <Form.Item label="已还金额" name="repay" 
-                            rules={[
-                                {required:true,message:'请输入已偿还金额'},
-                                
-                            ]} >
+                    <Form.Item label="已还金额" name="repay"  >
                         <Input type="number"  allowClear   />
                     </Form.Item>
-                    <Form.Item label="付款方式" name="paymentId" 
+                    <Form.Item label="支付方式" name="paymentId" 
                             rules={[
                                 {required:true,message:'请选择付款方式'},
                                 
@@ -348,7 +352,7 @@ function DebtEdit() {
                                 }
                         </Select>
                     </Form.Item>
-                    <Form.Item  label="状态" name="status" >
+                    <Form.Item  label="债务状态" name="status" >
                         <Select  placeholder="请选择" allowClear >
                                 {
                                     chooseStatusArray.map( (item) => (

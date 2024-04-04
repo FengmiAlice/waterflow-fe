@@ -4,7 +4,7 @@ import AsyncModal from '../../../components/Modal';
 import {useNavigate} from 'react-router-dom';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Drawer} from 'antd';
 import moment from 'moment';
-import { getInvestedList,getInvestedListById, getInvestedSingleList,getInvestedStatistic,getPaymentTypeList, addInvested,deleteInvested,addDividend,updateInvestCurrent,addSingleInvest,deleteSingleInvest} from '../../../api/user';
+import { getInvestedList,getInvestedDetailById, getInvestedSingleList,getInvestedStatistic,getPaymentTypeList, addInvested,deleteInvested,addDividend,updateInvestCurrent,addSingleInvest,deleteSingleInvest} from '../../../api/user';
 import {debounce} from '../../../utils/appTools';
 
 const { Option } = Select;
@@ -391,7 +391,7 @@ function Invest() {
                 }
                 updateInvestCurrent(params).then((res) => {
                     if (res.data.success === true) {
-                        updateInvestData();
+                        updateInvestData(rowId);
                         buttonSearch();//重新掉接口刷新理财列表数据
                         operProfitFunc(false);
                     }else{
@@ -450,12 +450,13 @@ function Invest() {
             let params = {
                 id:rowId
             };
-            getInvestedListById(params).then((res)=>{
+            getInvestedDetailById(params).then((res)=>{
                 if (res.data.success === true) {
+                    // console.log('获取单理财数据',res.data.obj);
                     let data = res.data.obj;
                     // 更新form
                     form.setFieldsValue({
-                        time: data.time.format('YYYY-MM-DD'),
+                        time: moment(data.time),
                         description: data.description,
                         plan: data.plan,
                         amount: data.amount,
@@ -559,8 +560,9 @@ function Invest() {
                 };
                 deleteSingleInvest(par).then((res)=>{
                     if (res.data.success === true) {
-                        updateInvestData();
+                        updateInvestData(rowId);
                         singleSearch();//刷新投资明细列表数据
+                        buttonSearch();//重新掉接口刷新理财列表数据
                         message.success(res.data.message);
                     }
                 }).catch((error)=>{
@@ -600,7 +602,8 @@ function Invest() {
                 };
                 addSingleInvest(params).then((res) => {
                     if (res.data.success === true) {
-                        updateInvestData();
+                        updateInvestData(rowId);
+                        buttonSearch();//重新掉接口刷新理财列表数据
                         singleSearch();//刷新投资明细列表数据
                         message.success(res.data.message);
                         setInvestChildrenOpen(false);
@@ -751,7 +754,7 @@ function Invest() {
                                 <Input type="number" disabled />
                         </Form.Item>
                         <Form.Item label="补充描述" name="note" >
-                                <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" />
+                                <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" allowClear/>
                         </Form.Item>
                 </Form>
                 {isAddFlag === false && <Button size="small" onClick={handleSingleInvest} type="primary"> 买入或卖出</Button>}
@@ -767,7 +770,7 @@ function Invest() {
                     params = {singleParam} 
                     initMethod={initFunc} />
                 }
-                {/* 嵌套买入卖出抽屉  width={320}bodyStyle={{ padding: 40, }} */}
+                {/* 嵌套买入卖出抽屉,不允许编辑 width={320}bodyStyle={{ padding: 40, }} */}
                 <Drawer
                     title={investSingleTitle}
                     placement="right"
@@ -776,7 +779,7 @@ function Invest() {
                     forceRender
                     extra={
                         <Space>
-                            <Button size="small" onClick={debounceInvestSingleSubmit} type="primary"> 提交</Button>
+                            {isSingleFlag === true && <Button size="small" onClick={debounceInvestSingleSubmit} type="primary"> 提交</Button>}
                         </Space>
                     }>
 
@@ -786,21 +789,21 @@ function Invest() {
                                         {required:true,message:'请选择时间'},
                                         
                                     ]}  >
-                                    <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getInvestTimeChange} placeholder="请选择创建时间" allowClear />
+                                    <DatePicker disabled={isSingleFlag===false}  format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getInvestTimeChange} placeholder="请选择创建时间" allowClear />
                             </Form.Item>
                             <Form.Item label="投资项目" name="investName"  >
-                                <Input disabled />
+                                <Input disabled={isSingleFlag===false} />
                                 {/* value={inputVal} */}
                             </Form.Item>
                             <Form.Item label="操作" name="type" >
                                 <Select placeholder="请选择"
-                                    options={[{ value: 1, label: '买入' }, { value: 0, label: '卖出' }]} allowClear />
+                                    options={[{ value: 1, label: '买入' }, { value: 0, label: '卖出' }]} allowClear disabled={isSingleFlag===false}/>
                             </Form.Item>
                             <Form.Item label="金额" name="amount"  rules={[  {required:true,message:'请输入金额'}, ]}>
-                                    <Input type="number"  />
+                                    <Input type="number"  disabled={isSingleFlag===false}/>
                             </Form.Item>
                             <Form.Item label="支付方式" name="paymentId" >
-                                    <Select   onChange={paymentSingleTypeChange} placeholder="请选择" allowClear>
+                                    <Select   onChange={paymentSingleTypeChange} placeholder="请选择" allowClear disabled={isSingleFlag===false}>
                                                 {
                                                 paymentTypeArray.map( (item,index,arr) => (
                                                 
@@ -812,7 +815,7 @@ function Invest() {
                                         </Select>
                             </Form.Item>
                             <Form.Item label="补充描述" name="note" >
-                                    <TextArea row={1} placeholder="请输入附加描述" />
+                                    <TextArea row={1} placeholder="请输入附加描述" disabled={isSingleFlag===false}/>
                             </Form.Item>
                     </Form>
                 </Drawer>

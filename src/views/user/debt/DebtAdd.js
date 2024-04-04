@@ -61,16 +61,22 @@ function DebtAdd() {
 
     // 使用防抖函数来限制表单提交的频率
     const debounceDebtSubmit = debounce(handleSubmit, 1000);
-    // 添加编辑债务记录弹窗信息确认操作
+    // 添加债务记录弹窗信息确认操作
     async function handleSubmit() {
         try {
             const values = await form.validateFields();
             // console.log('债务记录提交', values)
             if (values) {
+                 let endT = values.endTime;
+                if (endT) {
+                    endT=endT.format('YYYY-MM-DD');
+                } else {
+                    endT = '';
+                }
                 let params = {
                     id: '',
                     time: values.time.format('YYYY-MM-DD'),
-                    endTime: values.endTime.format('YYYY-MM-DD'),
+                    endTime: endT,
                     description: values.description,
                     owner:values.owner,
                     amount: values.amount,
@@ -104,10 +110,7 @@ function DebtAdd() {
                             <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getTimeChange} placeholder="请选择创建时间" allowClear />
                     </Form.Item>
                     <Form.Item style={{clear:'both'}} label="结束时间" name="endTime"  
-                            rules={[
-                                {required:true,message:'请选择结束时间'},
-                                
-                            ]}  >
+                              >
                             <DatePicker   format='YYYY-MM-DD' style={{ width: 100+'%' }} onChange={getEndTimeChange} placeholder="请选择结束时间" allowClear />
                     </Form.Item>
                     <Form.Item label="详情" name="description"   
@@ -132,13 +135,10 @@ function DebtAdd() {
                         <Input  type="number" allowClear   />
                     </Form.Item>
                     <Form.Item label="已还金额" name="repay"   
-                            rules={[
-                                {required:true,message:'请输入已偿还金额'},
-                                
-                            ]} >
+                            >
                         <Input type="number"  allowClear   />
                     </Form.Item>
-                    <Form.Item label="付款方式" name="paymentId"   
+                    <Form.Item label="支付方式" name="paymentId"   
                             rules={[
                                 {required:true,message:'请选择付款方式'},
                                 
@@ -154,7 +154,7 @@ function DebtAdd() {
                                 }
                         </Select>
                     </Form.Item>
-                    <Form.Item  label="状态" name="status">
+                    <Form.Item  label="债务状态" name="status">
                         <Select  placeholder="请选择" allowClear >
                                 {
                                     chooseStatusArray.map( (item) => (
