@@ -4,7 +4,7 @@
 import React, {  useEffect, useState } from 'react';
 import { useStore, observer } from '../../hooks/storeHook';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/images/logo.svg';
+import logo from '../../assets/images/logo.png';
 import sunrise from '../../assets/images/morning.png';
 import sunup from '../../assets/images/later-morning.png';
 import midsun from '../../assets/images/noon.png';
@@ -171,10 +171,12 @@ function HeadBar () {
     <div className="c-PageLayout-headBar">
         <div className="headLeft">
             {/* logo图标 */}
-            <div className="logoWrap"> <img src={logo} className="logo" alt="logo" /></div>
+                <div className="logoWrap">
+                    <img src={logo} className="logo" alt="logo" />
+                    <span className='logoTitle'>流水集</span></div>
         </div>
             <div className="headRight">
-                <div className='dynamicImgBox'><img src={imageSrc} alt="时间变化图片" /></div>
+                <div className='dynamicImgBox'><img src={imageSrc} className="changeImg" alt="时间变化图片" /></div>
                 <Dropdown overlay={menuItems}>
                      {/* overlay={
                         <Menu>
