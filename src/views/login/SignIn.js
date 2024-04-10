@@ -1,12 +1,10 @@
-import React,{useState,useEffect}  from 'react';
-import {Form,Input,Button,Checkbox} from 'antd';
+import React,{useEffect}  from 'react';
+import {Form,Input,Button} from 'antd';
 import {useNavigate, Link} from 'react-router-dom';
 import '../../assets/style/App.css'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { doSignIn,getUserInfo } from '../../api/login';
 import { useStore } from '../../hooks/storeHook';
-import { removeCookie, setCookie ,getCookie} from '../../utils/appTools';
-
 
 function SignIn(){
     // 创建form实例
@@ -14,36 +12,10 @@ function SignIn(){
     // const { userStore } = store;
     const { userStore } = useStore()
     const navigate = useNavigate();
-    const [checked,setChecked] = useState(false);
-    // const flag = useRef(null);
+
     useEffect(()=>{
-        let username = getCookie('username')
-        let password = getCookie('password')
-            if (username !== undefined && username !== '' && password !== undefined && password !== '') {
-                // setFieldsValue回显表格数据
-                form.setFieldsValue({
-                    'username': username,
-                    'password': password,
-                });
-                setChecked(true)
-            }
-    },[form])
-      
 
-    // 设置记住密码复选框状态
-    function onCheckChange(e){
-        const {username,password} = form.getFieldsValue();
-        if(e.target.checked === true){
-            setCookie('password',password,1)
-            setCookie('username',username,1)
-            setChecked(true)
-        }else{
-            removeCookie('username')
-            removeCookie('password')
-            setChecked(false)
-        }
-
-    }
+    },[])
 
     // enter键事件
     function onkeydown(e){
@@ -84,9 +56,6 @@ function SignIn(){
 
     return(
         <div className="v-signIn-index" >
-            {/* <header className="login-header">
-               <div className="logoPic"><img src={logo} className="App-logo" alt="logo"></img></div>
-            </header> */}
             <section className="signInSection">
                 <h4 className="title">个人财务管家系统--流水集</h4>
                 <Form  className="formWrap" name="login"  form={form}  size="large"  autoComplete="on"  >
@@ -105,14 +74,6 @@ function SignIn(){
                                 ]}
                         >
                         <Input prefix={<LockOutlined className="prefix-icon" />} type="password" placeholder="请输入密码"  onKeyDown={(e)=>onkeydown(e)}  />
-                    </Form.Item>
-                    <Form.Item  >
-                        <div className="moreWrap">
-                        {/* valuePropName="checked" noStyle */}
-                            <Form.Item name="remember" >
-                                <Checkbox checked = {checked} onChange={(e)=>onCheckChange(e)}>记住我</Checkbox>
-                            </Form.Item>
-                        </div>
                     </Form.Item>
                     <Form.Item  >
                         <Button type="primary" className="loginBtn" onClick={handleLogin}  > 登录</Button>

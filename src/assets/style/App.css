@@ -271,14 +271,13 @@ letter-spacing: 1px;
 width: 350px;
 margin: 0 auto;
 }
-.formWrap .moreWrap {
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
+
 .loginBtn, .registerBtn{
 width: 100%;
 border-radius: 10px;
+}
+.loginBtn{
+    margin-bottom: 10px;
 }
 
 .infoFormWrap .userInfoBtn{
