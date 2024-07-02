@@ -70,12 +70,12 @@ function Budge() {
                               <div className='largeBtnBox'>
                                 <Button size="small" type="primary"  onClick={ ()=> handleEdit(record)}>编辑</Button>
                                 <Button size="small" type="danger" onClick={() => handleDelete(record)}>删除</Button>
-                                <Button size="small" type="link"  onClick={ ()=> handleClose(record)}>结算</Button>
+                                <Button size="small" type="link" onClick={() => handleClose(record)} >结算</Button>
                               </div>
                               <div className="miniBtnBox">
                                 <Button size="small" type="text" className='miniPrimaryBtn' onClick={ ()=> handleEdit(record)}>编辑</Button>
                                 <Button size="small" type="text" danger onClick={() => handleDelete(record)}>删除</Button>
-                                <Button size="small" type="link"  onClick={ ()=> handleClose(record)}>结算</Button>
+                                <Button size="small" type="link" onClick={() => handleClose(record)}>结算</Button>
                               </div>
                             
                         </Space>
@@ -107,6 +107,7 @@ function Budge() {
     const [budgetTypeArray, setBudgetTypeArray] = useState([]);//设置新增、编辑预算类别列表
     const [selectedTypeArray, setSelectedTypeArray] = useState([]);//设置搜索预算类别列表
     const [rowId, setRowId] = useState('');//设置新增或删除需要传递的行id
+    const [btnStatus,setBtnStatus] = useState(false);//设置结算按钮是否显示
 
     let initParamsData = {
         month:month.current,
@@ -122,7 +123,7 @@ function Budge() {
     const [isTypeVisible, setTypeVisible] = useState('');//设置添加新类别弹窗是否显示
     const [isSpecialType, setIsSpecialType] = useState('');//设置添加新类别弹窗输出类型
     const [rowKeys, setRowKeys] = useState([]);//设置表格选择的数据
-    
+
     useEffect(() => {
             getBudgetTypeList();//获取预算类别数据
             getStatistics();//获取表格上方的统计金额数据
@@ -250,6 +251,7 @@ function Budge() {
     }
        // 关闭预算按钮事件
     function handleClose(row) { 
+        // console.log('预算--', row)
        // confirm弹框
         confirm({
             title: '确认关闭此结算?',
@@ -260,7 +262,7 @@ function Budge() {
             onOk() {
                 let par = {
                     id: row.id,
-                    actualAmount:realAmount,
+                    actualAmount:row.actualAmount,
                 };
                 closeBudget(par).then((res)=>{
                     if(res.data.success === true){
@@ -487,7 +489,6 @@ function Budge() {
                     params={searchData}
                     getRowKeys={handleKeys}
                     initMethod={initFunc}
-                    
                 />         
                 {/* 添加或编辑预算记录弹窗 */}
                 <AsyncModal title={budgetTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={budgetFooter} operDialogFunc={operDialogFunc} handleOk={debounceBudgetSubmit}>
