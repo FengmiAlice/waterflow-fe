@@ -5,6 +5,8 @@
   "homepage": "/",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@antv/x6": "^1.34.6",
+    "@antv/x6-react-components": "^2.0.8",
     "@reduxjs/toolkit": "^1.8.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",

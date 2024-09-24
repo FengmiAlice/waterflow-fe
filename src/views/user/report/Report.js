@@ -1,49 +1,49 @@
 
 
 import React, {useEffect,useState,useRef} from 'react';
-import { DatePicker,Form,Button,Statistic,Select, message  } from 'antd';
-import AsyncModal from '../../components/Modal';
-import ArgPieEcharts from '../../components/Echarts/pie';
-import ArgBarEcharts from '../../components/Echarts/bar';
-import ArgLineEcharts from '../../components/Echarts/line';
-import {getOverview,getConsumePie,getConsumePieType,getIncome,getConsumeIncomeLately,getThreeConsumeLately,getLineConsumeData} from '../../api/report';
-import {debounce} from '../../utils/appTools';
+import { DatePicker,Form,Input,Button,Statistic,Select, message  } from 'antd';
+import AsyncModal from '../../../components/Modal';
+import ArgPieEcharts from '../../../components/Echarts/pie';
+import ArgBarEcharts from '../../../components/Echarts/bar';
+import ArgLineEcharts from '../../../components/Echarts/line';
+import {getOverview,getConsumePie,getConsumePieType,getIncome,getConsumeIncomeLately,getThreeConsumeLately,getLineConsumeData,createGraph} from '../../../api/report';
+import { debounce } from '../../../utils/appTools';
+import {useNavigate} from 'react-router-dom';
 import moment from 'moment';
 const { Option } = Select;
+
 
 function Report(){
      // 搜索条件的一些参数获取
     const month = useRef('');//设置月份
     const year = useRef('');//设置年份  
+    const navigate = useNavigate();
 
     // const reportFooter = useState(false);
     const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
     const [reportVisible,setReportVisble] = useState(false);//设置详细报告弹窗false
     const [reportTitle,setReportTitle] = useState('');//设置详细报告弹窗title
-    const [reportText,setReportText] = useState('');//设置详细报告弹窗text
-
+    const [reportText, setReportText] = useState('');//设置详细报告弹窗text
+    const [customVisible, setCustomVisible] = useState(false);//设置自定义图表弹窗false
 
     const [consumeAcount,setConsumeAcount] = useState(0);
     const [incomeAcount,setIncomeAcount] =useState(0);
     const [wealthAcount,setWealthAcount] =useState(0);
-  
     const [pieData,setPieData] = useState([]);  // 设置获取各类开支占比饼图数据
     const [pieTypeData,setPieTypeData] =useState([]); // 设置获取各类支付方式占比饼图数据
     const [incomeData,setIncomeData] =useState([]);  // 设置获取各类收入占比饼图数据
-
     const [barTitle,setBarTitle] = useState('');//最近半年收支柱状图title
     const [barXData,setBarXData] = useState([]);//最近半年收支柱状图x轴数据
     const [barData,setBarData] = useState([]);//最近半年收支柱状图series数据
-
     const [multipleBarTitle,setMultipleBarTitle] = useState(''); //最近3个月支出柱状图title
     const [multipleBarLenData,setMultipleBarLenData] = useState([]); //最近3个月支出柱状图legend数据
     const [multipleBarXData,setMultipleBarXData] = useState([]); //最近3个月支出柱状图x轴数据
     const [multipleBarData,setMultipleBarData] = useState([]);  //最近3个月支出柱状图series数据
-
     const [lineTitle, setLineTitle] = useState('');//支出收入折线图title
     const [lineData, setLineData] = useState([]);//支出收入折线图表数据
     const [lineXData,setLineXData] =useState([]);//支出收入折线图x轴数据
     const [lineLenData,setLineLenData] = useState([]);//支出收入折线图例数据
+    const [chartWords,setChartWords] = useState(''); //自定义图表关键词
 
     const [lineForm] = Form.useForm();
     const startDate = useRef('');//开始日期
@@ -290,6 +290,11 @@ function Report(){
             console.log(error)
         })
     }
+    // 点击自定义图表按钮事件
+    function handleCustomReport(){
+       setIsModalType('special');
+       operCustomFunc(true);
+    }
     // 点击查看详细报告按钮事件
     function detailReport(){
         setIsModalType('special');
@@ -298,6 +303,36 @@ function Report(){
     // 设置详细报告弹窗是否显示
     const operFunc = (flag)=>{
         setReportVisble(flag)
+    }
+    // 设置自定义图表弹窗是否显示
+    const operCustomFunc =(flag)=>{
+        setCustomVisible(flag)
+    }
+    // 自定义图表弹窗输入框事件
+    const handleWordChange =(e)=>{
+        // console.log('输入框名字---', e.target.value)
+        setChartWords(e.target.value)
+    }
+    // 设置自定义图表弹窗关闭事件
+    const closeCustomModal = () => {
+        operCustomFunc(false);
+    }
+     // 自定义图表弹窗提交按钮事件
+    function handleChartSubmit() {
+        // console.log('自定义图表提交按钮事件-图表', chartWords)
+        let params = {
+            name: chartWords,
+        }
+        createGraph(params).then((res)=>{
+            if (res.data.success === true) {
+                console.log(res.data.obj)
+                message.success('创建图表成功');
+                // 跳转到绘图编辑页面
+                navigate(`/index/report/flow?id=${res.data.obj.id}`);  
+            }
+        }).catch((error)=>{
+                    console.log(error)
+        })
     }
 
     return(
@@ -313,6 +348,7 @@ function Report(){
                     <Form.Item  >
                         <Button type="primary" size="small" className="reportSearchBtn" onClick={debounceReportSearch} > 搜索</Button>
                         <Button type="primary" size="small" className="reportSearchBtn" onClick={detailReport}> 详细报告</Button>
+                        <Button type="primary" size="small" className="reportSearchBtn" onClick={handleCustomReport}> 自定义图表</Button>
                     </Form.Item>
             </Form>
         </header>
@@ -377,21 +413,20 @@ function Report(){
                 </div>
            </div>
        
-        </section>
+            </section>
+            {/* 详细报告弹窗 */}
         <AsyncModal   className="reportDialog" title={reportTitle}  vis={reportVisible}  modalType={isModalType} isClosable={false}  isFooter={null}  operDialogFunc={operFunc}>
             <p>{reportText}</p>
+            </AsyncModal>
+            {/* 自定义图表弹窗 */}
+          <AsyncModal title="创建自定义图表"  vis={customVisible}    modalType={isModalType} isClosable={false}  isFooter={null}  operDialogFunc={operCustomFunc}  handleOk={closeCustomModal}>
+                <Form  name="customForm" labelCol={{span:4}} autoComplete="off">
+                    <Form.Item label="图表名称">
+                        <Input type="text" allowClear onChange={(e)=>handleWordChange(e)} placeholder='请输入自定义的图表名称' />
+                        <Button size="small" type="primary" onClick={handleChartSubmit} >提交</Button>
+                    </Form.Item>
+                </Form>
         </AsyncModal>
-
-        {/* <Modal
-            className="reportDialog"
-            title={reportTitle}
-            visible={reportVisible}
-            onCancel={handleClose}
-            closable = {false}
-            footer={null}
-        >
-            <p>{reportText}</p>
-        </Modal> */}
     </div>
     )
 }

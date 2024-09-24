@@ -149,8 +149,26 @@ const routes = [
                     title: "报告",
                     icon:<WalletOutlined />,
                 },
-                component: () => import( '../views/user/Report'),
+                children: [
+                    {
+                        path: '/index/report/list',
+                        meta:{
+                            title:'报告列表',
+                        },
+                        component: () => import( '../views/user/report/Report'),
+                    },
+                    {
+                        path: '/index/report/flow',
+                        hidden: true,
+                        meta:{
+                            title: "绘图编辑",
+                        },
+                        component: () => import( '../views/user/report/Flow'),
+                    },
+                ],
+                
             },
+            
         ]
     },
     {

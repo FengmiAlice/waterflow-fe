@@ -30,3 +30,7 @@ export function getThreeConsumeLately(){
 export function getLineConsumeData(data){
     return http('post','/api1/report/statistics/multiData',data)
 }
+// 创建自定义图表初始化接口
+export function createGraph(data){
+    return http('post','/api1/report/nodeflow/graph/init',data)
+}
