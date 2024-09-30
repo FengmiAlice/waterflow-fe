@@ -43,7 +43,7 @@ export default function Flow() {
             const graph = new Graph({
                 container: container,//画布载体
                 width: 800,//画布宽度
-                height: 600,//画布高度
+                height: 1500,//画布高度
                 history: true,// 开启历史记录
                 // 背景网格设置
                 grid: {
@@ -65,6 +65,7 @@ export default function Flow() {
                     createEdge() {
                         //新的连接线
                         return new Shape.Edge({
+                            connector: 'smooth',
                              tools: [
                                 {
                                     name: 'button-remove',  // 工具名称
