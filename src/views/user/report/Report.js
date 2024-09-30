@@ -6,9 +6,10 @@ import AsyncModal from '../../../components/Modal';
 import ArgPieEcharts from '../../../components/Echarts/pie';
 import ArgBarEcharts from '../../../components/Echarts/bar';
 import ArgLineEcharts from '../../../components/Echarts/line';
-import {getOverview,getConsumePie,getConsumePieType,getIncome,getConsumeIncomeLately,getThreeConsumeLately,getLineConsumeData,createGraph} from '../../../api/report';
+import {getOverview,getConsumePie,getConsumePieType,getIncome,getConsumeIncomeLately,getThreeConsumeLately,getLineConsumeData,createGraph,getGraphList,executeGraphById,deleteGraphById} from '../../../api/report';
 import { debounce } from '../../../utils/appTools';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {DeleteOutlined} from '@ant-design/icons';
 import moment from 'moment';
 const { Option } = Select;
 
@@ -43,7 +44,19 @@ function Report(){
     const [lineData, setLineData] = useState([]);//支出收入折线图表数据
     const [lineXData,setLineXData] =useState([]);//支出收入折线图x轴数据
     const [lineLenData,setLineLenData] = useState([]);//支出收入折线图例数据
-    const [chartWords,setChartWords] = useState(''); //自定义图表关键词
+    const [chartWords, setChartWords] = useState(''); //自定义图表关键词
+    
+
+    const [customGraphArray,setCustomGraphArray] = useState([]); //自定义图表数据
+    // const [customBarTitle,setCustomBarTitle] = useState(''); //自定义柱状图title
+    // const [customBarXData,setCustomBarXData] = useState([]); //自定义柱状图x轴数据
+    // const [customBarSeriesData,setCustomBarSeriesData] = useState([]); //自定义柱状图series数据
+    // const [customPieTitle, setCustomPieTitle] = useState(''); //自定义饼图title
+    // const [customPieSeriesData, setCustomPieSeriesData] = useState([]); //自定义饼图series数据
+    // const [customLineSereiesData, setCustomLineSereiesData] = useState([]); //自定义折线图series数据
+    // const [customLineXData, setCustomLineXData] = useState([]); //自定义折线图x轴数据
+    // const [customLineTitle, setCustomLineTitle] = useState(''); //自定义折线图title
+    // const [customLineLegendData, setCustomLineLegendData] = useState([]); //自定义折线图legend数据
 
     const [lineForm] = Form.useForm();
     const startDate = useRef('');//开始日期
@@ -124,7 +137,8 @@ function Report(){
         getConsumePieData();
         getConsumePieTypeData();
         getIncomeData();
-
+        fetchCustomGraphsData();
+       
     },[])
     
    // 设置搜索防抖功能
@@ -325,13 +339,135 @@ function Report(){
         }
         createGraph(params).then((res)=>{
             if (res.data.success === true) {
-                console.log(res.data.obj)
                 message.success('创建图表成功');
                 // 跳转到绘图编辑页面
-                navigate(`/index/report/flow?id=${res.data.obj.id}`);  
+                navigate(`/index/report/flow?id=${res.data.obj.id}&name=${res.data.obj.name}`);  
+               
             }
         }).catch((error)=>{
-                    console.log(error)
+                console.log(error)
+        })
+    }
+   
+    // 获取有哪些自定义图表需要展示
+    const fetchCustomGraphsData = async () => {
+        try {
+            const initData = await getGraphList();
+            if (initData.data.success === true) {
+                const graphList = initData.data.obj.list;
+                const updatedGraphs = await Promise.all(graphList.map(async (item) => {
+                    let additionalData = {};
+                    if (item.type === 'BAR') {
+                        additionalData = await getBarGraphById(item.id);
+                        // console.log(111, additionalData)
+                    }
+                    if (item.type === 'PIE') {
+                        additionalData = await getPieGraphById(item.id);
+                        // console.log(222, additionalData)
+                    }
+                    if (item.type === 'LINE') {
+                        additionalData = await getLineGraphById(item.id);
+                        // console.log(333, additionalData)
+                    }
+                    return { ...item, configObj: additionalData };
+                }))
+                // console.log('updatedGraphs', updatedGraphs)
+                setCustomGraphArray(updatedGraphs);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    } 
+    // 根据id获取柱状图数据
+    const getBarGraphById = async (id) => {
+        let data = await executeGraphById({ id: id });
+        //   console.log('扇形图打印data.data---', data.data.obj)
+        if (data.data.success === true) {
+            let seriesArray = [];
+            let title = data.data.obj.title;
+            let barSeriesX = data.data.obj.xdataArray;
+            let nameArray = data.data.obj.nameArray;
+            let yDataArray = data.data.obj.ydataArray;
+            for (var index = 0; index < nameArray.length; index++) {
+                var seriesData = {
+                    type: 'bar',
+                    name: nameArray[index],
+                    data: yDataArray[index]
+                };
+                seriesArray.push(seriesData);
+            }
+           return {title: title, xData: barSeriesX, seriesData: seriesArray}      
+        }
+    }
+     // 根据id获取扇形图数据
+    const getPieGraphById = async (id) => {
+        let data = await executeGraphById({ id: id });
+        //   console.log('扇形图打印data.data---', data.data.obj)
+        if (data.data.success === true) { 
+            return { title: data.data.obj.title, seriesData: data.data.obj.data }
+        }
+    }
+     // 根据id获取折线图数据
+    const getLineGraphById = async (id) => {
+        let data = await executeGraphById({ id: id });
+            //  console.log('折线图打印data.data---', data.data.obj)
+        if (data.data.success === true) {
+               let seriesArray=[];
+            let title = data.data.obj.title;
+            let seriesLineX =data.data.obj.xdataArray;
+            let nameArray = data.data.obj.nameArray;
+            let yDataArray =data.data.obj.ydataArray;
+
+            for(let i=0;i<nameArray.length;i++){
+                let stackData={
+                    name:nameArray[i],
+                    type: 'line',
+                    data:yDataArray[i],
+                    areaStyle: {
+            
+                    },
+                }
+                seriesArray.push(stackData)
+            }
+            return {
+                        title:title,
+                        legendData:nameArray,
+                        xData:seriesLineX,
+                        seriesData:seriesArray
+                    }
+        }
+    }
+    // 删除自定义的柱状图图表
+    const deleteCustomBarGraph = (id) => { 
+        deleteGraphById(id).then((data) => {
+            if (data.data.success === true) {
+                message.success('删除成功');
+                fetchCustomGraphsData();
+            } else {
+                message.error(data.data.message)
+            }
+        })
+    }
+    // 删除自定义的折线图图表
+    const deleteCustomLineGraph = (id) => {      
+        deleteGraphById(id).then((data) => {
+            if (data.data.success === true) {
+                message.success('删除成功');
+                fetchCustomGraphsData();
+            } else {
+                message.error(data.data.message)
+            }
+        })
+    }
+    // 删除自定义的扇形图图表
+    const deleteCustomPieGraph = (id) => { 
+        deleteGraphById(id).then((data) => {
+            if (data.data.success === true) {
+                message.success('删除成功');
+                fetchCustomGraphsData();
+            } else {
+                message.error(data.data.message)
+            }
         })
     }
 
@@ -412,9 +548,39 @@ function Report(){
                     <ArgLineEcharts id="multipleLine" title={lineTitle} legendData={lineLenData} xData={lineXData} seriesData={lineData} />
                 </div>
            </div>
-       
-            </section>
-            {/* 详细报告弹窗 */}
+                <div className="customGraphContainer">
+                    {
+                        customGraphArray.map(item => {
+                            if (item.type === 'BAR') {
+                                return (
+                                    <div className="customGraphItem" key={item.id}>
+                                        <ArgBarEcharts  id={`customBar${item.id}`}  key={item.id} title={item.configObj.title} xData={item.configObj.xData} seriesData={item.configObj.seriesData} barType="single" />
+                                        <Button className='deleteChartsBtn'  icon={<DeleteOutlined />} size="small" onClick={()=>deleteCustomBarGraph(item.id)}></Button>
+                                    </div>
+                                )
+                            }
+                            if (item.type === 'LINE') {
+                                return (
+                                    <div className="customGraphItem" key={item.id}>
+                                        <ArgLineEcharts id={`multipleLine${item.id}`} key={item.id} title={item.configObj.title} legendData={item.configObj.legendData} xData={item.configObj.xData} seriesData={item.configObj.seriesData} />
+                                        <Button className='deleteChartsBtn' icon={<DeleteOutlined />} size="small" onClick={()=>deleteCustomLineGraph(item.id)}></Button>
+                                    </div>
+                                )
+                            }
+                            if (item.type === 'PIE') {
+                                return (
+                                    <div className="customGraphItem" key={item.id}>
+                                        <ArgPieEcharts id={`customPie${item.id}`} key={item.id} title={item.configObj.title} sourceData={item.configObj.seriesData} />
+                                        <Button className='deleteChartsBtn' icon={<DeleteOutlined />} size="small" onClick={()=>deleteCustomPieGraph(item.id)}></Button>
+                                    </div>
+                                )
+                            }
+                            return null;
+                        })
+                    }
+                </div>                       
+        </section>
+        {/* 详细报告弹窗 */}
         <AsyncModal   className="reportDialog" title={reportTitle}  vis={reportVisible}  modalType={isModalType} isClosable={false}  isFooter={null}  operDialogFunc={operFunc}>
             <p>{reportText}</p>
             </AsyncModal>

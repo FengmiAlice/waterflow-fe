@@ -438,7 +438,7 @@ margin:10px 0;
 /* 绘图编辑页面样式 */
 .user-container{
   display:flex;
-  justify-content: space-around;
+  /* justify-content: space-between; */
   width:100%;
   box-sizing: border-box;
 }
@@ -461,13 +461,48 @@ height:100%;
   font-size: 12px;
 }
 .middle-wrap{
-  flex:1;
+  /* flex:1; */
   margin:0 20px;
 }
 .sidebar-wrap{
-  /* width:300px; */
+  width:300px;
   height:100%;
 
+}
+.customGraphContainer{
+    display: flex;
+    flex-wrap: wrap;
+    padding:30px 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+   
+}
+.customGraphContainer .customGraphItem{
+    position:relative;
+     width:340px;
+    height:340px;
+    float: left;
+    margin:0 40px;
+}
+.customGraphContainer .customGraphItem .deleteChartsBtn{
+    position:absolute;
+    top: 4px;
+    right: 35px;
+    z-index: 100;
+    cursor: pointer;
+    color: #333;
+    font-size: 30px;
+    border:none;
+}
+.flowTips{
+    margin:6px 0;
+    color:red;
+    font-size: 16px;
+}
+.x6-toolbar{
+    height:32px!important;
+    padding-left:0!important;
 }
 
 
