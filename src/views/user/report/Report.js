@@ -589,8 +589,8 @@ function Report(){
                 <Form  name="customForm" labelCol={{span:4}} autoComplete="off">
                     <Form.Item label="图表名称">
                         <Input type="text" allowClear onChange={(e)=>handleWordChange(e)} placeholder='请输入自定义的图表名称' />
-                        <Button size="small" type="primary" onClick={handleChartSubmit} >提交</Button>
                     </Form.Item>
+                     <Button size="small" type="primary" onClick={handleChartSubmit} >提交</Button>
                 </Form>
         </AsyncModal>
     </div>

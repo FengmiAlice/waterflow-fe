@@ -49,6 +49,7 @@ const useLineEcharts = (props)=>{
         let lineOption = {
             title: {
                 text: title,
+                left: 'center',
                 // 主标题文字的字体大小
                 textStyle: {
                     fontSize:[fontBySize]
