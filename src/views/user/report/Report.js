@@ -9,7 +9,7 @@ import ArgLineEcharts from '../../../components/Echarts/line';
 import {getOverview,getConsumePie,getConsumePieType,getIncome,getConsumeIncomeLately,getThreeConsumeLately,getLineConsumeData,createGraph,getGraphList,executeGraphById,deleteGraphById} from '../../../api/report';
 import { debounce } from '../../../utils/appTools';
 import { useNavigate } from 'react-router-dom';
-import {DeleteOutlined} from '@ant-design/icons';
+import {DeleteOutlined,EditOutlined} from '@ant-design/icons';
 import moment from 'moment';
 const { Option } = Select;
 
@@ -448,6 +448,10 @@ function Report(){
             }
         })
     }
+    // 编辑自定义柱状图图表
+    const editCustomBarGraph = (id) => {
+         navigate(`/index/report/flow?detailId=${id}`);  
+    }
     // 删除自定义的折线图图表
     const deleteCustomLineGraph = (id) => {      
         deleteGraphById(id).then((data) => {
@@ -459,6 +463,10 @@ function Report(){
             }
         })
     }
+        // 编辑自定义折线图图表
+    const editCustomLineGraph = (id) => {
+         navigate(`/index/report/flow?detailId=${id}`);  
+    }
     // 删除自定义的扇形图图表
     const deleteCustomPieGraph = (id) => { 
         deleteGraphById(id).then((data) => {
@@ -469,6 +477,10 @@ function Report(){
                 message.error(data.data.message)
             }
         })
+    }
+        // 编辑自定义扇形图图表
+    const editCustomPieGraph = (id) => {
+         navigate(`/index/report/flow?detailId=${id}`);  
     }
 
     return(
@@ -554,7 +566,8 @@ function Report(){
                             if (item.type === 'BAR') {
                                 return (
                                     <div className="customGraphItem" key={item.id}>
-                                        <ArgBarEcharts  id={`customBar${item.id}`}  key={item.id} title={item.configObj.title} xData={item.configObj.xData} seriesData={item.configObj.seriesData} barType="single" />
+                                        <ArgBarEcharts id={`customBar${item.id}`} key={item.id} title={item.configObj.title} xData={item.configObj.xData} seriesData={item.configObj.seriesData} barType="single" />
+                                        <Button className='editChartsBtn'  icon={<EditOutlined />} size="small" onClick={()=>editCustomBarGraph(item.id)}></Button>
                                         <Button className='deleteChartsBtn'  icon={<DeleteOutlined />} size="small" onClick={()=>deleteCustomBarGraph(item.id)}></Button>
                                     </div>
                                 )
@@ -563,6 +576,7 @@ function Report(){
                                 return (
                                     <div className="customGraphItem" key={item.id}>
                                         <ArgLineEcharts id={`multipleLine${item.id}`} key={item.id} title={item.configObj.title} legendData={item.configObj.legendData} xData={item.configObj.xData} seriesData={item.configObj.seriesData} />
+                                         <Button className='editChartsBtn'  icon={<EditOutlined />} size="small" onClick={()=>editCustomLineGraph(item.id)}></Button>
                                         <Button className='deleteChartsBtn' icon={<DeleteOutlined />} size="small" onClick={()=>deleteCustomLineGraph(item.id)}></Button>
                                     </div>
                                 )
@@ -571,6 +585,7 @@ function Report(){
                                 return (
                                     <div className="customGraphItem" key={item.id}>
                                         <ArgPieEcharts id={`customPie${item.id}`} key={item.id} title={item.configObj.title} sourceData={item.configObj.seriesData} />
+                                         <Button className='editChartsBtn'  icon={<EditOutlined />} size="small" onClick={()=>editCustomPieGraph(item.id)}></Button>
                                         <Button className='deleteChartsBtn' icon={<DeleteOutlined />} size="small" onClick={()=>deleteCustomPieGraph(item.id)}></Button>
                                     </div>
                                 )

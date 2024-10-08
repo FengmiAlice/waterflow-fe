@@ -20,8 +20,10 @@ export default function Flow() {
     const [selectNode,setSelectNode] = useState(null);//存储选中节点
     const [nodeProperties, setNodeProperties] = useState(null);  // 更新节点的属性
     const [selectedArray,setSelectedArray]=useState([]);//节点属性下拉框列表
-    const [flowId] = useState(new URLSearchParams(window.location.search).get('id'));//流程图详情id
-    const [flowName] = useState(new URLSearchParams(window.location.search).get('name'));//流程图名称
+    const [flowId] = useState(new URLSearchParams(window.location.search).get('id'));//创建后的流程图id
+    const [flowName] = useState(new URLSearchParams(window.location.search).get('name'));//创建后的流程图名称
+    const [editId, setEditId] = useState(null);//编辑流程图id
+    const [editName, setEditName] = useState(null);//编辑流程图名称
     // const [dynamicSelectRel,setDynamicSelectRel]=useState([]);//获取动态下拉框数据的标识
     const [nodeList,setNodeList]=useState([]);//左侧可拖拽的节点列表
 
@@ -33,10 +35,15 @@ export default function Flow() {
             let searchParams = new URLSearchParams(window.location.search);
             // console.log('路由传递过来的参数---',searchParams)
             if (searchParams) {
-                let id = searchParams.get('id'); //获取流程图详情id
-                // console.log('流程图详情id---',id)
-                getFlowInitDetail(id);
+                let id = searchParams.get('id'); //获取创建好的流程图id
+                // console.log('流程图id---',id)
                 getLeftNodeLists();
+            }
+            let turnParams = new URLSearchParams(window.location.search);
+            if (turnParams) {
+                let detailId = turnParams.get('detailId'); //获取编辑流程图id
+                // console.log('编辑流程图id---', detailId)
+                 getFlowInitDetail(detailId);
             }
             const container = document.getElementById('container');
              // 创建一个graph对象并实例化
@@ -116,7 +123,9 @@ export default function Flow() {
         getGraphDetail({ id: id }).then(res => { 
             if (res.data.success === true) { 
                 let  data  = res.data.obj;
-                // console.log('初始化图表详情数据---',data)      
+                // console.log('初始化图表详情数据---', data)   
+                setEditId(data.id)
+                setEditName(data.name)
                 // 取返回接口的节点、边的uiProperties来渲染流程图
                 let initNodes =data.workflowSchema.nodes.map((item) => {
                     return item.uiProperties
@@ -329,9 +338,10 @@ export default function Flow() {
             }
         }
         // console.log('画布数据---', graphData)
+        // console.log('提交---',editId,editName,flowId,flowName)
         let params = {
-            id: parseInt(flowId),
-            name: flowName,
+            id: parseInt(flowId)||parseInt(editId),
+            name: flowName || editName,
             workflowSchema: graphData
         }
         graphSubmit(params).then((res) => {

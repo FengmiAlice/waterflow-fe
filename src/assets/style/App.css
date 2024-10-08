@@ -487,8 +487,18 @@ height:100%;
 }
 .customGraphContainer .customGraphItem .deleteChartsBtn{
     position:absolute;
-    top: 4px;
+    top: 0;
     right: 35px;
+    z-index: 100;
+    cursor: pointer;
+    color: #333;
+    font-size: 30px;
+    border:none;
+}
+.customGraphContainer .customGraphItem .editChartsBtn{
+    position:absolute;
+    top: 0;
+    right: 60px;
     z-index: 100;
     cursor: pointer;
     color: #333;
