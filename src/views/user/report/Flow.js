@@ -416,51 +416,63 @@ export default function Flow() {
                             {item.name}
                         </div>
                 );
+            } else {
+                return null;
             }
         })
         const aggregationListItems = nodeAggregationList.map((item) => {
-             if (item.type === 'AGGREGATION') {
+            if (item.type === 'AGGREGATION') {
                 return (
                         <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
                             {item.name}
                         </div>
                 );
+            } else {
+                return null;
             }
         })
         const aggregationFuncListItems = nodeAggregationFuncList.map((item) => {
-             if (item.type === 'AGGREGATION_FUNC') {
+            if (item.type === 'AGGREGATION_FUNC') {
                 return (
                         <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
                             {item.name}
                         </div>
                 );
+            } else {
+                return null;
             }
         })
         const filterListItems = nodeFilterList.map((item) => {
-             if (item.type === 'FILTER') {
+            if (item.type === 'FILTER') {
                 return (
                         <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
                             {item.name}
                         </div>
                 );
+            } else {
+                return null;
             }
         })
         const sortListItems = nodeSortList.map((item) => {
-             if (item.type === 'SORT') {
+            if (item.type === 'SORT') {
                 return (
                         <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
                             {item.name}
                         </div>
                 );
+            } else {
+                return null;
             }
         })
         const outputListItems= outPutNodeList.map((item) => {
-             if (item.type === 'OUTPUT') {
+            if (item.type === 'OUTPUT') {
                 return (
                         <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
                             {item.name}
                         </div>
                 );
+            } else {
+                return null;
             }
         })
         const otherFilterListItems = otherFilterNodeList.map((item) => {
@@ -470,6 +482,8 @@ export default function Flow() {
                             {item.name}
                         </div>
                 );
+            } else {
+                return null;
             }
             
         })
