@@ -62,11 +62,11 @@ const useBarEcharts = (props)=>{
                         type: 'none'        // 默认为直线，可选为：'line' | 'shadow'
                     }
                 },
-                toolbox: {
-                    feature: {
-                        saveAsImage: { show: true }
-                    }
-                },
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: { show: true }
+                //     }
+                // },
                 dataZoom: [
                     {
                         type: 'inside',//slider表示有滑动块的，inside表示内置的
