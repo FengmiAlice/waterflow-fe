@@ -153,7 +153,7 @@ const routes = [
                     {
                         path: '/index/report/list',
                         meta:{
-                            title:'报告列表',
+                            title:'报告详情页',
                         },
                         component: () => import( '../views/user/report/Report'),
                     },
@@ -161,7 +161,7 @@ const routes = [
                         path: '/index/report/flow',
                         hidden: true,
                         meta:{
-                            title: "绘图编辑",
+                            title: "绘图编辑页",
                         },
                         component: () => import( '../views/user/report/Flow'),
                     },

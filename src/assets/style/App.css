@@ -446,7 +446,13 @@ margin:10px 0;
 width:200px;
 height:100%;
 }
-.left-wrap .btnItem{
+.left-wrap .btnGroupContainer .btnGroupItem .btnGroupTitle{
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  padding: 10px 0;
+}
+.left-wrap .btnGroupContainer .btnGroupItem .item{
   border: 1px solid rgb(239,239,245);
   display: flex;
   width: 100%;
@@ -488,7 +494,7 @@ height:100%;
 .customGraphContainer .customGraphItem .deleteChartsBtn{
     position:absolute;
     top: 0;
-    right: 35px;
+    right: 0;
     z-index: 100;
     cursor: pointer;
     color: #333;
@@ -498,7 +504,7 @@ height:100%;
 .customGraphContainer .customGraphItem .editChartsBtn{
     position:absolute;
     top: 0;
-    right: 60px;
+    right: 20px;
     z-index: 100;
     cursor: pointer;
     color: #333;

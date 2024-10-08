@@ -25,25 +25,25 @@ export default function Flow() {
     const [editId, setEditId] = useState(null);//编辑流程图id
     const [editName, setEditName] = useState(null);//编辑流程图名称
     // const [dynamicSelectRel,setDynamicSelectRel]=useState([]);//获取动态下拉框数据的标识
-    const [nodeList,setNodeList]=useState([]);//左侧可拖拽的节点列表
-
+    const [nodeSourceList,setNodeSourceList]=useState([]);//左侧可拖拽的f数据源分类节点列表
+    const [nodeAggregationFuncList, setNodeAggregationFunList] = useState([]);//左侧可拖拽的聚合函数分类节点列表
+    const [nodeAggregationList, setNodeAggregationList] = useState([]);//左侧可拖拽的聚合分类节点列表
+    const [nodeFilterList,setNodeFilterList] =useState([]); //左侧可拖拽的过滤分类节点列表
+    const [nodeSortList, setNodeSortList] = useState([]);//左侧可拖拽的排序分类节点列表
+    const [outPutNodeList, setOutPutNodeList] = useState([]);//左侧可拖拽的输出分类节点列表
+    const [otherFilterNodeList,setOtherFilterNodeList] = useState([]);//左侧可拖拽的其他分类节点列表
     useEffect(() => {
    
         if (!initFlag) {
             setInitFlag(true);
             // console.log('初始渲染111')
-            let searchParams = new URLSearchParams(window.location.search);
-            // console.log('路由传递过来的参数---',searchParams)
-            if (searchParams) {
-                let id = searchParams.get('id'); //获取创建好的流程图id
-                // console.log('流程图id---',id)
-                getLeftNodeLists();
-            }
-            let turnParams = new URLSearchParams(window.location.search);
-            if (turnParams) {
-                let detailId = turnParams.get('detailId'); //获取编辑流程图id
-                // console.log('编辑流程图id---', detailId)
-                 getFlowInitDetail(detailId);
+            // let searchParamsId = new URLSearchParams(window.location.search).get('id');
+            // console.log('路由传递过来的参数创建好的流程图id---',searchParamsId)
+             getLeftNodeLists(); //获取左侧节点列表
+            let detailParamsId = new URLSearchParams(window.location.search).get('detailId');
+            //  console.log('路由传递过来的参数编辑流程图id---', detailParamsId)
+            if (detailParamsId) {
+                 getFlowInitDetail(detailParamsId);
             }
             const container = document.getElementById('container');
              // 创建一个graph对象并实例化
@@ -112,6 +112,8 @@ export default function Flow() {
                  e.stopPropagation()
                 // 显示或更新节点属性  
                 setSelectNode(cell)
+                // console.log('点击的节点---', cell)
+                getDynamicSelectedList(cell); // 获取动态下拉框的值
               
             })
         } else {
@@ -145,7 +147,39 @@ export default function Flow() {
      function getLeftNodeLists() {
         getNodeList().then((res)=>{
             if (res.data.success === true) {
-                setNodeList(res.data.obj.list)
+                // console.log('左侧节点列表---', res.data.obj.list)
+                let data = res.data.obj.list;
+                let tempArray1 = [];
+                let tempArray2 = [];
+                let tempArray3 = [];
+                let tempArray4 = [];
+                let tempArray5 = [];
+                let tempArray6 = [];
+                let tempArray7 = [];
+                data.forEach((item) => {
+                    if (item.type === 'DATA_SOURCE') {
+                        tempArray1.push(item)
+                    }else if( item.type === 'AGGREGATION') {
+                        tempArray2.push(item)
+                    }else if( item.type === 'AGGREGATION_FUNC') {
+                        tempArray3.push(item)
+                    }else if( item.type === 'FILTER') {
+                        tempArray4.push(item)
+                    }else if( item.type === 'SORT') {
+                        tempArray5.push(item)
+                    } else if (item.type === 'OUTPUT') {
+                        tempArray6.push(item)
+                    } else if(item.type==="HAVING"){
+                        tempArray7.push(item)
+                    }
+                })
+                setNodeSourceList(tempArray1)
+                setNodeAggregationList(tempArray2)
+                setNodeAggregationFunList(tempArray3)
+                setNodeFilterList(tempArray4)
+                setNodeSortList(tempArray5)
+                setOutPutNodeList(tempArray6)
+                setOtherFilterNodeList(tempArray7)
             }
         })
     }
@@ -157,48 +191,61 @@ export default function Flow() {
     }
     // 拖动左侧菜单后按下鼠标触发事件
     function dragNodeDown(e,item) {
-        // console.log('鼠标按下---',e,item)
+        // console.log('鼠标按下---',item)
         startDragToGraph(drawGraph.current, item, e);
         getDynamicSelectedList(item); // 获取动态下拉框的值
     }
       // 动态获取节点属性下拉框可选值列表数据
     function getDynamicSelectedList(node) {
-        // console.log('鼠标按下点击的节点---',node)
-        let properties = node.properties;
-        // properties.forEach(item => { 
-        //     if (item.valueSchema.type === 'list' && item.valueSchema.source === 'rel') {
-        //         let dynamicSelectRel = item.valueSchema.rel; // 获取到动态下拉框的rel
-        //         if (dynamicSelectRel) {
-        //             let params = {
-        //                 rel: dynamicSelectRel
-        //             }
-        //             getDynamicSelectValue(params).then((res) => {
-        //                 if (res.data.success === true) {
-        //                     setSelectedArray(res.data.obj.list)
-        //                 }
-        //             })
-        //         }
-        //     }
-        // })
-        for(const item of properties) {
-            if (item.valueSchema.type === 'list' && item.valueSchema.source === 'rel') {
-                let dynamicSelectRel = item.valueSchema.rel; // 获取到动态下拉框的rel
-                if (dynamicSelectRel) {
-                    let params = {
-                        rel: dynamicSelectRel
-                    }
-                    getDynamicSelectValue(params).then((res) => {
-                        if (res.data.success === true) {
-                            setSelectedArray(res.data.obj.list)
+        // console.log('node---', node)
+        // 区分是拖拽的节点还是已经存在的节点
+        if (node.hasOwnProperty('nodeId')) {
+            // console.log('拖拽的节点')
+            let properties = node.properties;
+            for(const item of properties) {
+                if (item.valueSchema.type === 'list' && item.valueSchema.source === 'rel') {
+                    let dynamicSelectRel = item.valueSchema.rel; // 获取到动态下拉框的rel
+                    if (dynamicSelectRel) {
+                        let params = {
+                            rel: dynamicSelectRel
                         }
-                    }).catch((err) => {
-                        console.log(err)
-                    })
+                        getDynamicSelectValue(params).then((res) => {
+                            if (res.data.success === true) {
+                                setSelectedArray(res.data.obj.list)
+                            }
+                        }).catch((err) => {
+                            console.log(err)
+                        })
+                    }
+                } else {
+                    setSelectedArray([])
                 }
-            } else {
-                setSelectedArray([])
             }
         }
+        else{
+            // console.log('已经存在的节点')
+             let properties = node.data.properties;
+            for(const item of properties) {
+                if (item.valueSchema.type === 'list' && item.valueSchema.source === 'rel') {
+                    let dynamicSelectRel = item.valueSchema.rel; // 获取到动态下拉框的rel
+                    if (dynamicSelectRel) {
+                        let params = {
+                            rel: dynamicSelectRel
+                        }
+                        getDynamicSelectValue(params).then((res) => {
+                            if (res.data.success === true) {
+                                setSelectedArray(res.data.obj.list)
+                            }
+                        }).catch((err) => {
+                            console.log(err)
+                        })
+                    }
+                } else {
+                    setSelectedArray([])
+                }
+            }
+        }
+    
     }
     // 拖拽创建节点
     function startDragToGraph(graph, item, e) {
@@ -338,7 +385,6 @@ export default function Flow() {
             }
         }
         // console.log('画布数据---', graphData)
-        // console.log('提交---',editId,editName,flowId,flowName)
         let params = {
             id: parseInt(flowId)||parseInt(editId),
             name: flowName || editName,
@@ -362,11 +408,104 @@ export default function Flow() {
         setSelectNode(null);//删除选中节点的属性
     }
 
-    const listItems = nodeList.map((item)=>
-        <div className="btnItem" key={item.key}  draggable="true"   onMouseDown={(e)=>dragNodeDown(e,item)}>
-        {item.name}
-        </div>
-    )
+    const renderNodes = () => {
+        const sourceListItems = nodeSourceList.map((item) => {
+            if (item.type === 'DATA_SOURCE') {
+                return (
+                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                            {item.name}
+                        </div>
+                );
+            }
+        })
+        const aggregationListItems = nodeAggregationList.map((item) => {
+             if (item.type === 'AGGREGATION') {
+                return (
+                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                            {item.name}
+                        </div>
+                );
+            }
+        })
+        const aggregationFuncListItems = nodeAggregationFuncList.map((item) => {
+             if (item.type === 'AGGREGATION_FUNC') {
+                return (
+                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                            {item.name}
+                        </div>
+                );
+            }
+        })
+        const filterListItems = nodeFilterList.map((item) => {
+             if (item.type === 'FILTER') {
+                return (
+                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                            {item.name}
+                        </div>
+                );
+            }
+        })
+        const sortListItems = nodeSortList.map((item) => {
+             if (item.type === 'SORT') {
+                return (
+                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                            {item.name}
+                        </div>
+                );
+            }
+        })
+        const outputListItems= outPutNodeList.map((item) => {
+             if (item.type === 'OUTPUT') {
+                return (
+                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                            {item.name}
+                        </div>
+                );
+            }
+        })
+        const otherFilterListItems = otherFilterNodeList.map((item) => {
+            if (item.type === "HAVING") {
+                 return (
+                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                            {item.name}
+                        </div>
+                );
+            }
+            
+        })
+
+        return <div className="btnGroupContainer">
+                <div className="btnGroupItem">
+                    <div className="btnGroupTitle">数据源节点：</div>
+                    {sourceListItems}
+                </div>
+                <div className="btnGroupItem">
+                    <div className="btnGroupTitle">聚合节点：</div>
+                    {aggregationListItems}
+                </div>
+                <div className="btnGroupItem">
+                    <div className="btnGroupTitle">聚合函数节点：</div>
+                    {aggregationFuncListItems}
+                </div>
+                <div className="btnGroupItem">
+                    <div className="btnGroupTitle">过滤节点：</div>
+                    {filterListItems}
+                </div>
+                <div className="btnGroupItem">
+                    <div className="btnGroupTitle">排序节点：</div>
+                    {sortListItems}
+                </div>
+                <div className="btnGroupItem">
+                    <div className="btnGroupTitle">输出节点：</div>
+                    {outputListItems}
+                </div>
+                <div className="btnGroupItem">
+                    <div className="btnGroupTitle">其他过滤节点：</div>
+                    {otherFilterListItems}
+                </div>
+            </div>
+    }
+    
 
     const renderForm = () => { 
         if (!selectNode) return null;
@@ -498,7 +637,7 @@ export default function Flow() {
             <div className="user-container">
                 {/* 左侧节点列表 */}
                 <div  className="left-wrap">
-                {listItems}
+                {renderNodes()}
                 </div>
                 {/* 画布 */}
                 <div className="middle-wrap">
