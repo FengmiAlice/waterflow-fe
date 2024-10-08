@@ -478,6 +478,10 @@ export default function Flow() {
                 <div className="btnGroupItem">
                     <div className="btnGroupTitle">数据源节点：</div>
                     {sourceListItems}
+            </div>
+               <div className="btnGroupItem">
+                    <div className="btnGroupTitle">过滤节点：</div>
+                    {filterListItems}
                 </div>
                 <div className="btnGroupItem">
                     <div className="btnGroupTitle">聚合节点：</div>
@@ -488,20 +492,16 @@ export default function Flow() {
                     {aggregationFuncListItems}
                 </div>
                 <div className="btnGroupItem">
-                    <div className="btnGroupTitle">过滤节点：</div>
-                    {filterListItems}
+                    <div className="btnGroupTitle">聚合后过滤节点：</div>
+                    {otherFilterListItems}
                 </div>
                 <div className="btnGroupItem">
-                    <div className="btnGroupTitle">排序节点：</div>
+                    <div className="btnGroupTitle">聚合后排序节点：</div>
                     {sortListItems}
                 </div>
-                <div className="btnGroupItem">
+               <div className="btnGroupItem">
                     <div className="btnGroupTitle">输出节点：</div>
                     {outputListItems}
-                </div>
-                <div className="btnGroupItem">
-                    <div className="btnGroupTitle">其他过滤节点：</div>
-                    {otherFilterListItems}
                 </div>
             </div>
     }
