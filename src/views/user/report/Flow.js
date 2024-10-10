@@ -36,14 +36,12 @@ export default function Flow() {
    
 
     useEffect(() => {
-   
         if (!initFlag) {
             setInitFlag(true);
             // console.log('初始渲染111')
             // let searchParamsId = new URLSearchParams(window.location.search).get('id');
             // console.log('路由传递过来的参数创建好的流程图id---',searchParamsId)
             getLeftNodeLists(); //获取左侧节点列表
-            //   console.log('状态更新后的draggedNodesKey---', draggedNodesKey);
             let detailParamsId = new URLSearchParams(window.location.search).get('detailId');
             //  console.log('路由传递过来的参数编辑流程图id---', detailParamsId)
             if (detailParamsId) {
@@ -120,6 +118,13 @@ export default function Flow() {
                 getDynamicSelectedList(cell); // 获取动态下拉框的值
               
             })
+            // 监听节点删除事件  
+            graph.on('node:removed', ({ cell }) => {  
+                // console.log('Node removed:', cell);  
+                setDraggedNodesKey(prevKeys => prevKeys.filter(key => key !== cell.data.key));
+                graph.removeCell(cell);// 删除节点
+                setSelectNode(null);    
+            }); 
         } else {
             // console.log('不是初始渲染222')
         }
@@ -129,9 +134,14 @@ export default function Flow() {
         getGraphDetail({ id: id }).then(res => { 
             if (res.data.success === true) { 
                 let  data  = res.data.obj;
-                // console.log('初始化图表详情数据---', data)   
-                setEditId(data.id)
-                setEditName(data.name)
+                // console.log('初始化图表详情数据---', data)  
+                let array=[]
+                data.workflowSchema.nodes.forEach(  item => {
+                    array.push(item.key)
+                })
+                setDraggedNodesKey(array);//设置获取已拖拽的节点key数组
+                setEditId(data.id);//设置编辑id
+                setEditName(data.name);//设置编辑名称
                 // 取返回接口的节点、边的uiProperties来渲染流程图
                 let initNodes =data.workflowSchema.nodes.map((item) => {
                     return item.uiProperties
@@ -334,14 +344,15 @@ export default function Flow() {
                     args: {
                         x: 0,
                         y: 0,
-                        onClick({ e, cell }) {
-                            // 基于当前状态来设置新状态时，使用函数式更新可以确保你使用的是最新的状态值。否则，你可能会遇到意料之外的行为。
-                            setDraggedNodesKey(prevKeys => prevKeys.filter(key => key !== cell.data.key));
-                            // console.log('删除节点后的draggedNodesKey----', draggedNodesKey)
-                            e.stopPropagation(); // 阻止事件冒泡
-                            graph.removeCell(cell);// 删除节点
-                            setSelectNode(null);                    
-                        }
+                        // onClick({ e, cell }) {
+                        //     console.log('删除节点前的draggedNodesKey----', draggedNodesKey)
+                        //     // 基于当前状态来设置新状态时，使用函数式更新可以确保你使用的是最新的状态值。否则，你可能会遇到意料之外的行为。
+                        //     setDraggedNodesKey(prevKeys => prevKeys.filter(key => key !== cell.data.key));
+                        //     console.log('删除节点后的draggedNodesKey----', draggedNodesKey)
+                        //     e.stopPropagation(); // 阻止事件冒泡
+                        //     graph.removeCell(cell);// 删除节点
+                        //     setSelectNode(null);                    
+                        // }
                     }, // 工具对应的参数
                 },
             ],
