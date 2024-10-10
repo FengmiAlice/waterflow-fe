@@ -31,7 +31,10 @@ export default function Flow() {
     const [nodeFilterList,setNodeFilterList] =useState([]); //左侧可拖拽的过滤分类节点列表
     const [nodeSortList, setNodeSortList] = useState([]);//左侧可拖拽的排序分类节点列表
     const [outPutNodeList, setOutPutNodeList] = useState([]);//左侧可拖拽的输出分类节点列表
-    const [otherFilterNodeList,setOtherFilterNodeList] = useState([]);//左侧可拖拽的其他分类节点列表
+    const [otherFilterNodeList, setOtherFilterNodeList] = useState([]);//左侧可拖拽的其他分类节点列表
+    const [draggedNodesKey, setDraggedNodesKey] = useState([]); // 存储已拖拽节点key
+   
+
     useEffect(() => {
    
         if (!initFlag) {
@@ -39,7 +42,8 @@ export default function Flow() {
             // console.log('初始渲染111')
             // let searchParamsId = new URLSearchParams(window.location.search).get('id');
             // console.log('路由传递过来的参数创建好的流程图id---',searchParamsId)
-             getLeftNodeLists(); //获取左侧节点列表
+            getLeftNodeLists(); //获取左侧节点列表
+            //   console.log('状态更新后的draggedNodesKey---', draggedNodesKey);
             let detailParamsId = new URLSearchParams(window.location.search).get('detailId');
             //  console.log('路由传递过来的参数编辑流程图id---', detailParamsId)
             if (detailParamsId) {
@@ -119,7 +123,7 @@ export default function Flow() {
         } else {
             // console.log('不是初始渲染222')
         }
-    }, [initFlag, drawGraph]);
+    }, [initFlag, drawGraph,draggedNodesKey]);
     // 初始化流程图数据
     function getFlowInitDetail(id) {
         getGraphDetail({ id: id }).then(res => { 
@@ -157,6 +161,7 @@ export default function Flow() {
                 let tempArray6 = [];
                 let tempArray7 = [];
                 data.forEach((item) => {
+                    item["isDragged"] = false; // 拖拽标识
                     if (item.type === 'DATA_SOURCE') {
                         tempArray1.push(item)
                     }else if( item.type === 'AGGREGATION') {
@@ -180,6 +185,7 @@ export default function Flow() {
                 setNodeSortList(tempArray5)
                 setOutPutNodeList(tempArray6)
                 setOtherFilterNodeList(tempArray7)
+                
             }
         })
     }
@@ -190,8 +196,15 @@ export default function Flow() {
         }
     }
     // 拖动左侧菜单后按下鼠标触发事件
-    function dragNodeDown(e,item) {
-        // console.log('鼠标按下---',item)
+    function dragNodeDown(e, item,isDragged) {
+        // 检查该节点的 key 是否已经存在于数组中,如果已存在就提示不可点击拖拽  
+       if (isDragged) {  
+            e.preventDefault();  
+            alert('This node has already been dragged!');  
+            return;  
+        } 
+        // 将节点的key推入数组中
+        setDraggedNodesKey(prevKeys => [...prevKeys, item.key]);
         startDragToGraph(drawGraph.current, item, e);
         getDynamicSelectedList(item); // 获取动态下拉框的值
     }
@@ -321,10 +334,13 @@ export default function Flow() {
                     args: {
                         x: 0,
                         y: 0,
-                        onClick({ e, cell }){
+                        onClick({ e, cell }) {
+                            // 基于当前状态来设置新状态时，使用函数式更新可以确保你使用的是最新的状态值。否则，你可能会遇到意料之外的行为。
+                            setDraggedNodesKey(prevKeys => prevKeys.filter(key => key !== cell.data.key));
+                            // console.log('删除节点后的draggedNodesKey----', draggedNodesKey)
                             e.stopPropagation(); // 阻止事件冒泡
                             graph.removeCell(cell);// 删除节点
-                            setSelectNode(null);
+                            setSelectNode(null);                    
                         }
                     }, // 工具对应的参数
                 },
@@ -397,7 +413,6 @@ export default function Flow() {
             }
         })
     }
-
     // 重置画布事件
     function undoGraph(){
         // 获取所有节点和边的ID  
@@ -407,14 +422,18 @@ export default function Flow() {
         drawGraph.current.removeCells(allCells);
         setSelectNode(null);//删除选中节点的属性
     }
-
+    // 渲染左侧节点列表
     const renderNodes = () => {
+        //   console.log('已存在的拖拽节点key---',draggedNodesKey)
         const sourceListItems = nodeSourceList.map((item) => {
             if (item.type === 'DATA_SOURCE') {
+                // 检查拖拽节点数组draggedNodes里是否包含当前节点的key
+                const isDragged = draggedNodesKey.includes(item.key);
+                item['isDragged'] = isDragged;
                 return (
-                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
-                            {item.name}
-                        </div>
+                    <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
+                        {item.name}
+                    </div>
                 );
             } else {
                 return null;
@@ -422,8 +441,10 @@ export default function Flow() {
         })
         const aggregationListItems = nodeAggregationList.map((item) => {
             if (item.type === 'AGGREGATION') {
+                const isDragged = draggedNodesKey.includes(item.key);
+                item['isDragged'] = isDragged;
                 return (
-                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -433,8 +454,10 @@ export default function Flow() {
         })
         const aggregationFuncListItems = nodeAggregationFuncList.map((item) => {
             if (item.type === 'AGGREGATION_FUNC') {
+                const isDragged = draggedNodesKey.includes(item.key);
+                item['isDragged'] = isDragged;
                 return (
-                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -444,8 +467,10 @@ export default function Flow() {
         })
         const filterListItems = nodeFilterList.map((item) => {
             if (item.type === 'FILTER') {
+                const isDragged = draggedNodesKey.includes(item.key);
+                item['isDragged'] = isDragged;
                 return (
-                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -455,8 +480,10 @@ export default function Flow() {
         })
         const sortListItems = nodeSortList.map((item) => {
             if (item.type === 'SORT') {
+                const isDragged = draggedNodesKey.includes(item.key);
+                item['isDragged'] = isDragged;
                 return (
-                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -466,8 +493,10 @@ export default function Flow() {
         })
         const outputListItems= outPutNodeList.map((item) => {
             if (item.type === 'OUTPUT') {
+                const isDragged = draggedNodesKey.includes(item.key);
+                item['isDragged'] = isDragged;
                 return (
-                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -477,8 +506,10 @@ export default function Flow() {
         })
         const otherFilterListItems = otherFilterNodeList.map((item) => {
             if (item.type === "HAVING") {
+                const isDragged = draggedNodesKey.includes(item.key);
+                item['isDragged'] = isDragged;    
                  return (
-                        <div className="item" key={item.key} draggable="true" onMouseDown={(e) => dragNodeDown(e, item)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
