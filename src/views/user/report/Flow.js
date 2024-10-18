@@ -24,14 +24,14 @@ export default function Flow() {
     const [flowName] = useState(new URLSearchParams(window.location.search).get('name'));//创建后的流程图名称
     const [editId, setEditId] = useState(null);//编辑流程图id
     const [editName, setEditName] = useState(null);//编辑流程图名称
-    // const [dynamicSelectRel,setDynamicSelectRel]=useState([]);//获取动态下拉框数据的标识
     const [nodeSourceList,setNodeSourceList]=useState([]);//左侧可拖拽的f数据源分类节点列表
     const [nodeAggregationFuncList, setNodeAggregationFunList] = useState([]);//左侧可拖拽的聚合函数分类节点列表
     const [nodeAggregationList, setNodeAggregationList] = useState([]);//左侧可拖拽的聚合分类节点列表
     const [nodeFilterList,setNodeFilterList] =useState([]); //左侧可拖拽的过滤分类节点列表
     const [nodeSortList, setNodeSortList] = useState([]);//左侧可拖拽的排序分类节点列表
     const [outPutNodeList, setOutPutNodeList] = useState([]);//左侧可拖拽的输出分类节点列表
-    const [otherFilterNodeList, setOtherFilterNodeList] = useState([]);//左侧可拖拽的其他分类节点列表
+    const [havingFilterNodeList, setHavingFilterNodeList] = useState([]);//左侧可拖拽的聚合分类节点列表
+    const [calculationNodeList, setCalCulationNodeList] = useState([]);//左侧可拖拽的数值计算分类节点列表
     const [draggedNodesKey, setDraggedNodesKey] = useState([]); // 存储已拖拽节点key
    
 
@@ -170,6 +170,7 @@ export default function Flow() {
                 let tempArray5 = [];
                 let tempArray6 = [];
                 let tempArray7 = [];
+                let tempArray8 = [];
                 data.forEach((item) => {
                     item["isDragged"] = false; // 拖拽标识
                     if (item.type === 'DATA_SOURCE') {
@@ -186,6 +187,8 @@ export default function Flow() {
                         tempArray6.push(item)
                     } else if(item.type==="HAVING"){
                         tempArray7.push(item)
+                    } else if (item.type = "CALCULATION") {
+                        tempArray8.push(item)
                     }
                 })
                 setNodeSourceList(tempArray1)
@@ -194,8 +197,8 @@ export default function Flow() {
                 setNodeFilterList(tempArray4)
                 setNodeSortList(tempArray5)
                 setOutPutNodeList(tempArray6)
-                setOtherFilterNodeList(tempArray7)
-                
+                setHavingFilterNodeList(tempArray7)
+                setCalCulationNodeList(tempArray8)
             }
         })
     }
@@ -515,7 +518,7 @@ export default function Flow() {
                 return null;
             }
         })
-        const otherFilterListItems = otherFilterNodeList.map((item) => {
+        const havingFilterListItems = havingFilterNodeList.map((item) => {
             if (item.type === "HAVING") {
                 const isDragged = draggedNodesKey.includes(item.key);
                 item['isDragged'] = isDragged;    
@@ -529,37 +532,54 @@ export default function Flow() {
             }
             
         })
+        const calculationListItems = calculationNodeList.map((item) => {
+            if(item.type === "CALCULATION") {
+                const isDragged = draggedNodesKey.includes(item.key);
+                item['isDragged'] = isDragged;    
+                 return (
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
+                            {item.name}
+                        </div>
+                );
+            } else {
+                return null;
+            }
+        })
 
-        return <div className="btnGroupContainer">
-                <div className="btnGroupItem">
-                    <div className="btnGroupTitle">数据源节点：</div>
-                    {sourceListItems}
-            </div>
-               <div className="btnGroupItem">
-                    <div className="btnGroupTitle">过滤节点：</div>
-                    {filterListItems}
+        return  <div className="btnGroupContainer">
+                    <div className="btnGroupItem">
+                        <div className="btnGroupTitle">数据源节点：</div>
+                        {sourceListItems}
+                    </div>
+                    <div className="btnGroupItem">
+                        <div className="btnGroupTitle">过滤节点：</div>
+                        {filterListItems}
+                    </div>
+                    <div className="btnGroupItem">
+                        <div className="btnGroupTitle">聚合节点：</div>
+                        {aggregationListItems}
+                    </div>
+                    <div className="btnGroupItem">
+                        <div className="btnGroupTitle">聚合函数节点：</div>
+                        {aggregationFuncListItems}
+                    </div>
+                    <div className="btnGroupItem">
+                        <div className="btnGroupTitle">聚合后过滤节点：</div>
+                        {havingFilterListItems}
+                    </div>
+                    <div className="btnGroupItem">
+                        <div className="btnGroupTitle">聚合后排序节点：</div>
+                        {sortListItems}
+                    </div>
+                    <div className="btnGroupItem">
+                        <div className="btnGroupTitle">数值计算节点：</div>
+                        {calculationListItems}
+                    </div>
+                    <div className="btnGroupItem">
+                        <div className="btnGroupTitle">输出节点：</div>
+                        {outputListItems}
+                    </div>
                 </div>
-                <div className="btnGroupItem">
-                    <div className="btnGroupTitle">聚合节点：</div>
-                    {aggregationListItems}
-                </div>
-                <div className="btnGroupItem">
-                    <div className="btnGroupTitle">聚合函数节点：</div>
-                    {aggregationFuncListItems}
-                </div>
-                <div className="btnGroupItem">
-                    <div className="btnGroupTitle">聚合后过滤节点：</div>
-                    {otherFilterListItems}
-                </div>
-                <div className="btnGroupItem">
-                    <div className="btnGroupTitle">聚合后排序节点：</div>
-                    {sortListItems}
-                </div>
-               <div className="btnGroupItem">
-                    <div className="btnGroupTitle">输出节点：</div>
-                    {outputListItems}
-                </div>
-            </div>
     }
     
 
