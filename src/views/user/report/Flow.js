@@ -209,7 +209,7 @@ export default function Flow() {
         }
     }
     // 拖动左侧菜单后按下鼠标触发事件
-    function dragNodeDown(e, item,isDragged) {
+    function dragNodeStart(e, item,isDragged) {
         // 检查该节点的 key 是否已经存在于数组中,如果已存在就提示不可点击拖拽  
        if (isDragged) {  
             e.preventDefault();  
@@ -376,12 +376,12 @@ export default function Flow() {
         })
         dnd.start(rect,e);
         //定义节点拖拽结束事件
-        rect.on('dragend', onDragEnd()); 
+        // rect.on('dragend', onDragEnd()); 
     }
-    function onDragEnd() { 
-        // 拖拽结束事件
-        console.log('拖拽结束')
-    }
+    // function onDragEnd() { 
+    //     // 拖拽结束事件
+    //     console.log('拖拽结束')
+    // }
     // 保存画布事件
     function saveGraph(){
         let nodesArray = drawGraph.current.getNodes();
@@ -445,7 +445,7 @@ export default function Flow() {
                 const isDragged = draggedNodesKey.includes(item.key);
                 item['isDragged'] = isDragged;
                 return (
-                    <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
+                    <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onDragStart={(e) => dragNodeStart(e, item,isDragged)}>
                         {item.name}
                     </div>
                 );
@@ -458,7 +458,7 @@ export default function Flow() {
                 const isDragged = draggedNodesKey.includes(item.key);
                 item['isDragged'] = isDragged;
                 return (
-                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onDragStart={(e) => dragNodeStart(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -471,7 +471,7 @@ export default function Flow() {
                 const isDragged = draggedNodesKey.includes(item.key);
                 item['isDragged'] = isDragged;
                 return (
-                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onDragStart={(e) => dragNodeStart(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -484,7 +484,7 @@ export default function Flow() {
                 const isDragged = draggedNodesKey.includes(item.key);
                 item['isDragged'] = isDragged;
                 return (
-                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onDragStart={(e) => dragNodeStart(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -497,7 +497,7 @@ export default function Flow() {
                 const isDragged = draggedNodesKey.includes(item.key);
                 item['isDragged'] = isDragged;
                 return (
-                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onDragStart={(e) => dragNodeStart(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -510,7 +510,7 @@ export default function Flow() {
                 const isDragged = draggedNodesKey.includes(item.key);
                 item['isDragged'] = isDragged;
                 return (
-                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onDragStart={(e) => dragNodeStart(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -523,7 +523,7 @@ export default function Flow() {
                 const isDragged = draggedNodesKey.includes(item.key);
                 item['isDragged'] = isDragged;    
                  return (
-                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onDragStart={(e) => dragNodeStart(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
@@ -537,7 +537,7 @@ export default function Flow() {
                 const isDragged = draggedNodesKey.includes(item.key);
                 item['isDragged'] = isDragged;    
                  return (
-                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onMouseDown={(e) => dragNodeDown(e, item,isDragged)}>
+                        <div className={`item${isDragged ? 'dragged' : ''}`} key={item.key} draggable={!isDragged} onDragStart={(e) => dragNodeStart(e, item,isDragged)}>
                             {item.name}
                         </div>
                 );
