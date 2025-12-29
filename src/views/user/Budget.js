@@ -4,7 +4,7 @@ import { DatePicker, Form, Button, Input, message, Select, Space, Tooltip, Modal
 import {debounce} from '../../utils/appTools';
 import ArgTable from '../../components/Table';
 import AsyncModal from '../../components/Modal';
-import moment from 'moment';
+import dayjs from 'dayjs';
 const { Option } = Select;
 const { TextArea } = Input;
 const {confirm} = Modal;
@@ -185,12 +185,12 @@ function Budge() {
         // console.log('选择的年', budgetYearTime.current)
 
         if (scopeLevel.current === 0) {
-            budgetMonthTime.current = moment().format("YYYY-MM");//格式化当前月份
-            setSelectedDate(moment(budgetMonthTime.current))
+            budgetMonthTime.current = dayjs().format("YYYY-MM");//格式化当前月份
+            setSelectedDate(dayjs(budgetMonthTime.current))
         }
         if (scopeLevel.current === 1) {
-            budgetYearTime.current = moment().format("YYYY");//格式化当前年份
-            setSelectedDate(moment( budgetYearTime.current))
+            budgetYearTime.current = dayjs().format("YYYY");//格式化当前年份
+            setSelectedDate(dayjs( budgetYearTime.current))
         } 
     }
     const PickerWithType = ({ type, onChange }) => {
@@ -199,16 +199,16 @@ function Budge() {
     };
     // 新增编辑预算选择时间事件,每次选择日期之前清空之前选择的值，并设置默认级别、时间
     function getLevelMonthOrYearChange(date, dateString) {
-        // console.log('moment选择',date)
+        // console.log('dayjs选择',date)
         // console.log('时间选择', dateString)
         // console.log('级别选择', scopeLevel.current)
         if (scopeLevel.current === 0) {
             budgetMonthTime.current = dateString;
-            setSelectedDate(moment(budgetMonthTime.current))
+            setSelectedDate(dayjs(budgetMonthTime.current))
         }
         if (scopeLevel.current === 1) {
             budgetYearTime.current = dateString;
-            setSelectedDate(moment(budgetYearTime.current))
+            setSelectedDate(dayjs(budgetYearTime.current))
         }
     }
     // 获取添加编辑预算记录时选择的预算类别值
@@ -284,10 +284,10 @@ function Budge() {
         // 清空上一次填写的表单记录
         addBudgetType.current = '';
         scopeLevel.current = 0;//重置为0
-        budgetMonthTime.current = moment().format('YYYY-MM');//重置为当月
+        budgetMonthTime.current = dayjs().format('YYYY-MM');//重置为当月
         //  console.log('新增时',scopeLevel.current)
         // console.log('新增时', budgetMonthTime.current)
-        setSelectedDate(moment(budgetMonthTime.current));//默认显示当月
+        setSelectedDate(dayjs(budgetMonthTime.current));//默认显示当月
         // 重置表单
         form.resetFields();
 
@@ -302,7 +302,7 @@ function Budge() {
         // console.log('编辑级别',scopeLevel.current)
         // console.log(row.timeFormat)
         scopeLevel.current = row.scopeLevel;
-        row.timeFormat = moment(row.timeFormat);
+        row.timeFormat = dayjs(row.timeFormat);
         setSelectedDate(row.timeFormat);//赋值显示在日期组件上
         
         if (scopeLevel.current === 0) {
@@ -493,7 +493,7 @@ function Budge() {
                 {/* 添加或编辑预算记录弹窗 */}
                 <AsyncModal title={budgetTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={budgetFooter} operDialogFunc={operDialogFunc} handleOk={debounceBudgetSubmit}>
                     <section >
-                        <Form name="budgetForm"  form={form} initialValues={{'scopeLevel':0,'timeFormat':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
+                        <Form name="budgetForm"  form={form} initialValues={{'scopeLevel':0,'timeFormat':dayjs()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                             <Form.Item  label="预算类别" >
                                 <Form.Item  name="type"  rules={[ {required:true,message:'请选择预算类别'}, ]} noStyle>
                                     <Select className='consumeTypeSelect'  onChange={addTypeChange} placeholder="请选择预算类别" allowClear >

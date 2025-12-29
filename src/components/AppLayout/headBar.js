@@ -1,9 +1,9 @@
 /**
  * @Description: 顶部栏
 */
-import React, {  useEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
 import { useStore, observer } from '../../hooks/storeHook';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import sunrise from '../../assets/images/morning.png';
 import sunup from '../../assets/images/later-morning.png';
@@ -13,7 +13,7 @@ import sunset from '../../assets/images/later-afternoon.png';
 import night from '../../assets/images/night.png';
 import deepnight from '../../assets/images/deep-night.png';
 import { updateUserInfo,updatePassword } from '../../api/login';
-import { Form,Input, Dropdown,Modal,Menu,Space,message } from 'antd';
+import { Form,Input, Dropdown,Modal,message } from 'antd';
 import { DownOutlined,UserOutlined,SettingOutlined,LogoutOutlined} from '@ant-design/icons';
 // const {confirm} = Modal;ExclamationCircleOutlined
  
@@ -23,11 +23,12 @@ function HeadBar () {
     // 使用useForm创建form实例
     const [form] = Form.useForm();
     const [pwdForm] = Form.useForm();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [infoVisible, setInfoVisible] = useState(false);
     const [resetVisible, setResetVisible] = useState(false);
     const [displayHour, setDisplayHour] = useState(null);
-     const [imageSrc, setImageSrc] = useState('');
+    const [imageSrc, setImageSrc] = useState('');
+
     useEffect(() => {
         if(infoVisible){
             //使用setFieldsValue回显表格数据
@@ -106,16 +107,6 @@ function HeadBar () {
             const values = await pwdForm.validateFields();
             // console.log('重置密码', values)
             if (values) {
-                // confirm({
-                //     title: '确认重置密码?',
-                //     icon: <ExclamationCircleOutlined />,
-                //     okText:"确认",
-                //     cancelText:"取消",
-                //    // confirm弹框内确认按钮操作
-                //     onOk() {
-                           
-                //     },
-                // });
                  let params = {
                     newPassword:values.newPwd,
                     repeatPassword:values.repeatPwd,
@@ -139,21 +130,19 @@ function HeadBar () {
         setResetVisible(false);
     }
     //   退出登录
-    function onLogout () {
+    function onLogout() {
         userStore.setToken('');
         userStore.setUserInfo({});
-        navigate('/signIn')
+        // navigate('/signIn')
+        window.location.href = '/signIn';//避免了React的状态管理问题，直接进行页面跳转
     }
-    // 解决[antd: Menu] `children` will be removed in next major version. Please use `items` instead问题
+    // antd5.20.3 dropdown下拉菜单
     const items = [
-        { label:(<Space><UserOutlined/>个人信息</Space>), key: '1',},
-        { label:(<Space><SettingOutlined/>修改密码</Space>) , key: '2',},
-        { label:(<Space><LogoutOutlined/>退出</Space>), key: '3', },
+        { label:"个人信息", key: '1',icon: <UserOutlined />,},
+        { label:"修改密码" , key: '2',icon:<SettingOutlined/>},
+        { label:"退出", key: '3',icon: <LogoutOutlined />},
     ];
-    const menuItems = (
-        <Menu items={items} onClick={e=>menuItemClick(e)}/>
-    );
-    
+   
     const menuItemClick = (e) => {
         // console.log('测试', e);
         if (e.key === '1') {
@@ -166,7 +155,6 @@ function HeadBar () {
         }
     }
 
-
     return (
     <div className="c-PageLayout-headBar">
         <div className="headLeft">
@@ -175,28 +163,18 @@ function HeadBar () {
                     <img src={logo} className="logo" alt="logo" />
                     <span className='logoTitle'>流水集</span></div>
         </div>
-            <div className="headRight">
+        <div className="headRight">
                 <div className='dynamicImgBox'><img src={imageSrc} className="changeImg" alt="时间变化图片" /></div>
-                <Dropdown overlay={menuItems}>
-                     {/* overlay={
-                        <Menu>
-                        <Menu.Item key="0">
-                            <div onClick={turnToUserInfo}>个人信息</div>
-                        </Menu.Item>
-                        <Menu.Item key="1">
-                            <div>修改密码</div>
-                        </Menu.Item>
-                        <Menu.Divider />
-                        <Menu.Item key="2">
-                            <div className="logout" onClick={onLogout}>退出</div>
-                        </Menu.Item>
-                        </Menu>
-                    } */}
-                    <div><span className='dynamicTime'>{ displayHour},</span><span className='dynamicName'>{userInfo.name}</span> <DownOutlined className="iconArrowDown" /></div>
+                <Dropdown menu={{ items,onClick: menuItemClick }}  >
+                    <div>
+                        <span className='dynamicTime'>{displayHour},</span>
+                        <span className='dynamicName'>{userInfo.name}</span>
+                        <DownOutlined className="iconArrowDown" />
+                    </div>
                 </Dropdown>
         </div>
         {/* 个人信息弹窗 */}
-        <Modal title="个人信息" forceRender visible={infoVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
+        <Modal title="个人信息" forceRender open={infoVisible} onOk={handleSubmit} onCancel={handleCancel} okText="确认" cancelText="取消" >
         <section >
                 <Form  className="infoFormWrap" name="infoForm"  form={form}  labelCol={{span:4}}  size="large"  autoComplete="off" >
                     <Form.Item  label="账号" name="username"   >
@@ -240,7 +218,7 @@ function HeadBar () {
             </section>
         </Modal>
         {/* 重置密码弹窗 */}
-        <Modal title="重置密码" forceRender visible={resetVisible} onOk={handleResetSubmit} onCancel={handleResetCancel} okText="确认" cancelText="取消" >
+        <Modal title="重置密码" forceRender open={resetVisible} onOk={handleResetSubmit} onCancel={handleResetCancel} okText="确认" cancelText="取消" >
             <section >
                 <Form  className="infoFormWrap" name="pwdForm"  form={pwdForm} labelCol={{span:6}}  size="large"  autoComplete="off" >
                     <Form.Item  label="新密码：" name="newPwd"   rules={[

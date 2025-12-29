@@ -4,7 +4,7 @@ import AsyncModal from '../../components/Modal';
 import ArgPieEcharts from '../../components/Echarts/pie';
 import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip} from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { getConsumeList, getConsumeTypeList, getPaymentTypeList, addTableRow, deleteTableRow, deleteTableRowArray, exportConsumeTable, addType,addConsumeAnalysis } from '../../api/user';
 import {debounce} from '../../utils/appTools';
 const { RangePicker } = DatePicker; 
@@ -102,7 +102,7 @@ function Consume(){
     // 获取store中的用户信息
     const { userStore } = useStore()
     const { userInfo } = userStore;
-    let currentMonth =  moment().format("YYYY-MM");
+    let currentMonth =  dayjs().format("YYYY-MM");
     let initSearchData = {
             times:'',
             month:currentMonth,
@@ -146,12 +146,12 @@ function Consume(){
     const tableIds = useRef('consume_report');//获取支出列表table id
     const tableRef = useRef(null);//设置表格的ref
     const searchWords = useRef('');//设置支出统计分析弹窗关键词
-    let curTime= moment().format("YYYY-MM-DD");
+    let curTime= dayjs().format("YYYY-MM-DD");
     const consumeTime = useRef(curTime);//设置支出记录默认时间
 
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
     useEffect(()=>{
-        month.current = moment().format("YYYY-MM");//初始化赋值当前月份
+        month.current = dayjs().format("YYYY-MM");//初始化赋值当前月份
         getTypeList();
         getPaymentList();
     },[])
@@ -322,7 +322,7 @@ function Consume(){
         setAddFlag(true);
         if (isAddFlag === true) {
             // console.log(isAddFlag,1111)
-            consumeTime.current = moment().format("YYYY-MM-DD")
+            consumeTime.current = dayjs().format("YYYY-MM-DD")
         }
         form.resetFields();
         setConsumeTitle('添加支出记录');
@@ -339,8 +339,8 @@ function Consume(){
             //  console.log(isAddFlag,2222)
             consumeTime.current = row.timeStr;
         }
-        // 将返回的时间转换为moment格式用于编辑显示在时间组件上
-        row.time = moment(row.time)
+        // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
+        row.time = dayjs(row.time)
         addConsumeType.current = row.typeId;
         addPaymentType.current = row.paymentId;
         form.setFieldsValue(row) 
@@ -563,11 +563,11 @@ function Consume(){
                         <RangePicker  onChange={getRangeValue}  disabledDate={
                         (current) => {
                             // 选择今天及今天之前的日期
-                            return current && current > moment().startOf('day');
+                            return current && current > dayjs().startOf('day');
                         }}  allowClear />
                     </Form.Item>
                     <Form.Item label="月份选择"  >
-                        <DatePicker defaultValue={moment()} format='YYYY-MM' picker="month" onChange={getMonthChange}placeholder="请选择月份" allowClear  />
+                        <DatePicker defaultValue={dayjs()} format='YYYY-MM' picker="month" onChange={getMonthChange}placeholder="请选择月份" allowClear  />
                     </Form.Item>
                     <Form.Item label="年份选择" >
                         <DatePicker format='YYYY'    picker="year"  onChange={getYearChange} placeholder="请选择年份" allowClear />
@@ -630,7 +630,7 @@ function Consume(){
                 {/* 添加或编辑支出记录弹窗 */}
                 <AsyncModal title={consumeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={consumeFooter} operDialogFunc={operDialogFunc} handleOk={debounceConsumeSubmit}>
                     <section >
-                        <Form   name="consumeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
+                        <Form   name="consumeForm"  form={form} initialValues={{'time':dayjs()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                             <Form.Item  label="支出类别" >
                                 <Form.Item  name="typeId"  rules={[ {required:true,message:'请选择支出类别'}, ]} noStyle>
                                     <Select className='consumeTypeSelect'  onChange={addTypeChange} placeholder="请选择支出类别" allowClear >

@@ -10,7 +10,7 @@ import {getOverview,getConsumePie,getConsumePieType,getIncome,getConsumeIncomeLa
 import { debounce } from '../../../utils/appTools';
 import { useNavigate } from 'react-router-dom';
 import {DeleteOutlined,EditOutlined} from '@ant-design/icons';
-import moment from 'moment';
+import dayjs from 'dayjs';
 const { Option } = Select;
 
 
@@ -91,7 +91,7 @@ function Report(){
 
     // 获取折线图搜索开始日期
     const getStartDateChange=(date,dateString)=>{
-        let startVal = moment(date).valueOf();
+        let startVal = dayjs(date).valueOf();
         let endVal= new Date(endDate.current).getTime();
         if(startVal > endVal){
             lineForm.setFieldsValue({'startField':null});
@@ -104,7 +104,7 @@ function Report(){
      // 获取折线图搜索结束日期
      const getEndDateChange=(date,dateString)=>{  
         let startVal= new Date(startDate.current).getTime();
-        let endVal = moment(date).valueOf();
+        let endVal = dayjs(date).valueOf();
        if(endVal < startVal){
             lineForm.setFieldsValue({'endField':null});
             endDate.current = '';
@@ -125,9 +125,9 @@ function Report(){
 
     useEffect(()=>{
         // 设置支出收入余额搜索参数默认值
-        let forwardYear = moment().subtract(1, 'year').format('YYYY-MM-DD');//开始日期与结束日期相差1年
+        let forwardYear = dayjs().subtract(1, 'year').format('YYYY-MM-DD');//开始日期与结束日期相差1年
         startDate.current = forwardYear;
-        endDate.current = moment().format("YYYY-MM-DD");//结束日期
+        endDate.current = dayjs().format("YYYY-MM-DD");//结束日期
         
         buttonLineSearch();
         getLaterlyBarData();
@@ -531,14 +531,14 @@ function Report(){
            <div className="lineContiner">
                 <Form  className="reportWrap" layout="inline" name="lineReport"  size="small" form={lineForm}  
                 //设置初始值
-                initialValues={{'startField':moment().subtract(1, 'year'),'endField':moment(),'countNum':statisticType.current}}>
+                initialValues={{'startField':dayjs().subtract(1, 'year'),'endField':dayjs(),'countNum':statisticType.current}}>
                     <Form.Item label="开始日期" name="startField" >
                         <DatePicker format='YYYY-MM-DD'   onChange={getStartDateChange} />
-                        {/* defaultValue={moment().subtract(1, 'year')} */}
+                        {/* defaultValue={dayjs().subtract(1, 'year')} */}
                     </Form.Item>
                     <Form.Item label="结束日期" name="endField">
                         <DatePicker format='YYYY-MM-DD'  onChange={getEndDateChange} />
-                        {/* defaultValue={moment()}  */}
+                        {/* defaultValue={dayjs()}  */}
                     </Form.Item>
                     <Form.Item label="统计粒度" >
                         <Form.Item name="countNum" noStyle>
@@ -566,7 +566,7 @@ function Report(){
                             if (item.type === 'BAR') {
                                 return (
                                     <div className="customGraphItem" key={item.id}>
-                                        <ArgBarEcharts id={`customBar${item.id}`} key={item.id} title={item.configObj.title} xData={item.configObj.xData} seriesData={item.configObj.seriesData} barType="single" />
+                                        <ArgBarEcharts id={`customBar${item.id}`} key={item.id} title={item.configObj.title||'默认标题'} xData={item.configObj.xData} seriesData={item.configObj.seriesData} barType="single" />
                                         <Button className='editChartsBtn'  icon={<EditOutlined />} size="small" onClick={()=>editCustomBarGraph(item.id)}></Button>
                                         <Button className='deleteChartsBtn'  icon={<DeleteOutlined />} size="small" onClick={()=>deleteCustomBarGraph(item.id)}></Button>
                                     </div>

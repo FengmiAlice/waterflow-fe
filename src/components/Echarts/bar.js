@@ -11,13 +11,16 @@ import * as echarts from 'echarts'
  * 
 */
 const useBarEcharts = (props)=>{
-    const {id,title,xData,seriesData,barType} = props;//legendData
-    const drawMultipleBar = useCallback(()=>{
-        // console.log(barType)
-        // let myBarChartDom = echarts.init(document.getElementById(id));
-
+    const { id, title, xData, seriesData, barType } = props;//legendData
+ 
+    const drawMultipleBar = useCallback(()=>{// 基于准备好的dom，初始化echarts实例
         // 获取DOM id
         let barChartDom = document.getElementById(id);
+        // 防御性检查
+        if (!barChartDom) {
+            console.warn(`DOM element with id=${id} not found`);
+            return;
+        }
         // 获取实例
         let barChart = echarts.getInstanceByDom(barChartDom);
         // 如果不存在则创建
@@ -44,6 +47,8 @@ const useBarEcharts = (props)=>{
                 containLabel: true,
             };
         }
+        // 配置项容错
+        const title = props.title || '默认标题';
         // 如果是普通类型柱状图
         if(barType === 'single'){
             let multipleOption1 = {
@@ -177,10 +182,13 @@ const useBarEcharts = (props)=>{
             };
             barChart.setOption(multipleOption2);
         }
-        window.addEventListener('resize',()=>{
-            barChart.resize();
-        })
-    }, [id,title,xData,seriesData,barType]) 
+        const handleResize = () => barChart.resize();
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            barChart.dispose(); // 关键清理
+        };
+    }, [id,props.title,xData,seriesData,barType]) 
     
     useEffect(()=>{
         drawMultipleBar();

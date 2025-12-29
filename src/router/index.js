@@ -1,6 +1,9 @@
 
 import store from '../store'
-import { HomeOutlined,MoneyCollectOutlined,PayCircleOutlined,RedEnvelopeOutlined,PoundOutlined,AccountBookOutlined,UserAddOutlined,WalletOutlined} from '@ant-design/icons';
+import {
+    HomeOutlined, MoneyCollectOutlined, PayCircleOutlined, RedEnvelopeOutlined, PoundOutlined,
+    AccountBookOutlined, UserAddOutlined, WalletOutlined, SyncOutlined
+} from '@ant-design/icons';
 import AppLayout from '../components/AppLayout';
 
 const routes = [
@@ -23,6 +26,14 @@ const routes = [
             icon: <HomeOutlined />,
         },
         children: [
+            {
+                path: '/index/aiAnswer',
+                meta:{
+                    title: 'AI智能记账',
+                    icon: <SyncOutlined />,
+                },
+                component: () => import('../views/user/AiAnswer'),
+            },
             {
                 path: '/index/budget',
                 meta:{
@@ -189,7 +200,7 @@ const routes = [
             noLogin:true,
         },
         component: () => import( '../views/register/SignUp'),
-    },  
+    }, 
     {
         path: '*',
         meta: {

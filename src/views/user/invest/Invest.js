@@ -3,7 +3,7 @@ import ArgTable from '../../../components/Table';
 import AsyncModal from '../../../components/Modal';
 import {useNavigate} from 'react-router-dom';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Drawer} from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { getInvestedList,getInvestedDetailById, getInvestedSingleList,getInvestedStatistic,getPaymentTypeList, addInvested,deleteInvested,addDividend,updateInvestCurrent,addSingleInvest,deleteSingleInvest} from '../../../api/user';
 import {debounce} from '../../../utils/appTools';
 
@@ -172,13 +172,13 @@ function Invest() {
     const tableRef = useRef(null);//设置表格的ref
     const singleInvestRef=useRef(null);//设置理财记录抽屉下投资明细的ref
     const keyword = useRef('');//设置搜索关键字值
-    let currentTime= moment().format("YYYY-MM-DD");
+    let currentTime= dayjs().format("YYYY-MM-DD");
     const investTime = useRef(currentTime);//添加理财记录默认时间
     const paymentType = useRef('');//设置接受账户值
     const paymentSingleType = useRef('');//设置投资明细账户值
-    let currentRedTime= moment().format("YYYY-MM-DD");
+    let currentRedTime= dayjs().format("YYYY-MM-DD");
     const redTime = useRef(currentRedTime);//设置默认分红时间
-    let currentsingleTime= moment().format("YYYY-MM-DD");
+    let currentsingleTime= dayjs().format("YYYY-MM-DD");
     const singleTime = useRef(currentsingleTime);//设置投资明细时间
    
 
@@ -311,7 +311,7 @@ function Invest() {
     const handleRed = () => {
         // console.log('是否是新增分红',isRedFlag)
         if (isRedFlag === true) {
-             redTime.current = moment().format("YYYY-MM-DD");
+             redTime.current = dayjs().format("YYYY-MM-DD");
         }
         paymentType.current = '';
         setRedType('CASH_OUT');
@@ -412,7 +412,7 @@ function Invest() {
         setIsRedFlag(true);
           if (isAddFlag === true) {
             // console.log(isAddFlag,1111)
-            investTime.current = moment().format("YYYY-MM-DD")
+            investTime.current = dayjs().format("YYYY-MM-DD")
         }
         form.resetFields();
         setInvestOpen(true);
@@ -432,8 +432,8 @@ function Invest() {
         if (isAddFlag === false) {
             investTime.current = row.timeStr;
         }
-        // 将返回的时间转换为moment格式用于编辑显示在时间组件上
-        row.time = moment(row.time);
+        // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
+        row.time = dayjs(row.time);
         // form.setFieldsValue(row);
         
         setInvestTitle('编辑理财记录');
@@ -456,7 +456,7 @@ function Invest() {
                     let data = res.data.obj;
                     // 更新form
                     form.setFieldsValue({
-                        time: moment(data.time),
+                        time: dayjs(data.time),
                         description: data.description,
                         plan: data.plan,
                         amount: data.amount,
@@ -518,7 +518,7 @@ function Invest() {
         setIsSingleFlag(true);
         if (isSingleFlag === true) {
                  // console.log(isSingleFlag,1111)
-            singleTime.current = moment().format("YYYY-MM-DD");
+            singleTime.current = dayjs().format("YYYY-MM-DD");
         }
         // 添加投资明细记录之前将投资明细表单除了time、investName之外的字段值置空
         investSingleForm.setFieldsValue({ 'type': "", 'amount':"",'paymentId':'','note':""});
@@ -537,8 +537,8 @@ function Invest() {
             // console.log(isSingleFlag,2222)
             singleTime.current = row.time;
         }
-        // 将返回的时间转换为moment格式用于编辑显示在时间组件上
-        row.time = moment(row.time);
+        // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
+        row.time = dayjs(row.time);
         investSingleForm.setFieldsValue(row);
         setInvestSingleTitle('编辑投资明细记录');
         setInvestChildrenOpen(true);
@@ -714,7 +714,7 @@ function Invest() {
                     title={investTitle}
                     placement="right"
                     onClose={onClose}
-                    visible={investOpen}
+                    open={investOpen}
                     className='investDrawer'
                     extra={
                         <Space>
@@ -725,7 +725,7 @@ function Invest() {
                     }
                 >
 
-                <Form  name="investForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:8}}  size="middle"  autoComplete="off" >
+                <Form  name="investForm"  form={form} initialValues={{'time':dayjs()}} labelCol={{span:8}}  size="middle"  autoComplete="off" >
                         <Form.Item style={{clear:'both'}} label="创建时间" name="time"  
                                     rules={[
                                         {required:true,message:'请选择创建时间'},
@@ -775,7 +775,7 @@ function Invest() {
                     title={investSingleTitle}
                     placement="right"
                     onClose={onChildrenClose}
-                    visible={investChildrenOpen}
+                    open={investChildrenOpen}
                     forceRender
                     extra={
                         <Space>
@@ -783,7 +783,7 @@ function Invest() {
                         </Space>
                     }>
 
-                    <Form  name="investSingleForm"  form={investSingleForm} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
+                    <Form  name="investSingleForm"  form={investSingleForm} initialValues={{'time':dayjs()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
                         <Form.Item style={{clear:'both'}} label="时间" name="time"  
                                     rules={[
                                         {required:true,message:'请选择时间'},
@@ -821,7 +821,7 @@ function Invest() {
                 </Drawer>
                 {/* 添加分红记录弹窗 */}
                 <AsyncModal title='添加分红记录' modalType={isModalType} vis={isRedVisible} isClosable={false} isFooter={typeFooter} operDialogFunc={operRedFunc} handleOk={debounceRedSubmit}>
-                    <Form  name="redForm" form={redForm} initialValues={{'time':moment(),"dividentType":"CASH_OUT"}} labelCol={{span:4}}  size="middle"  autoComplete="off">
+                    <Form  name="redForm" form={redForm} initialValues={{'time':dayjs(),"dividentType":"CASH_OUT"}} labelCol={{span:4}}  size="middle"  autoComplete="off">
                         <Form.Item  label="分红方式" name="dividentType"  rules={[
                                         {required:true,message:'请选择分红方式'},
                                         

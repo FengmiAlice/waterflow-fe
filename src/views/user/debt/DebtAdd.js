@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {useNavigate} from 'react-router-dom';
 import { DatePicker,Form,Button,Input,Select} from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { addDebt, getPaymentTypeList } from '../../../api/user';
 import {debounce} from '../../../utils/appTools';
 const { Option } = Select;
@@ -10,7 +10,7 @@ function DebtAdd() {
       // 使用useForm创建新增支出记录form实例
     const [form] = Form.useForm();
    
-    let currentTime= moment().format("YYYY-MM-DD");
+    let currentTime= dayjs().format("YYYY-MM-DD");
     const createTime = useRef(currentTime);//添加新债务记录创建时间初始值
     const endTime = useRef('');//添加新债务记录结束时间
     const chooseStatusArray = [
@@ -101,7 +101,7 @@ function DebtAdd() {
     return (
         <div className='debtSectionContainer'>
             <section className='recordFormBox'>
-                <Form   name="debtForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:4}}  size="middle"  autoComplete="off" >
+                <Form   name="debtForm"  form={form} initialValues={{'time':dayjs()}} labelCol={{span:4}}  size="middle"  autoComplete="off" >
                     <Form.Item style={{clear:'both'}} label="创建时间" name="time"  
                             rules={[
                                 {required:true,message:'请选择创建时间'},

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef,useCallback } from 'react';
 import {useNavigate} from 'react-router-dom';
 import { DatePicker, Form, Button, Input, Select,Space,message,Modal } from 'antd';
 import ArgTable from '../../../components/Table';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { getDebtRepayList, addDebt, getPaymentTypeList, deleteDebtRecord,getDebtDetailById } from '../../../api/user';
 import {debounce} from '../../../utils/appTools';
 const { Option } = Select;
@@ -113,14 +113,14 @@ function DebtEdit() {
             //     let startDate, endDate;
             //     // 解决日期组件出现NaN问题
             //     if (data.time === null ) {
-            //         startDate = moment();  
+            //         startDate = dayjs();  
             //     } else {
-            //         startDate = moment(data.time);        
+            //         startDate = dayjs(data.time);        
             //     }
             // if (data.endTime === null) {
-            //     endDate = moment();
+            //     endDate = dayjs();
             // } else {
-            //     endDate = moment(data.endTime);
+            //     endDate = dayjs(data.endTime);
             // }
             //     form.setFieldsValue({
             //         'time': startDate,
@@ -158,13 +158,13 @@ function DebtEdit() {
                 let startDate, endDate;
                 // 解决日期组件出现NaN问题
                 if (data.time === null) {
-                    startDate = moment();
+                    startDate = dayjs();
                    
                 } else {
-                    startDate = moment(data.time);
+                    startDate = dayjs(data.time);
                 }
                 if (data.endTime !== null) {
-                    endDate = moment(data.endTime);
+                    endDate = dayjs(data.endTime);
                 } 
                     
                 form.setFieldsValue({

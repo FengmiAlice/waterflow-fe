@@ -7,7 +7,7 @@ import '@antv/x6-react-components/es/toolbar/style/index.css';
 import { DatePicker, Form, Input, Select,message } from 'antd';
 import { getGraphDetail, getNodeList, graphSubmit, getDynamicSelectValue } from '../../../api/report';
 import {useNavigate} from 'react-router-dom';
-import moment from 'moment';
+import dayjs from 'dayjs';
 const Item = Toolbar.Item;
 const Group = Toolbar.Group;
 const { Option } = Select;
@@ -591,9 +591,9 @@ export default function Flow() {
             // console.log('渲染表单节点属性----', field)
             if (field.valueSchema.type === 'date') {
                 if(!field.value){
-                    field.value = moment().format("YYYY-MM-DD")
+                    field.value = dayjs().format("YYYY-MM-DD")
                 }
-                return (<Form.Item label={field.text}  key={field.name} ><DatePicker format='YYYY-MM-DD' defaultValue={moment(field.value)} onChange={(date, dateString) => handleDateChange(date, dateString, field.name,selectNode)} /></Form.Item>);
+                return (<Form.Item label={field.text}  key={field.name} ><DatePicker format='YYYY-MM-DD' defaultValue={dayjs(field.value)} onChange={(date, dateString) => handleDateChange(date, dateString, field.name,selectNode)} /></Form.Item>);
             } 
             else if (field.valueSchema.type === 'list') {
                 return (

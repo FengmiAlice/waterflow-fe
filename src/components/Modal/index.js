@@ -30,7 +30,7 @@ const useAsyncModal = (props)=>{
     },[vis,modalType])
 
     return(
-        <Modal title={title}  forceRender visible={isVisble} closable ={isClosable} onOk={handleOk} onCancel={()=> operDialogFunc(false)} okText="确认" cancelText="取消" footer={ isFooter ? undefined : null}>
+        <Modal title={title}  forceRender open={isVisble} closable ={isClosable} onOk={handleOk} onCancel={()=> operDialogFunc(false)} okText="确认" cancelText="取消" footer={ isFooter ? undefined : null}>
             <div>{props.children}</div>
         </Modal>
     )

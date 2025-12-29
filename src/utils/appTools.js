@@ -2,7 +2,6 @@
 /**
  * 通用工具函数
 */
-
 import { routes } from '../router';
 /**
  * 获取路由路径和路由meta字段的映射数据
@@ -11,36 +10,76 @@ import { routes } from '../router';
  * }
  * 
  */
- function getRouteMetaMap(){
-    const getMap = (routeList=[])=>{
-        let map = new Map();
-        routeList.forEach((v)=>{
-            putTitleinMap(v,map)
-        })
-        return map;
+function getRouteMetaMap() {
+  const map = new Map();
+  /**
+   * 递归处理路由，将标题存入Map
+   */
+  const processRoute = (route, parentPath = '') => {
+    // 过滤不需要的路由
+    if (route.redirect || route.path === '*' || !route.path || route.meta?.hideMenu) {
+      return;
     }
-    return getMap(routes);
+    // 构建完整路径
+    let fullPath = route.path;
+    if (parentPath && !route.path.startsWith('/')) {
+      // 处理相对路径
+      if (parentPath.endsWith('/')) {
+        fullPath = `${parentPath}${route.path}`;
+      } else {
+        fullPath = `${parentPath}/${route.path}`;
+      }
+    }
+    // 规范化路径（移除重复的斜杠）
+    fullPath = fullPath.replace(/\/+/g, '/');
+    // 如果有标题，存入Map
+    if (route.meta?.title) {
+      map.set(fullPath, route.meta.title);
+    }
+    // 处理子路由
+    if (route.children && route.children.length > 0) {
+      route.children.forEach(child => {
+        processRoute(child, fullPath);
+      });
+    }
+  };
+  // 处理所有路由
+  routes.forEach(route => {
+    processRoute(route);
+  });
+  
+  return map;
 }
+// function getRouteMetaMap() {
+//     const getMap = (routeList = []) => {
+//         let map = new Map();
+//         routeList.forEach((v)=>{
+//             putTitleinMap(v,map)
+//         })
+//         return map;
+//     }
+//     return getMap(routes);
+// }
 
 /**
  * 把obj.title和obj.children.title放入map里
  * 
  * return void
  */
-function putTitleinMap(obj,map){
-    obj.meta = obj.meta || {};
+// function putTitleinMap(obj,map){
+//     obj.meta = obj.meta || {};
  
-    if(obj.redirect || obj.path === '*' || obj.path === undefined || obj.meta.hideMenu === true){
-        return;
-    }
-    map.set(obj.path, obj.meta.title)
-    if(obj.children){
-        obj.children.forEach((k) => {
-            // map.set(k.path,k.meta.title)
-            putTitleinMap(k,map)
-        })
-    }
-}
+//     if(obj.redirect || obj.path === '*' || obj.path === undefined || obj.meta.hideMenu === true){
+//         return;
+//     }
+//     map.set(obj.path, obj.meta.title)
+//     if(obj.children&&obj.children.length>0){
+//         obj.children.forEach((k) => {
+//             // map.set(k.path,k.meta.title)
+//             putTitleinMap(k,map)
+//         })
+//     }
+// }
 
 /**
  * @description: 根据url解析出路由path路径
@@ -66,23 +105,39 @@ function putTitleinMap(obj,map){
  * @param {string} url 指定地址，默认取当前页地址
  * @return {string} { a: 1, b: 2, c: 3 }
  */
-
 function getQueryObject(url) {
-  url = url || (window === null || window === void 0 ? void 0 : window.location.href) || '';
-  var questionIndex = url.lastIndexOf('?');
-  var obj = {};
+    // 更安全的 URL 获取方式
+    url = url || (typeof window !== 'undefined' ? window.location.href : '');
+    // 使用 URL API（现代浏览器推荐）
+    try {
+        const urlObj = new URL(url);
+        const params = {};
+        
+        urlObj.searchParams.forEach((value, key) => {
+        params[key] = decodeURIComponent(value);
+        });
+        
+        return params;
+    } catch (e) {
+        // 回退到原来的正则方法
+        return parseQueryString(url);
+    }
+}
+// 备用方法
+function parseQueryString(url) {
+  const questionIndex = url.lastIndexOf('?');
+  const params = {};
   if (questionIndex > 0) {
-      var search = url.substring(questionIndex + 1);
-      var reg = /([^?&=]+)=([^?&=]*)/g;
-      search.replace(reg, function (rs, $1, $2) {
-          var name = decodeURIComponent($1);
-          var val = decodeURIComponent($2);
-          val = String(val);
-          obj[name] = val;
-          return rs;
-      });
+    const search = url.substring(questionIndex + 1);
+    const reg = /([^?&=]+)=([^?&=]*)/g;
+    search.replace(reg, (match, key, value) => {
+      const name = decodeURIComponent(key);
+      const val = decodeURIComponent(value);
+      params[name] = val;
+      return match;
+    });
   }
-  return obj;
+  return params;
 }
 
 /**
@@ -240,7 +295,7 @@ function removeCookie(name){
 // 获取url?后面的参数
 function getQueryParams() {
     var url = decodeURI(window.location.search); //获取地址栏url"?"符后的字符串
-    let result = new Object();
+    const result = {};
     if (url.indexOf("?") !== -1) {
         var str = url.substring(1);
         var urlCode = str.split('&');

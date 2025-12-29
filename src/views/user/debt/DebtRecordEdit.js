@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';//useLocation、useSearchParams
 import { DatePicker, Form, Button, Input, Select,message } from 'antd';
 import { getPaymentTypeList, addDebtRecord } from '../../../api/user';
 import { debounce } from '../../../utils/appTools';
-import moment from 'moment';
+import dayjs from 'dayjs';
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -14,7 +14,7 @@ function DebtRecordEdit() {
     // let location = useLocation();//获取navaigate中传递的state信息
     // console.log('navaigate中传递的params', location);
     const navigate = useNavigate();
-    let currentTime= moment().format("YYYY-MM-DD");
+    let currentTime= dayjs().format("YYYY-MM-DD");
     const debtRecordTime = useRef(currentTime);//设置偿还债务记录默认时间
     const [debtId, setDebtId] = useState('');//设置债务记录行id
     const [recordId, setRecordId] = useState('');//设置偿还记录的行id
@@ -42,9 +42,9 @@ function DebtRecordEdit() {
              let startDate;
             // 解决日期组件出现NaN问题
             if (data.time === null) {
-                startDate = moment();
+                startDate = dayjs();
             } else {
-                startDate = moment(data.time);
+                startDate = dayjs(data.time);
             }
             // console.log('2222----', data)
             //在组件挂载后，将查询参数赋值给表单数据
@@ -115,7 +115,7 @@ function DebtRecordEdit() {
     return (
         <div className='debtSectionContainer'>
             <section className='recordFormBox'>
-                <Form   name="debtEditRecordForm"  form={debtEditRecordForm} initialValues={{'time':moment()}} labelCol={{span:4}}  size="middle"  autoComplete="off" >
+                <Form   name="debtEditRecordForm"  form={debtEditRecordForm} initialValues={{'time':dayjs()}} labelCol={{span:4}}  size="middle"  autoComplete="off" >
                     <Form.Item style={{clear:'both'}} label="时间" name="time"  
                             rules={[
                                 {required:true,message:'请选择时间'},

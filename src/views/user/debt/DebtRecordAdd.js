@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { DatePicker, Form, Button, Input, Select,message } from 'antd';
 import { getPaymentTypeList, addDebtRecord } from '../../../api/user';
 import { debounce } from '../../../utils/appTools';
-import moment from 'moment';
+import dayjs from 'dayjs';
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -11,7 +11,7 @@ export default function DebtRecordAdd() {
   // 使用useForm创建新增债务记录form实例
     const [debtAddRecordForm] = Form.useForm();
     const navigate = useNavigate(); 
-    let currentTime= moment().format("YYYY-MM-DD");
+    let currentTime= dayjs().format("YYYY-MM-DD");
     const debtRecordTime = useRef(currentTime);//设置偿还债务记录默认时间
     const [debtId, setDebtId] = useState('');//设置债务记录行id
     const [paymentTypeArray, setPaymentTypeArray] = useState([]);//设置支付方式列表
@@ -89,7 +89,7 @@ export default function DebtRecordAdd() {
     return (
         <div className='debtSectionContainer'>
             <section className='recordFormBox'>
-                <Form   name="debtAddRecordForm"  form={debtAddRecordForm} initialValues={{'time':moment()}} labelCol={{span:4}}  size="middle"  autoComplete="off" >
+                <Form   name="debtAddRecordForm"  form={debtAddRecordForm} initialValues={{'time':dayjs()}} labelCol={{span:4}}  size="middle"  autoComplete="off" >
                     <Form.Item style={{clear:'both'}} label="时间" name="time"  
                             rules={[
                                 {required:true,message:'请选择时间'},

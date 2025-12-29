@@ -56,9 +56,6 @@ function Account(){
     }
 
     // 获取store中的用户信息
-    // const { userStore } = useStore()
-    // const { userInfo } = userStore;
-    // let currentMonth =  moment().format("YYYY-MM");
     let initSearchData = {
         types:'',
         keyword: '',
@@ -100,7 +97,6 @@ function Account(){
     const navigate = useNavigate();
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行，传一个空数组，只执行一次）
        useEffect(()=>{
-                // month.current = moment().format("YYYY-MM");//格式化当前月份
                 getStatisticData();
                 getLists();//获取账户列表
 

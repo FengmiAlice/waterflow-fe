@@ -3,7 +3,7 @@ import ArgTable from '../../components/Table';
 import AsyncModal from '../../components/Modal';
 import { useStore } from '../../hooks/storeHook';
 import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { getIncomeList,getConsumeTypeList, getPaymentTypeList,addIncomeTableRow,deleteIncomeTableRow,exportIncomeTable,addIncomeType} from '../../api/user';
 import {debounce} from '../../utils/appTools';
 const { Option } = Select;
@@ -96,7 +96,7 @@ function Income(){
             }
         ];
     }
-    let currentYear =  moment().format("YYYY");
+    let currentYear =  dayjs().format("YYYY");
     let initSearchData = {
             month:'',
             year:currentYear,
@@ -137,7 +137,7 @@ function Income(){
     const addPaymentType= useRef('');//设置新增收入记录支付方式值
     const tableId= useRef('income_report');//获取收入列表table id
     const tableRef=useRef(null);//设置表格的ref
-    let curTime= moment().format("YYYY-MM-DD");
+    let curTime= dayjs().format("YYYY-MM-DD");
     const incomeTime = useRef(curTime);//设置收入记录默认时间
     const [isAddFlag,setAddFlag] = useState(false)//标识是否是新增
     //在页码或者页数变化的时候更新（在组件挂载和卸载时执行,传一个空数组，只执行一次）
@@ -149,7 +149,7 @@ function Income(){
         //     // console.log('不是初始渲染')
         // }
         // pageChange(page.current,size.current)
-        year.current = moment().format("YYYY");//格式化当前年份
+        year.current = dayjs().format("YYYY");//格式化当前年份
         getTypeList();
         getPaymentList();
        
@@ -283,7 +283,7 @@ function Income(){
         addPaymentType.current = '';
          setAddFlag(true);
         if (isAddFlag === true) {
-            incomeTime.current = moment().format("YYYY-MM-DD")
+            incomeTime.current = dayjs().format("YYYY-MM-DD")
         }
         form.resetFields();
         setIncomeTitle('添加收入记录');
@@ -297,8 +297,8 @@ function Income(){
         if (isAddFlag === false) {
             incomeTime.current = row.timeStr;
         }
-        // 将返回的时间转换为moment格式用于编辑显示在时间组件上
-        row.time = moment(row.time);
+        // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
+        row.time = dayjs(row.time);
         addConsumeType.current = row.typeId;
         addPaymentType.current = row.paymentId;
         form.setFieldsValue(row); 
@@ -462,7 +462,7 @@ function Income(){
                         <DatePicker  format='YYYY-MM' picker="month" onChange={getMonthChange} placeholder="请选择月份" allowClear />
                     </Form.Item>
                     <Form.Item label="年份选择" >
-                        <DatePicker defaultValue={moment()} format='YYYY' picker="year"  onChange={getYearChange} placeholder="请选择年份" allowClear />
+                        <DatePicker defaultValue={dayjs()} format='YYYY' picker="year"  onChange={getYearChange} placeholder="请选择年份" allowClear />
                     </Form.Item>
                     <Form.Item label="类别">
                         <Select style={{ width: 120 }} onChange={typeChange} placeholder="请选择类别" allowClear >
@@ -518,7 +518,7 @@ function Income(){
                  {/* 添加或编辑收入记录弹窗 */}
                  <AsyncModal title={incomeTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={incomeFooter} operDialogFunc={operDialogFunc} handleOk={debounceIncomeSubmit}>
                  <section >
-                      <Form   name="incomeForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
+                      <Form   name="incomeForm"  form={form} initialValues={{'time':dayjs()}} labelCol={{span:5}}  size="middle"  autoComplete="off" >
                           <Form.Item  label="收入类别">
                                  <Form.Item  name="typeId"  rules={[ {required:true,message:'请选择收入类别'},]} noStyle>
                                     <Select  className='incomeTypeSelect' onChange={addTypeChange} placeholder="请选择收入类别" allowClear >

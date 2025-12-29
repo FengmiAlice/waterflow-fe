@@ -148,7 +148,7 @@ function Debt() {
         // setAddFlag(true);
         // if (isAddFlag === true) {
         //     // console.log(isAddFlag,1111)
-        //     createTime.current = moment().format("YYYY-MM-DD")
+        //     createTime.current = dayjs().format("YYYY-MM-DD")
         // }
         // form.resetFields();
         // setDebtTitle('添加债务记录');
@@ -173,9 +173,9 @@ function Debt() {
         //     // createTime.current = row.timeStr;
         //     // endTime.current = row.endTimeStr;
         // }
-        // // 将返回的时间转换为moment格式用于编辑显示在时间组件上
-        // row.time = moment(row.time);
-        // row.endTime = moment(row.endTime);
+        // // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
+        // row.time = dayjs(row.time);
+        // row.endTime = dayjs(row.endTime);
         // // 将表单数据设置为表格行数据
         // form.setFieldsValue(row); 
         // setDebtTitle('编辑债务记录');
@@ -266,7 +266,7 @@ function Debt() {
             {/* 添加或编辑债务记录弹窗 */}
             {/* <AsyncModal title={debtTitle}  modalType={isModalType} vis={isModalVisible} isClosable={false} isFooter={debtFooter} operDialogFunc={operDialogFunc} handleOk={debounceDebtSubmit}>
                 <section >
-                    <Form   name="debtForm"  form={form} initialValues={{'time':moment()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
+                    <Form   name="debtForm"  form={form} initialValues={{'time':dayjs()}} labelCol={{span:6}}  size="middle"  autoComplete="off" >
                         <Form.Item style={{clear:'both'}} label="创建时间" name="time"  
                                 rules={[
                                     {required:true,message:'请选择创建时间'},

@@ -2,7 +2,7 @@
     import ReactDOM from 'react-dom';
     import store from '../store';
     import { message, Spin } from 'antd';
-
+    
     // 获取store数据
     const { userStore } = store;
     // 当前正在请求的数量
@@ -13,7 +13,7 @@
             var dom=document.createElement('div');
             dom.setAttribute('id','loading')
             document.body.appendChild(dom)
-            ReactDOM.render(<Spin tip="加载中..." size="large" />,dom)
+            ReactDOM.render(<Spin tip="加载中..." size="large" fullscreen />,dom)
         }
         requestCount++;
     }
