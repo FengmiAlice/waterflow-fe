@@ -1,19 +1,41 @@
-    import axios from 'axios';  
-    import ReactDOM from 'react-dom';
-    import store from '../store';
-    import { message, Spin } from 'antd';
+import axios from 'axios';  
+import ReactDOM from 'react-dom';
+import store from '../store';
+import { message, Spin } from 'antd';
     
-    // 获取store数据
-    const { userStore } = store;
-    // 当前正在请求的数量
-    var requestCount = 0;
+// 获取store数据
+const { userStore } = store;
+// 当前正在请求的数量
+let requestCount = 0;
     // 发送请求显示loading
     function showSpin(){
-        if(requestCount === 0){
-            var dom=document.createElement('div');
-            dom.setAttribute('id','loading')
-            document.body.appendChild(dom)
-            ReactDOM.render(<Spin tip="加载中..." size="large" fullscreen />,dom)
+        if (requestCount === 0) {
+            // 创建容器
+            const dom = document.createElement('div');
+            dom.id = 'fullscreen-loading';
+            dom.style.position = 'fixed';
+            dom.style.top = '0';
+            dom.style.left = '0';
+            dom.style.width = '100%';
+            dom.style.height = '100%';
+            dom.style.zIndex = '9999';
+            dom.style.display = 'flex';
+            dom.style.flexDirection = 'column';
+            dom.style.alignItems = 'center';
+            dom.style.justifyContent = 'center';
+            dom.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            document.body.appendChild(dom);
+            // // 不使用 tip，使用自定义文本
+            ReactDOM.render(
+                <div style={{
+                    textAlign: 'center'
+                }}>
+                    <Spin size="large" />
+                    <div style={{ marginTop: '16px', fontSize: '16px', color: '#1890ff' }}>
+                        加载中...
+                    </div>
+                </div>,dom
+            )
         }
         requestCount++;
     }
@@ -21,7 +43,17 @@
     function hideSpin(){
         requestCount--;
         if(requestCount === 0){
-            document.body.removeChild(document.getElementById('loading'))
+            // document.body.removeChild(document.getElementById('loading'))
+            const loadingElement = document.getElementById('fullscreen-loading');
+            if (loadingElement) {
+                ReactDOM.unmountComponentAtNode(loadingElement);
+                if (loadingElement.parentNode) {
+                    loadingElement.parentNode.removeChild(loadingElement);
+                }
+            }
+        }
+        if(requestCount < 0){
+            requestCount = 0;
         }
     }
 
