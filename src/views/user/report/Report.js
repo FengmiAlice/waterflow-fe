@@ -1,7 +1,7 @@
 
 
 import React, {useEffect,useState,useRef} from 'react';
-import { DatePicker,Form,Input,Button,Statistic,Select, message  } from 'antd';
+import { DatePicker,Form,Input,Button,Statistic,Select, App as AntdApp  } from 'antd';
 import AsyncModal from '../../../components/Modal';
 import ArgPieEcharts from '../../../components/Echarts/pie';
 import ArgBarEcharts from '../../../components/Echarts/bar';
@@ -19,7 +19,7 @@ function Report(){
     const month = useRef('');//设置月份
     const year = useRef('');//设置年份  
     const navigate = useNavigate();
-
+    const { message } = AntdApp.useApp();
     // const reportFooter = useState(false);
     const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
     const [reportVisible,setReportVisble] = useState(false);//设置详细报告弹窗false

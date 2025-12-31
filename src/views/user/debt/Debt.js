@@ -1,7 +1,7 @@
 import React, {useEffect,useState,useRef} from 'react';
 import ArgTable from '../../../components/Table';
 import {useNavigate} from 'react-router-dom';
-import {Form,Button,Input,Select,Space,message,Modal} from 'antd';
+import {Form,Button,Input,Select,Space,App as AntdApp,Modal} from 'antd';
 import { getDebtList, deleteDebt } from '../../../api/user';
 import {debounce} from '../../../utils/appTools';
 const { Option } = Select;
@@ -72,7 +72,7 @@ function Debt() {
             }
         ];
     }
-
+    const { message } = AntdApp.useApp();
     let initSearchData = {
             status:'',
             keyword:'',

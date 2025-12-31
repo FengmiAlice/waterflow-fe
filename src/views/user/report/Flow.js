@@ -4,7 +4,7 @@ import { ZoomInOutlined, ZoomOutOutlined, SaveOutlined, UndoOutlined } from '@an
 import { Toolbar } from '@antv/x6-react-components';
 import '@antv/x6-react-components/es/menu/style/index.css';
 import '@antv/x6-react-components/es/toolbar/style/index.css';
-import { DatePicker, Form, Input, Select,message } from 'antd';
+import { DatePicker, Form, Input, Select,App as AntdApp } from 'antd';
 import { getGraphDetail, getNodeList, graphSubmit, getDynamicSelectValue } from '../../../api/report';
 import {useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -13,7 +13,9 @@ const Group = Toolbar.Group;
 const { Option } = Select;
 // const { RangePicker } = DatePicker; 
 
+
 export default function Flow() {
+    const {message} = AntdApp.useApp();//在antd v5中，你可以在App组件内使用静态方法
     const navigate = useNavigate();
     const [initFlag, setInitFlag] = useState(false);
     const drawGraph = useRef(null);
@@ -632,22 +634,27 @@ export default function Flow() {
         // console.log('日期组件事件---', date, dateString, fieldName,node)
         // 非空判断
         dateString = dateString || '';
-        // 更新节点属性的一个字段  
-        const updatedProperties = node.data.properties;  
+        //拷贝一个新数组
+        const updatedProperties = node.data.properties.map(field => {
+            return field;
+        });
         // console.log('日期组件更新节点属性的---',updatedProperties)
         const field = updatedProperties.find(f => f.name === fieldName);  
         // console.log('找到日期组件更新节点属性的一个字段---',field)
         if (field) {  
             field.value = dateString;  
         }  
-        setNodeProperties(updatedProperties); 
+        setNodeProperties(updatedProperties);// 更新节点属性字段值 
  
-    }, [])
+    }, [setNodeProperties])
     // // 渲染的动态表单组件-日期范围组件事件
     // const handleRangeDateChange= useCallback(( date, dateStringArray,fieldName,node)=>{
     //     // console.log('日期范围组件事件---', date, dateStringArray, fieldName,node)
     //     // 更新节点属性的一个字段  
-    //     const updatedProperties = node.data.properties;  
+    //     //拷贝一个新数组
+        // const updatedProperties = node.data.properties.map(field => {
+        //     return field;
+        // }); 
     //     // console.log('日期组件更新节点属性的一个字段---',updatedProperties)
     //     const field = updatedProperties.find(f => f.name === fieldName);  
     //       if (field) {
@@ -672,29 +679,33 @@ export default function Flow() {
         // console.log('输入框组件事件---', value, fieldName,node)
         // 非空判断
         value = value || '';
-        // 更新节点属性的一个字段  
-        const updatedProperties = node.data.properties;  
+        //拷贝一个新数组
+        const updatedProperties = node.data.properties.map(field => {
+            return field;
+        });
         // console.log('输入框组件更新节点属性的一个字段---', updatedProperties)
-         const field = updatedProperties.find(f => f.name === fieldName);  
+        const field = updatedProperties.find(f => f.name === fieldName);  
         if (field) {  
             field.value = value;  
         }  
         setNodeProperties(updatedProperties); 
-    },[])
+    },[setNodeProperties])
      // 渲染的动态表单组件-下拉框组件事件
     const handleSelectChange = useCallback((value, fieldName,node)=>{
         // console.log('下拉框组件事件---', value, fieldName,node)
         // 非空判断
         value = value || '';
-        // 更新节点属性的一个字段  
-        const updatedProperties = node.data.properties;  
+       //拷贝一个新数组
+        const updatedProperties = node.data.properties.map(field => {
+            return field;
+        }); 
         // console.log('下拉框组件更新节点属性---', updatedProperties)
          const field = updatedProperties.find(f => f.name === fieldName);  
         if (field) {  
             field.value = value;  
         }  
         setNodeProperties(updatedProperties); 
-    },[])
+    },[setNodeProperties])
 
 
     return (

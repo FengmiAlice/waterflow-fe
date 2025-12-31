@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';//useLocation、useSearchParams
-import { DatePicker, Form, Button, Input, Select,message } from 'antd';
+import { DatePicker, Form, Button, Input, Select,App as AntdApp } from 'antd';
 import { getPaymentTypeList, addDebtRecord } from '../../../api/user';
 import { debounce } from '../../../utils/appTools';
 import dayjs from 'dayjs';
@@ -9,6 +9,7 @@ const { TextArea } = Input;
 
 
 function DebtRecordEdit() {
+     const { message } = AntdApp.useApp();
     // 使用useForm创建新增债务记录form实例
     const [debtEditRecordForm] = Form.useForm();
     // let location = useLocation();//获取navaigate中传递的state信息

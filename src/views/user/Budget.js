@@ -1,6 +1,6 @@
 import React, {useEffect,useState,useRef} from 'react';
 import { getBudgetList, getConsumeTypeList, getBudgetStatistic,addType,addBudget,deleteBudget,closeBudget} from '../../api/user';
-import { DatePicker, Form, Button, Input, message, Select, Space, Tooltip, Modal } from 'antd';
+import { DatePicker, Form, Button, Input, App as AntdApp, Select, Space, Tooltip, Modal } from 'antd';
 import {debounce} from '../../utils/appTools';
 import ArgTable from '../../components/Table';
 import AsyncModal from '../../components/Modal';
@@ -10,8 +10,8 @@ const { TextArea } = Input;
 const {confirm} = Modal;
 
 function Budge() {
-      // 列表的column项配置
-     const columns = ()=>{
+    // 列表的column项配置
+    const columns = ()=>{
         return [
             {
                 title: '开始日期',
@@ -85,6 +85,7 @@ function Budge() {
             }
         ];
     }
+    const { message } = AntdApp.useApp();
     const month=useRef('');//设置月份值
     const year = useRef('');//设置年份值
     const budgetType = useRef('');//设置搜索类别值

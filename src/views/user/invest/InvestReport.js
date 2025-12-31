@@ -1,6 +1,6 @@
  
 import React, { useEffect, useState,useRef} from 'react';
-import { DatePicker,Form,Button,Select, message  } from 'antd';
+import { DatePicker,Form,Button,Select, App as AntdApp  } from 'antd';
 import ArgPieEcharts from '../../../components/Echarts/pie';
 import ArgLineEcharts from '../../../components/Echarts/line';
 import { typePieInvestAmount,typePieInvestCurrent,typeLineInvestAmount } from '../../../api/user';
@@ -15,7 +15,7 @@ function InvestReport() {
     const [lineLenData,setLineLenData] = useState([]);//支出收入折线图例数据
     const [lineYData, setLineYData] = useState([]);//支出收入折线图Y轴数据
     const [lineXData, setLineXData] = useState([]);//支出收入折线图x轴数据
-    
+    const { message } = AntdApp.useApp();
     const [lineForm] = Form.useForm();
     const startDate = useRef('');//开始日期
     const endDate = useRef('');//结束日期

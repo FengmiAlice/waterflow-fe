@@ -28,7 +28,8 @@
     "build": "cross-env GENERATE_SOURCEMAP=false react-app-rewired build",
     "build:view": "cross-env GENERATE_SOURCEMAP=false ANALYZER=true react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "preinstall": "npx npm-force-resolutions"
   },
   "eslintConfig": {
     "extends": "react-app"

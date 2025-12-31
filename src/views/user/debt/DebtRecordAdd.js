@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DatePicker, Form, Button, Input, Select,message } from 'antd';
+import { DatePicker, Form, Button, Input, Select,App as AntdApp } from 'antd';
 import { getPaymentTypeList, addDebtRecord } from '../../../api/user';
 import { debounce } from '../../../utils/appTools';
 import dayjs from 'dayjs';
@@ -8,6 +8,7 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 export default function DebtRecordAdd() {
+    const { message } = AntdApp.useApp();
   // 使用useForm创建新增债务记录form实例
     const [debtAddRecordForm] = Form.useForm();
     const navigate = useNavigate(); 

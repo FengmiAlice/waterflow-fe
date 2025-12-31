@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef,useCallback } from 'react';
 import {useNavigate} from 'react-router-dom';
-import { DatePicker, Form, Button, Input, Select,Space,message,Modal } from 'antd';
+import { DatePicker, Form, Button, Input, Select,Space,App as AntdApp,Modal } from 'antd';
 import ArgTable from '../../../components/Table';
 import dayjs from 'dayjs';
 import { getDebtRepayList, addDebt, getPaymentTypeList, deleteDebtRecord,getDebtDetailById } from '../../../api/user';
@@ -71,7 +71,7 @@ function DebtEdit() {
             }
         ]
     }
-
+    const { message } = AntdApp.useApp();
     // 使用useForm创建新增债务记录form实例
     const [form] = Form.useForm();
     const recordTitle = () => '偿还记录列表';//设置偿还记录表格标题

@@ -3,7 +3,7 @@ import ArgTable from '../../components/Table';
 import AsyncModal from '../../components/Modal';
 import ArgPieEcharts from '../../components/Echarts/pie';
 import { useStore } from '../../hooks/storeHook';
-import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip} from 'antd';
+import { DatePicker,Form,Button,Input,Select,Space,App as AntdApp,Modal,Tooltip} from 'antd';
 import dayjs from 'dayjs';
 import { getConsumeList, getConsumeTypeList, getPaymentTypeList, addTableRow, deleteTableRow, deleteTableRowArray, exportConsumeTable, addType,addConsumeAnalysis } from '../../api/user';
 import {debounce} from '../../utils/appTools';
@@ -98,7 +98,7 @@ function Consume(){
             }
         ];
     }
-
+    const { message } = AntdApp.useApp();
     // 获取store中的用户信息
     const { userStore } = useStore()
     const { userInfo } = userStore;

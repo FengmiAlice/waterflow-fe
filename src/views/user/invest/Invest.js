@@ -2,7 +2,7 @@ import React, {useEffect,useState,useRef} from 'react';
 import ArgTable from '../../../components/Table';
 import AsyncModal from '../../../components/Modal';
 import {useNavigate} from 'react-router-dom';
-import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Drawer} from 'antd';
+import { DatePicker,Form,Button,Input,Select,Space,App as AntdApp,Modal,Drawer} from 'antd';
 import dayjs from 'dayjs';
 import { getInvestedList,getInvestedDetailById, getInvestedSingleList,getInvestedStatistic,getPaymentTypeList, addInvested,deleteInvested,addDividend,updateInvestCurrent,addSingleInvest,deleteSingleInvest} from '../../../api/user';
 import {debounce} from '../../../utils/appTools';
@@ -164,7 +164,7 @@ function Invest() {
     const defaultTitle = () => '投资明细';//设置投资明细表格标题
     const navigate = useNavigate();
 
-    
+    const { message } = AntdApp.useApp();
     const [form] = Form.useForm();// 使用useForm创建新增理财记录form实例
     const [redForm] = Form.useForm();// 使用useForm创建分红form实例
     const [profitForm] = Form.useForm();// 使用useForm创建更新收益form实例
