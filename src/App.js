@@ -34,10 +34,10 @@ function App(){
             }
       },[userStore]);
      
-      return(
-                  <Router>
-                        { isRender ? (<RouterWaiter routes={routes} onRouteBefore={onRouteBefore} />) : null }
-                  </Router>
+    return (
+            <Router>
+                { isRender ? (<RouterWaiter routes={routes} onRouteBefore={onRouteBefore} />) : null }
+            </Router>
       )
 }
 export default  App;

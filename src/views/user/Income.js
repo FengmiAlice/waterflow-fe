@@ -2,7 +2,7 @@ import React, {useEffect,useState,useRef} from 'react';
 import ArgTable from '../../components/Table';
 import AsyncModal from '../../components/Modal';
 import { useStore } from '../../hooks/storeHook';
-import { DatePicker,Form,Button,Input,Select,Space,App as AntdApp,Modal,Tooltip } from 'antd';
+import { DatePicker,Form,Button,Input,Select,Space,message,Modal,Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { getIncomeList,getConsumeTypeList, getPaymentTypeList,addIncomeTableRow,deleteIncomeTableRow,exportIncomeTable,addIncomeType} from '../../api/user';
 import {debounce} from '../../utils/appTools';
@@ -96,7 +96,7 @@ function Income(){
             }
         ];
     }
-    const { message } = AntdApp.useApp();
+
     let currentYear =  dayjs().format("YYYY");
     let initSearchData = {
             month:'',

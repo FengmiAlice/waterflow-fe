@@ -1,5 +1,5 @@
 import  { useEffect, useState,useRef } from 'react';
-import { Button,  Avatar, Flex, Spin, Space,App as AntdApp,} from 'antd';
+import { Button,  Avatar, Flex, Spin, Space,message,} from 'antd';
 import { Bubble,
   Conversations,
   Prompts,
@@ -159,7 +159,6 @@ const DEFAULT_CONVERSATIONS_ITEMS = [
 ];
 const AiAnswer = () => {
     // const  styles  = useStyle();
-    const { message } = AntdApp.useApp();
     const [inputValue, setInputValue] = useState("");
     const abortController = useRef(null)
     const [messageHistory, setMessageHistory] = useState({})

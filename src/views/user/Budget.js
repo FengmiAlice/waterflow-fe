@@ -1,6 +1,6 @@
 import React, {useEffect,useState,useRef} from 'react';
 import { getBudgetList, getConsumeTypeList, getBudgetStatistic,addType,addBudget,deleteBudget,closeBudget} from '../../api/user';
-import { DatePicker, Form, Button, Input, App as AntdApp, Select, Space, Tooltip, Modal } from 'antd';
+import { DatePicker, Form, Button, Input, message, Select, Space, Tooltip, Modal } from 'antd';
 import {debounce} from '../../utils/appTools';
 import ArgTable from '../../components/Table';
 import AsyncModal from '../../components/Modal';
@@ -85,7 +85,6 @@ function Budge() {
             }
         ];
     }
-    const { message } = AntdApp.useApp();
     const month=useRef('');//设置月份值
     const year = useRef('');//设置年份值
     const budgetType = useRef('');//设置搜索类别值

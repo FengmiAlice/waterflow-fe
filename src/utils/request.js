@@ -1,7 +1,7 @@
 import axios from 'axios';  
 import ReactDOM from 'react-dom';
 import store from '../store';
-import { App as AntdApp, Spin } from 'antd';
+import { message, Spin } from 'antd';
 // 获取store数据
 const { userStore } = store;
 
@@ -115,7 +115,7 @@ let requestCount = 0;
             // console.log(response)
         //对响应数据做些什么处理
         hideSpin();
-        const { message } = AntdApp.useApp();
+
         //status为200表示http协议请求成功
         if(response.status === 200){
              //  每次调用接口成功后刷新token

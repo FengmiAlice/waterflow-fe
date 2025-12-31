@@ -4,7 +4,7 @@ import { ZoomInOutlined, ZoomOutOutlined, SaveOutlined, UndoOutlined } from '@an
 import { Toolbar } from '@antv/x6-react-components';
 import '@antv/x6-react-components/es/menu/style/index.css';
 import '@antv/x6-react-components/es/toolbar/style/index.css';
-import { DatePicker, Form, Input, Select,App as AntdApp } from 'antd';
+import { DatePicker, Form, Input, Select,message } from 'antd';
 import { getGraphDetail, getNodeList, graphSubmit, getDynamicSelectValue } from '../../../api/report';
 import {useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -15,7 +15,7 @@ const { Option } = Select;
 
 
 export default function Flow() {
-    const {message} = AntdApp.useApp();//在antd v5中，你可以在App组件内使用静态方法
+    // const {message} = AntdApp.useApp();//在antd v5中，你可以在App组件内使用静态方法
     const navigate = useNavigate();
     const [initFlag, setInitFlag] = useState(false);
     const drawGraph = useRef(null);

@@ -13,9 +13,9 @@ import sunset from '../../assets/images/later-afternoon.png';
 import night from '../../assets/images/night.png';
 import deepnight from '../../assets/images/deep-night.png';
 import { updateUserInfo,updatePassword } from '../../api/login';
-import { Form,Input, Dropdown,Modal,App as AntdApp } from 'antd';
+import { Form,Input, Dropdown,Modal,message } from 'antd';
 import { DownOutlined,UserOutlined,SettingOutlined,LogoutOutlined} from '@ant-design/icons';
-// const {confirm} = Modal;ExclamationCircleOutlined
+const {confirm} = Modal;
  
 function HeadBar () {
     const { userStore } = useStore()
@@ -28,7 +28,7 @@ function HeadBar () {
     const [resetVisible, setResetVisible] = useState(false);
     const [displayHour, setDisplayHour] = useState(null);
     const [imageSrc, setImageSrc] = useState('');
-    const { message } = AntdApp.useApp();
+  
     
     useEffect(() => {
         if(infoVisible){
