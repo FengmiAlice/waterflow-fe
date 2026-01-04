@@ -134,7 +134,27 @@ code {
       max-width: 700px;
       margin: 0 auto;
       color: var(--ant-color-text);
-      }  
+      } 
+      .agentName{
+         margin-block-start: 25%;
+        font-size: 32px;
+        margin-block-end: 38px;
+        font-weight: 600;
+      } 
+      .startPage{
+         display: flex;
+        width: 100%;
+        max-width: 840px;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+      }
+.ant-sender-content{
+    display: block !important;
+}
+.ant-sender-actions-list{
+    display: block !important;
+}
   
 /* 媒体查询适配屏幕分辨率 */
 @media screen and (max-width: 576px) {
