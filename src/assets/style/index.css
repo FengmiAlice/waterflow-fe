@@ -43,119 +43,208 @@ code {
     monospace;
 }
     
-  .layout{
-      width: 100%;
-      min-width: 1000px;
-      height: 100vh;
-      display: flex;
-      background: var(--ant-color-bg-container);
-      font-family: AlibabaPuHuiTi, var(--ant-font-family), sans-serif;
-    }
-    .sider{
-      background:var(--ant-color-bg-layout);
-      width: 280px;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      padding: 0 12px;
-      box-sizing: border-box;
-    }
-    .logo{
-      display: flex;
-      align-items: center;
-      justify-content: start;
-      padding: 0 24px;
-      box-sizing: border-box;
-      gap: 8px;
-      margin: 24px 0;
+.layout{
+    width: 100%;
+    min-width: 1000px;
+    height: 100vh;
+    display: flex;
+    background: var(--ant-color-bg-container);
+    font-family: AlibabaPuHuiTi, var(--ant-font-family), sans-serif;
+}
+.sider{
+    background:var(--ant-color-bg-layout);
+    width: 280px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px;
+    box-sizing: border-box;
+}
+.logo{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding: 0 24px;
+    box-sizing: border-box;
+    gap: 8px;
+    margin: 24px 0;
 
-      span {
-        font-weight: bold;
-        color: var(--ant-color-text);
-        font-size: 16px;
-      }
+    span {
+    font-weight: bold;
+    color: var(--ant-color-text);
+    font-size: 16px;
     }
-    .addBtn{
-      background: #1677ff0f;
-      border: 1px solid #1677ff34;
-      height: 40px;
-    }
-    .conversations{
-      flex: 1;
-      overflow-y: auto;
-      margin-top: 12px;
-      padding: 0;
-    }
-    .ant-conversations-list {
-        padding-inline-start: 0;
-    }
-    .siderFooter{
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-       border-top: 1px solid var(--ant-color-border-secondary);
-    }
-    .chat{
-      height: 100%;
-      width: 100%;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      padding-block: var(--ant-padding-lg);
-     
-    }
-   
-    .chatList{
-      flex: 1;
-      overflow: auto;
-    }
-    .loadingMessage{
-      background-image: linear-gradient(90deg, #ff6b23 0%, #af3cb8 31%, #53b6ff 89%);
-      background-size: 100% 2px;
-      background-repeat: no-repeat;
-      background-position: bottom;
-    }
-    .placeholder {
-      padding-top: 32px;
-    }
-    .sender{
-      width: 100%;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-    .speechButton {
-      font-size: 18px;
-      color: var(--ant-color-text) ;
-    }
-    .senderPrompt{
-      width: 100%;
-      max-width: 700px;
-      margin: 0 auto;
-      color: var(--ant-color-text);
-      } 
-      .agentName{
-         margin-block-start: 25%;
-        font-size: 32px;
-        margin-block-end: 38px;
-        font-weight: 600;
-      } 
-      .startPage{
-         display: flex;
-        width: 100%;
-        max-width: 840px;
-        flex-direction: column;
-        align-items: center;
-        height: 100%;
-      }
+}
+.addBtn{
+    background: #1677ff0f;
+    border: 1px solid #1677ff34;
+    height: 40px;
+}
+.addBtn:hover{
+    background: #1677ff0f!important;
+    border: 1px solid #1677ff34!important;
+    color: #1677ff!important;
+}
+.conversations{
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 12px;
+    padding: 0;
+}
+.ant-conversations-list {
+    padding-inline-start: 0;
+}
+.siderFooter{
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--ant-color-border-secondary);
+}
+.chat{
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-block: var(--ant-padding-lg);
+}
+.chatList{
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+.chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+    /* 无消息时的居中内容 */
+.center-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 0 16px;
+}
+.welcome-section {
+    max-width: 700px;
+    width: 100%;
+    margin: 0 0 20px auto;
+    text-align: center;
+}
+.center-sender {
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+}
+.sender-center {
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 16px;
+    border: 1px solid #f0f0f0;
+}
+/* 有消息时的布局 */
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+}
+.chatList {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+/* 底部输入框 */
+.bottom-sender {
+    background: #fff;
+    padding: 20px 0;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+}
+.sender-bottom {
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+.loadingMessage{
+    background-image: linear-gradient(90deg, #ff6b23 0%, #af3cb8 31%, #53b6ff 89%);
+    background-size: 100% 2px;
+    background-repeat: no-repeat;
+    background-position: bottom;
+    min-height: 20px;
+}
+.placeholder {
+    padding-top: 32px;
+}
+.sender{
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+.speechButton {
+    font-size: 18px;
+    color: var(--ant-color-text) ;
+}
+.senderPrompt{
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--ant-color-text);
+} 
+.agentName{
+    margin-block-start: 25%;
+    font-size: 32px;
+    margin-block-end: 38px;
+    font-weight: 600;
+} 
+.startPage{
+    display: flex;
+    width: 100%;
+    max-width: 840px;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+/* 用户消息样式 */
+.ant-bubble-placement-end {
+    margin-bottom: 16px;
+}
+/* AI消息样式 */
+.ant-bubble-placement-start {
+    margin-bottom: 16px;
+}
 .ant-sender-content{
     display: block !important;
 }
 .ant-sender-actions-list{
     display: block !important;
 }
-  
+.ant-welcome .ant-welcome-icon{
+    position: relative;
+    top:4px;
+}
+.ant-space{
+    display: flex!important;
+    align-items: flex-start;
+}
+.ant-welcome .ant-welcome-content-wrapper.ant-flex-vertical{
+    flex-direction: row!important;
+}
+.ant-welcome .ant-welcome-content-wrapper.ant-flex-align-stretch{
+    align-items: center!important;
+}
+.ant-bubble-list{max-width:800px!important;}
+.ant-bubble .ant-bubble-content{
+    max-width:60%!important;
+}
 /* 媒体查询适配屏幕分辨率 */
 @media screen and (max-width: 576px) {
     html{
