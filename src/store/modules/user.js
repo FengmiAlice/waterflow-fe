@@ -5,8 +5,9 @@
 import { makeAutoObservable } from 'mobx'
 
 export default class User {
-  token = '';
-  userInfo={};
+    token = '';
+    userInfo = {};
+    avatar = require('@/assets/images/avatar.png');
   constructor () {
     /**
      * state
