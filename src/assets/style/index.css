@@ -99,7 +99,13 @@ code {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-top: 1px solid var(--ant-color-border-secondary);
+    /* border-top: 1px solid var(--ant-color-border-secondary); */
+}
+.siderFooter .leftSider{
+    display:flex;
+}
+.siderFooter .leftSider .userName{
+    margin-left:10px;
 }
 .chat{
     height: 100%;
