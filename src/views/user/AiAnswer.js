@@ -339,7 +339,7 @@ const AiAnswer = () => {
             />
             <div className='siderFooter'>
                 <div className='leftSider'>
-                    <Avatar size={24} src={userStore.avatar} />
+                    <Avatar className='userAvatar' size={24} src={userStore.avatar} />
                     <div className='userName'>{userStore.userInfo.name}</div>
                 </div>
                 <Button type="text" icon={<QuestionCircleOutlined />} />

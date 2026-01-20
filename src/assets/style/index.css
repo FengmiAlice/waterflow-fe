@@ -96,16 +96,21 @@ code {
 }
 .siderFooter{
     height: 40px;
+    line-height: 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* border-top: 1px solid var(--ant-color-border-secondary); */
 }
 .siderFooter .leftSider{
     display:flex;
 }
 .siderFooter .leftSider .userName{
     margin-left:10px;
+    font-size:14px;
+}
+.siderFooter .leftSider .userAvatar{
+    position: relative;
+    top:8px;
 }
 .chat{
     height: 100%;
