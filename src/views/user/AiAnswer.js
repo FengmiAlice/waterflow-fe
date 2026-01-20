@@ -477,7 +477,7 @@ const AiAnswer = () => {
                     </div>
                     
                     {/* 居中的输入框 */}
-                    <div className='center-sender'>
+                    <div className='center-sender-container'>
                         <Sender
                             value={inputValue}
                             key={curConversation + '-center'}
@@ -493,25 +493,15 @@ const AiAnswer = () => {
                                 setLoading(false);
                                 setInputValue("");
                             }}
-                            autoSize={{ minRows: 3, maxRows: 6 }}
+                            autoSize={{ minRows: 2, maxRows: 4 }}
                             actions={(_, info) => {
                                 const { SendButton, LoadingButton } = info.components;
                                 return (
-                                    <Flex justify="space-between" align="center">
-                                        <Flex gap="small" align="center">
-                                            <Switch
-                                                checked={deepThink}
-                                                onChange={(checked) => {
-                                                    setDeepThink(checked);
-                                                }}
-                                                checkedChildren="深度思考"
-                                                unCheckedChildren="普通模式"
-                                            />
-                                        </Flex>
+                               
                                         <Flex gap={4}>
                                             {loading ? <LoadingButton type="default" onClick={() => abortController.current?.abort()}/> : <SendButton type="primary" />}
                                         </Flex>
-                                    </Flex>
+                                
                                 );
                             }}
                             placeholder="Press Enter to send message"
@@ -529,7 +519,7 @@ const AiAnswer = () => {
                     </div>
                     
                     {/* 底部输入框 */}
-                    <div className='bottom-sender'>
+                    <div className='bottom-sender-container'>
                         <Sender
                             value={inputValue}
                             key={curConversation + '-bottom'}
@@ -545,25 +535,15 @@ const AiAnswer = () => {
                                 setLoading(false);
                                 setInputValue("");
                             }}
-                            autoSize={{ minRows: 3, maxRows: 6 }}
+                            autoSize={{ minRows: 2, maxRows: 4 }}
                             actions={(_, info) => {
                                 const { SendButton, LoadingButton } = info.components;
                                 return (
-                                    <Flex justify="space-between" align="center">
-                                        <Flex gap="small" align="center">
-                                            <Switch
-                                                checked={deepThink}
-                                                onChange={(checked) => {
-                                                    setDeepThink(checked);
-                                                }}
-                                                checkedChildren="深度思考"
-                                                unCheckedChildren="普通模式"
-                                            />
-                                        </Flex>
+                               
                                         <Flex gap={4}>
                                             {loading ? <LoadingButton type="default" onClick={() => abortController.current?.abort()}/> : <SendButton type="primary" />}
                                         </Flex>
-                                    </Flex>
+                                
                                 );
                             }}
                             placeholder="Press Enter to send message"

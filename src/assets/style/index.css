@@ -137,7 +137,7 @@ code {
     margin: 0 0 20px auto;
     text-align: center;
 }
-.center-sender {
+.center-sender-container {
     max-width: 700px;
     width: 100%;
     margin: 0 auto;
@@ -161,7 +161,7 @@ code {
     flex-direction: column;
 }
 /* 底部输入框 */
-.bottom-sender {
+.bottom-sender-container {
     background: #fff;
     padding: 20px 0;
     position: sticky;
@@ -172,7 +172,7 @@ code {
     max-width: 700px;
     width: 100%;
     margin: 0 auto;
-    padding: 0 16px;
+    padding:16px;
 }
 .loadingMessage{
     background-image: linear-gradient(90deg, #ff6b23 0%, #af3cb8 31%, #53b6ff 89%);
@@ -221,9 +221,12 @@ code {
 .ant-bubble-placement-start {
     margin-bottom: 16px;
 }
-.ant-sender-content{
+/* .ant-sender-content{
     display: block !important;
-}
+} */
+ .ant-sender .ant-sender-content{
+    align-items: center!important;
+ }
 .ant-sender-actions-list{
     display: block !important;
 }
