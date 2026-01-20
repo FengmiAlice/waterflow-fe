@@ -22,8 +22,6 @@ const AiAnswer = () => {
     const [curConversation, setCurConversation] = useState(null);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [deepThink, setDeepThink] = useState(true);
-
 
     // 获取store数据
     const { userStore } = store;
@@ -40,29 +38,94 @@ const AiAnswer = () => {
     // ==================== request 配置 ====================
     // 创建请求实例
     const chatRequest = {
-         create: async (data, options = {}) => {
-        const response = await fetch('http://waterflow-cloud.cn/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${userStore.token}`,
-                'Content-Type': 'application/json',
-                ...options.headers
-            },
-            body: JSON.stringify({
-                model: 'Qwen3-8B',
-                ...data
-            }),
-            signal: options.signal
-        });
-        
-        if (!response.ok) {
-            const error = new Error(`HTTP ${response.status}: ${await response.text()}`);
-            error.status = response.status;
-            throw error;
-        }
-        
-        return response.json();
-    }
+        // 发送消息
+        sendMessageData: async (data, options = {}) => {
+            const response = await fetch('http://waterflow-cloud.cn/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${userStore.token}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                },
+                body: JSON.stringify({
+                    model: 'Qwen3-8B',
+                    ...data
+                }),
+                signal: options.signal
+            });
+            
+            if (!response.ok) {
+                const error = new Error(`HTTP ${response.status}: ${await response.text()}`);
+                error.status = response.status;
+                throw error;
+            }
+            return response.json();
+        },
+         // 获取会话列表
+        getConversationsData: async (options = {}) => {
+            const response = await fetch(`http://waterflow-cloud.cn/v1/chat/conversations`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${userStore.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'Qwen3-8B',
+                   
+                }),
+                signal: options.signal
+            });
+            
+            if (!response.ok) {
+                const error = new Error(`HTTP ${response.status}: ${await response.text()}`);
+                error.status = response.status;
+                throw error;
+            }
+            return response.json();
+        },
+        // 删除会话
+        deleteConversationData: async (data, options = {}) => {
+             const response = await fetch(`http://waterflow-cloud.cn/v1/chat/deleteconversations`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${userStore.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'Qwen3-8B',
+                    ...data
+                }),
+                signal: options.signal
+            });
+            
+            if (!response.ok) {
+                const error = new Error(`HTTP ${response.status}: ${await response.text()}`);
+                error.status = response.status;
+                throw error;
+            }
+            return response.json();
+        },
+        // 更新会话标题
+        updateConversationData: async (data, options = {}) => {
+            const response = await fetch(`http://waterflow-cloud.cn/v1/chat/conversationsrename`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${userStore.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'Qwen3-8B',
+                    ...data
+                }),
+                signal: options.signal
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+            }
+            
+            return response.json();
+        },
     }
    // ==================== 请求处理函数 ====================
     const onRequest = async (userInput) => {
@@ -122,7 +185,7 @@ const AiAnswer = () => {
       };
       console.log('发起的请求---',requestData)
       // 使用 XRequest 发起请求
-        const response = await chatRequest.create(requestData, {
+        const response = await chatRequest.sendMessageData(requestData, {
             signal: abortController.current.signal,
         })
 
@@ -230,40 +293,48 @@ const AiAnswer = () => {
         }
         // 切换到新会话
         setCurConversation(key);
-       // 从历史记录中恢复消息
-        const historyMessages = messageHistory[key] || [];
-        setMessages(historyMessages);
+        //    // 从历史记录中恢复消息
+        //     const historyMessages = messageHistory[key] || [];
+        setMessages([]);
   };
-//   删除会话
-  const deleteConversation = (key) => {
-    const newConversations = conversations.filter(conv => conv.key !== key);
-    setConversations(newConversations);
-    
-    // 更新消息历史
-    const newMessageHistory = { ...messageHistory };
-    delete newMessageHistory[key];
-    setMessageHistory(newMessageHistory);
-    
-    if (key === curConversation) {
-      const newKey = newConversations[0]?.key || null;
-        setCurConversation(newKey);
-        // 从历史记录恢复消息
-    const historyMessages = newMessageHistory[newKey] || [];
-    setMessages(historyMessages);
-      // 如果没有会话了，创建一个新的
-    if (!newKey) {
-      createNewConversation();
-    }
-    }
-  };
-//   重命名会话
-  const renameConversation = (key, newLabel) => {
-    setConversations(prev => 
-      prev.map(conv => 
-        conv.key === key ? { ...conv, label: newLabel } : conv
-      )
-    );
-  };
+    //   删除会话
+    const deleteConversation = async (key) => {
+        try {
+            await chatRequest.deleteConversationData(key); // 删除本地会话
+            const newConversations = conversations.filter(conv => conv.key !== key);
+            setConversations(newConversations);
+            if (key === curConversation) {
+                const newKey = newConversations[0]?.key || null;
+                setCurConversation(newKey);
+                setMessages([]);
+                if (!newKey) {
+                    // 没有会话时，清空状态
+                    setCurConversation(null);
+                    setMessages([]);
+                }
+                // 更新消息历史
+                const newMessageHistory = { ...messageHistory };
+                delete newMessageHistory[key];
+                setMessageHistory(newMessageHistory);
+            }
+        } catch (error) {
+            console.error('删除会话失败:', error);
+        }
+    };
+
+    //   重命名会话
+    const renameConversation =  (key, newLabel) => {
+        // try {
+        //     await chatRequest.updateConversationData(key,newLabel); // 更新本地会话
+             setConversations(prev => 
+                prev.map(conv => 
+                    conv.key === key ? { ...conv, label: newLabel } : conv
+                )
+            )
+        // }catch (error) {
+        //     console.error('重命名会话失败:', error);
+        // }
+    };
 
     // ==================== 消息处理函数 ====================
     // 复制消息
@@ -323,16 +394,16 @@ const AiAnswer = () => {
                         onClick: () => {
                             const newLabel = prompt('请输入新的对话名称:', conversation.label);
                             if (newLabel) {
-                            renameConversation(conversation.key, newLabel);
+                                renameConversation(conversation.key, newLabel);
                             }
                         }
                     },
                     {
-                    label: '删除',
-                    key: 'delete',
-                    icon: <DeleteOutlined />,
-                    danger: true,
-                    onClick: () => deleteConversation(conversation.key),
+                        label: '删除',
+                        key: 'delete',
+                        icon: <DeleteOutlined />,
+                        danger: true,
+                        onClick: () => deleteConversation(conversation.key),
                     },
                 ],
                 })}
@@ -400,65 +471,6 @@ const AiAnswer = () => {
             ) :null}
         </div>
     );
-    // const chatSender = (
-    //     <>
-    //     <div className='sender-container'>
-    //           {/* 当没有消息时显示 Welcome 组件 */}
-    //         {!hasMessages && (
-    //             <div className='welcome-container'>
-    //                 <Space
-    //                     className='placeholder'
-    //                 >
-    //                     <Welcome
-    //                         variant="borderless"
-    //                         icon="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*s5sNRo5LjfQAAAAAAAAAAAAADgCCAQ/fmt.webp"
-    //                         title="今天有什么可以帮到你"
-    //                     />
-    //                 </Space>
-    //             </div>
-    //         )}
-    //         <Sender
-    //             value={inputValue}
-    //             key={curConversation}
-    //             ref={senderRef}
-    //             className='sender'
-    //             onSubmit={() => {
-    //                 onSubmit(inputValue);
-    //                 setInputValue('');
-    //             }}
-    //             onChange={setInputValue}
-    //             onCancel={() => {
-    //                 abortController.current?.abort();
-    //                 setLoading(false);
-    //             }}
-    //             autoSize={{ minRows: 3, maxRows: 6 }}
-    //             actions={(_, info) => {
-    //             const { SendButton, LoadingButton } = info.components;
-    //                 return (
-    //                 <Flex justify="space-between" align="center">
-    //                     <Flex gap="small" align="center">
-    //                         <Switch
-    //                             checked={deepThink}
-    //                             onChange={(checked) => {
-    //                                 setDeepThink(checked);
-    //                             }}
-    //                                             checkedChildren="深度思考"
-    //                                             unCheckedChildren="普通模式"
-    //                         />
-    //                     </Flex>
-    //                     <Flex gap={4}>
-    //                         {loading ? <LoadingButton type="default"  onClick={() => abortController.current?.abort()}/> : <SendButton type="primary" />}
-    //                     </Flex>
-    //                 </Flex>
-    //                 );
-    //             }}
-    //             placeholder="Press Enter to send message"
-    //              disabled={loading}
-    //         />
-    //     </div>
-    //     </>
-    // );
-
     const chatContent = (
         <div className='chat-content'>
             {/* 无消息时显示欢迎界面和居中的输入框 */}
@@ -474,7 +486,7 @@ const AiAnswer = () => {
                             <Welcome
                                 variant="borderless"
                                 icon="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*s5sNRo5LjfQAAAAAAAAAAAAADgCCAQ/fmt.webp"
-                                title="今天有什么可以帮到你"
+                                title="今天有什么可以帮到你？"
                             />
                         </Space>
                     </div>
@@ -559,7 +571,7 @@ const AiAnswer = () => {
     );
     
     useEffect(() => {
-            // history mock
+        // history mock
         if ( curConversation && messages.length > 0) {
             setMessageHistory((prev) => ({
                 ...prev,
@@ -573,16 +585,13 @@ const AiAnswer = () => {
 
     // 另一个 useEffect 用于聚焦
     useEffect(() => {
-         
             // 当切换会话时，聚焦输入框
             if (senderRef.current) {
                 senderRef.current.focus({ cursor: 'end' });
             }
-        
-    }, []); // 只在 curConversation 变化时聚焦
+    }, []); 
 
     useEffect(() => {
-        
             // 初始化时创建一个默认对话
             if ( conversations.length === 0 && !curConversation) {
                 const defaultKey = Date.now().toString();
@@ -597,17 +606,13 @@ const AiAnswer = () => {
                 setCurConversation(defaultKey);
                 setMessages([]);
             }
-        
      }, []);
     
     return (
         <div className='layout'>
             {chatSider}
             < div className='chat' >
-                  
-                    {/* {chatList}
-                    {chatSender} */}
-                     {chatContent}
+                {chatContent}
             </div>
         </div>
     )
