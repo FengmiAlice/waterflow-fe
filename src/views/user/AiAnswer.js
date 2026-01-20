@@ -14,8 +14,74 @@ import {
   EllipsisOutlined
   } from '@ant-design/icons';
 import store from '../../store';
+// ==================== 自定义打字机效果 Hook ====================
+const useTypingEffect = () => {
+    const timersRef = useRef(new Map());
+    // 清理所有定时器
+    const clearAllTimers = () => {
+        timersRef.current.forEach(timerId => {
+            clearTimeout(timerId);
+        });
+        timersRef.current.clear();
+    };
+    // 模拟打字机效果
+    const startTypingEffect = (messageId, fullText, onUpdate, onComplete) => {
+        // 清理该消息的旧定时器
+        if (timersRef.current.has(messageId)) {
+            clearTimeout(timersRef.current.get(messageId));
+        }
+        const typingSpeed = 50; // 毫秒/字符
+        let currentIndex = 0;
+        let displayedText = '';
+        const typeNextChar = () => {
+            if (currentIndex >= fullText.length) {
+                // 打字完成
+                timersRef.current.delete(messageId);
+                onComplete && onComplete(fullText);
+                return;
+            }
+            
+            displayedText += fullText[currentIndex];
+            currentIndex++;
+            // 更新内容
+            onUpdate && onUpdate(displayedText);
+            // 设置下一个字符
+            const timerId = setTimeout(typeNextChar, typingSpeed);
+            timersRef.current.set(messageId, timerId);
+        };
+        // 开始打字
+        typeNextChar();
+        // 返回停止函数
+        return () => {
+            if (timersRef.current.has(messageId)) {
+                clearTimeout(timersRef.current.get(messageId));
+                timersRef.current.delete(messageId);
+            }
+        };
+    };
+    // 停止特定消息的打字效果
+    const stopTypingEffect = (messageId) => {
+        if (timersRef.current.has(messageId)) {
+            clearTimeout(timersRef.current.get(messageId));
+            timersRef.current.delete(messageId);
+        }
+    };
+    // 组件卸载时清理
+    useEffect(() => {
+        return () => {
+            clearAllTimers();
+        };
+    }, []);
+    
+    return {
+        startTypingEffect,
+        stopTypingEffect,
+        clearAllTimers
+    };
+};
 
 const AiAnswer = () => {
+    const { startTypingEffect, stopTypingEffect } = useTypingEffect(); // 获取打字效果函数
     const [inputValue, setInputValue] = useState("");
     const [messageHistory, setMessageHistory] = useState({});
     const [conversations, setConversations] = useState([]);
@@ -130,116 +196,147 @@ const AiAnswer = () => {
    // ==================== 请求处理函数 ====================
     const onRequest = async (userInput) => {
          // 确保 userInput 是字符串
-    if (typeof userInput !== 'string') {
-      console.error('userInput 不是字符串:', userInput);
-      return;
-    }
-      if (!userInput || loading) return;
-   
-     // 检查Token是否存在
-    if (!userStore.token) {
-        message.error('请先登录获取Token');
+        if (typeof userInput !== 'string') {
+        console.error('userInput 不是字符串:', userInput);
         return;
-      }
-    // 如果没有当前会话，创建一个新会话
-    if (!curConversation) {
-        createNewConversation(userInput);
-        return;
-    }
-    // 创建新的中止控制器
-    abortController.current = new AbortController();
-    try {
-      setLoading(true);
-      // 添加用户消息到消息列表
-      const userMessage = {
-        content: userInput,
-        role: 'user',
-          timestamp: Date.now(),
-        id: Date.now() + '-user'
-      };
-        const updatedMessages = [...messages, userMessage];
-        console.log('updatedMessages---',updatedMessages);
-        setMessages(updatedMessages);
-         // 更新会话标签（如果这是第一条消息）
-            const currentConversation = conversations.find(c => c.key === curConversation);
-            if (currentConversation && currentConversation.label === '新对话'||!currentConversation.label) {
-                renameConversation(curConversation, generateDefaultLabel(userInput));
-            }
-      // 添加初始的助手消息（loading状态）
-      const initialAssistantMessage = {
-        content: '',
-        role: 'assistant',
-        status: 'loading',
-          timestamp: Date.now() + 1,
-          id: Date.now() + '-assistant'
-      };
-      
-      setMessages(prev => [...prev, initialAssistantMessage]);
-      // 构建请求参数
-      const requestData = {
-        stream: false,
-        messages: updatedMessages.map(msg => ({
-          role: msg.role,
-          content: msg.content
-        })),
-      };
-      console.log('发起的请求---',requestData)
-      // 使用 XRequest 发起请求
-        const response = await chatRequest.sendMessageData(requestData, {
-            signal: abortController.current.signal,
-        })
-
-        console.log('📥 API 响应:', response);
-        let responseData = response;
-          // 如果响应有 data 属性
-        if (response.data) {
-            responseData = response.data;
-            console.log('📥 从 response.data 获取数据:', responseData);
         }
-      // 如果不是流式响应，直接处理结果
-        const assistantResponse = responseData.choices?.[0]?.message?.content || '';
-        setMessages(prev => {
-          const newMessages = [...prev];
-            const lastMsg = newMessages[newMessages.length - 1];
-            if (lastMsg && lastMsg.status === 'loading') {
-                lastMsg.content = assistantResponse;
-                lastMsg.status = 'done';
-                 lastMsg.id = Date.now() + '-assistant-done';
-            }
-            return newMessages;
-        });
-      
-      
-    } catch (error) {
-
-      if (error.name === 'AbortError') {
-        message.info('请求已取消');
-        // 移除loading状态的助手消息
-        setMessages(prev => prev.filter(msg => msg.status !== 'loading'));
-      } else {
-        // 添加错误消息
-        const errorMessage = {
-          content: error.message || '请求失败，请稍后重试',
-          role: 'assistant',
-          status: 'error',
-            timestamp: Date.now(),
-           id: Date.now() + '-error'
-        };
-        
-        setMessages(prev => {
-          const newMessages = [...prev];
-          // 替换loading消息为错误消息
-          newMessages.pop(); // 移除loading消息
-          return [...newMessages, errorMessage];
-        });
-        
-        message.error('请求失败，请检查网络连接或稍后重试');
-      }
-    } finally {
+        if (!userInput || loading) return;
+    
+        // 检查Token是否存在
+        if (!userStore.token) {
+            message.error('请先登录获取Token');
+            return;
+        }
+        // 如果没有当前会话，创建一个新会话
+        if (!curConversation) {
+            createNewConversation(userInput);
+            return;
+        }
+        // 创建新的中止控制器
+        abortController.current = new AbortController();
+        try {
+            setLoading(true);
+            // 添加用户消息到消息列表
+            const userMessage = {
+                content: userInput,
+                role: 'user',
+                timestamp: Date.now(),
+                id: Date.now() + '-user'
+            };
+            const updatedMessages = [...messages, userMessage];
+            console.log('updatedMessages---',updatedMessages);
+            setMessages(updatedMessages);
+            // 添加初始的助手消息（loading状态）
+            const assistantMessageId = Date.now() + '-assistant';
+            const initialAssistantMessage = {
+                content: '',
+                role: 'assistant',
+                status: 'loading',
+                timestamp: Date.now() + 1,
+                id: assistantMessageId
+            };
+            setMessages(prev => [...prev, initialAssistantMessage]);
+            // 构建请求参数
+            const requestData = {
+                stream: false,
+                messages: updatedMessages.map(msg => ({
+                role: msg.role,
+                content: msg.content
+                })),
+            };
+            // console.log('发起的请求参数---',requestData)
+            // 使用 XRequest 发起请求
+            const response = await chatRequest.sendMessageData(requestData, {
+                signal: abortController.current.signal,
+            })
+            // 处理非流式响应
+            await handleNonStreamResponse(response, assistantMessageId);
+        }
+        catch (error) {
+            handleRequestError(error);
+        }
+        finally {
             setLoading(false);
             setInputValue("");
-    }
-  };
+        }
+    };
+    // ==================== 非流式响应处理 ====================
+    const handleNonStreamResponse = (data, messageId) => {
+        return new Promise((resolve) => {
+            let responseData = data;
+            if (data.data) {
+                responseData = data.data;
+            }
+            // console.log('📥 非流式 API 响应responseData:', responseData);
+            // 提取完整的回复内容
+            const fullResponse = responseData.choices?.[0]?.message?.content || '';
+            if (!fullResponse) {
+                // 如果没有内容，直接完成
+                setMessages(prev => prev.map(msg => 
+                    msg.id === messageId 
+                        ? { ...msg, status: 'done' }
+                        : msg
+                ));
+                resolve();
+                return;
+            }
+             // 开始打字机效果
+            const stopTyping = startTypingEffect(
+                messageId,
+                fullResponse,
+                (displayedText) => {
+                    // 更新显示的文字
+                    setMessages(prev => prev.map(msg => 
+                        msg.id === messageId 
+                            ? { ...msg, content: displayedText }
+                            : msg
+                    ));
+                },
+                (completeText) => {
+                    // 打字完成
+                    setMessages(prev => prev.map(msg => 
+                        msg.id === messageId 
+                            ? { ...msg, status: 'done', content: completeText }
+                            : msg
+                    ));
+                    resolve();
+                }
+            );
+            // 保存停止函数以便取消
+            abortController.current.typingStopper = stopTyping;
+        });
+    };
+    // ==================== 请求错误处理 ====================
+    const handleRequestError = (error) => {
+        if (error.name === 'AbortError') {
+            message.info('请求已取消');
+            // 停止打字机效果
+            if (abortController.current.typingStopper) {
+                abortController.current.typingStopper();
+            }
+            // 移除 streaming 状态的消息
+            setMessages(prev => prev.filter(msg => 
+                msg.status !== 'streaming' && msg.status !== 'loading'
+            ));
+        } else {
+            // 添加错误消息
+            const errorMessage = {
+                content: error.message || '请求失败，请稍后重试',
+                role: 'assistant',
+                status: 'error',
+                timestamp: Date.now(),
+                id: `${Date.now()}-error`
+            };
+            
+            setMessages(prev => {
+                const newMessages = [...prev];
+                // 替换loading消息为错误消息
+                newMessages.pop();
+                return [...newMessages, errorMessage];
+            });
+            message.error(error.message || '请求失败，请检查网络连接或稍后重试');
+        }
+    };
     // ==================== 事件处理 ====================
     const onSubmit = (val) => {
         if (!val || loading) return;
@@ -429,17 +526,14 @@ const AiAnswer = () => {
                         content: msg.content,
                         role: msg.role,
                         classNames: {
-                        content: msg.status === 'loading' ? 'loadingMessage' : '',
+                        content: msg.status === 'streaming' ? 'streamingMessage' : '',
                         },
-                        typing: msg.status === 'loading' ? { 
-                        step: 5, 
-                        interval: 20, 
-                        suffix: <>💗</> 
-                        } : false,
+                        // 对于 streaming 状态的消息，使用打字机效果
+                       typing: msg.status === 'typing' ? { step: 1, interval: 100 } : false,
                         // 可以根据状态添加额外样式
                         style: msg.status === 'error' ? { 
-                        color: '#ff4d4f',
-                        backgroundColor: '#fff2f0'
+                            color: '#ff4d4f',
+                            backgroundColor: '#fff2f0'
                         } : {}
                 }))}
                 style={{ 
@@ -455,15 +549,27 @@ const AiAnswer = () => {
                             src="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*eco6RrQhxbMAAAAAAAAAAAAADgCCAQ/original"
                             size="small"
                                 />),
-                        footer:(content) => (
-                            <div style={{ display: 'flex' }}>
-                            <Button type="text" size="small" icon={<ReloadOutlined />}  onClick={regenerateResponse}/>
-                            <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => copyMessage(content)}/>
-                            <Button type="text" size="small" icon={<LikeOutlined />} />
-                            <Button type="text" size="small" icon={<DislikeOutlined />} />
+                        footer: (content) => {
+                             // 只在消息完成时显示操作按钮
+                            const message = messages.find(m => m.content === content);
+                            if (message && message.status === 'streaming') {
+                                return null;
+                            }
+                            return (
+                                <div style={{ display: 'flex' }}>
+                                    <Button type="text" size="small" icon={<ReloadOutlined />}  onClick={regenerateResponse}/>
+                                    <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => copyMessage(content)}/>
+                                    <Button type="text" size="small" icon={<LikeOutlined />} />
+                                    <Button type="text" size="small" icon={<DislikeOutlined />} />
+                                </div>
+                                )
+                        },
+                        loadingRender: () => (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <Spin size="small" />
+                                <span style={{ fontSize: 12, color: '#999' }}>思考中...</span>
                             </div>
                         ),
-                        loadingRender: () => <Spin size="small" />,
                     },
                     user: { placement: 'end', avatar: (<Avatar src={userStore.avatar || 'https://example.com/user-avatar.png'} size="small"/>) },
                 }}

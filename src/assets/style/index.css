@@ -259,6 +259,24 @@ code {
 .ant-bubble .ant-bubble-content{
     max-width:60%!important;
 }
+.streamingMessage {
+    position: relative;
+}
+
+.cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background-color: currentColor;
+    margin-left: 2px;
+    animation: blink 1s infinite;
+    vertical-align: middle;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
 /* 媒体查询适配屏幕分辨率 */
 @media screen and (max-width: 576px) {
     html{
