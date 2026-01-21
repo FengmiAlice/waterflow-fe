@@ -10,6 +10,7 @@ import {
   PlusOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
+  StopOutlined
   } from '@ant-design/icons';
 import store from '../../store';
 // ==================== 自定义打字机效果 Hook ====================
@@ -244,12 +245,14 @@ const AiAnswer = () => {
             })
             // 处理非流式响应
             await handleNonStreamResponse(response, assistantMessageId);
+            setLoading(false);
         }
         catch (error) {
             handleRequestError(error);
+            setLoading(false);
         }
         finally {
-            setLoading(false);
+            // setLoading(false);
             setInputValue("");
         }
     };
@@ -296,7 +299,9 @@ const AiAnswer = () => {
                 }
             );
             // 保存停止函数以便取消
-            abortController.current.typingStopper = stopTyping;
+            if (abortController.current) {
+                abortController.current.typingStopper = stopTyping;
+            }
         });
     };
     // ==================== 请求错误处理 ====================
@@ -335,6 +340,28 @@ const AiAnswer = () => {
         if (!val || loading) return;
         onRequest(val);
     };
+     // ==================== 停止生成函数 ====================
+    const handleStopGeneration = () => {
+            if (abortController.current) {
+                abortController.current.abort();
+                message.info('请求已取消');
+            }
+            // 停止打字机效果
+            if (abortController.current.typingStopper) {
+                abortController.current.typingStopper();
+                abortController.current.typingStopper = null;
+            }
+            // 停止 typing effect
+            stopTypingEffect();
+            // 移除 loading 状态的消息
+            setMessages(prev => prev.map(msg => 
+                (msg.status === 'loading' || msg.status === 'streaming')?{ ...msg, status: 'stopped', content: msg.content || '生成已停止' }
+                : msg
+            ));
+            setLoading(false);
+            setInputValue('');
+            message.info('已停止生成');
+    };
     // ==================== 会话管理 ====================
     const createNewConversation = (userInput = '') => {
         if (typeof userInput !== 'string') { 
@@ -371,22 +398,22 @@ const AiAnswer = () => {
   };
 
   const switchConversation = (key) => {
-    if (loading) {
-      abortController.current?.abort();
-    }
-    // 保存当前会话的消息到历史记录
-    if (curConversation && messages.length > 0) {
-        setMessageHistory(prev => ({
-                ...prev,
-                [curConversation]: messages
-            }));
+        if (loading) {
+        abortController.current?.abort();
+        }
+        // 保存当前会话的消息到历史记录
+        if (curConversation && messages.length > 0) {
+            setMessageHistory(prev => ({
+                    ...prev,
+                    [curConversation]: messages
+                }));
         }
         // 切换到新会话
         setCurConversation(key);
         //    // 从历史记录中恢复消息
         //     const historyMessages = messageHistory[key] || [];
         setMessages([]);
-  };
+    };
     //   删除会话
     const deleteConversation = async (key) => {
         try {
@@ -602,25 +629,27 @@ const AiAnswer = () => {
                                 setInputValue('');
                             }}
                             onChange={(val)=>setInputValue(val)}
-                            onCancel={() => {
-                                abortController.current?.abort();
-                                setLoading(false);
-                                stopTypingEffect();
-                                setInputValue("");
-                            }}
                             autoSize={{ minRows: 2, maxRows: 4 }}
                             actions={(_, info) => {
                                 const { SendButton, LoadingButton } = info.components;
                                 return (
                                
                                         <Flex gap={4}>
-                                            {loading ? <LoadingButton type="default" onClick={() => abortController.current?.abort()}/> : <SendButton type="primary" />}
+                                        {loading ? <Button 
+                                            type="default" 
+                                            danger
+                                            icon={<StopOutlined />}
+                                            onClick={handleStopGeneration}
+                                            style={{ marginRight: 8 }}
+                                        >
+                                            停止生成
+                                        </Button> : <SendButton type="primary" />}
                                         </Flex>
                                 
                                 );
                             }}
                             placeholder="Press Enter to send message"
-                            disabled={loading}
+                   
                         />
                     </div>
                 </div>
@@ -645,25 +674,27 @@ const AiAnswer = () => {
                                 setInputValue('');
                             }}
                             onChange={(val)=>setInputValue(val)}
-                            onCancel={() => {
-                                abortController.current?.abort();
-                                setLoading(false);
-                                stopTypingEffect();
-                                setInputValue("");
-                            }}
                             autoSize={{ minRows: 2, maxRows: 4 }}
                             actions={(_, info) => {
                                 const { SendButton, LoadingButton } = info.components;
                                 return (
                                
                                         <Flex gap={4}>
-                                            {loading ? <LoadingButton type="default" onClick={() => abortController.current?.abort()}/> : <SendButton type="primary" />}
+                                            {loading ? <Button 
+                                            type="default" 
+                                            danger
+                                            icon={<StopOutlined />}
+                                            onClick={handleStopGeneration}
+                                            style={{ marginRight: 8 }}
+                                        >
+                                            停止生成
+                                        </Button> : <SendButton type="primary" />}
                                         </Flex>
                                 
                                 );
                             }}
                             placeholder="Press Enter to send message"
-                            disabled={loading}
+
                         />
                     </div>
                 </>
@@ -679,7 +710,7 @@ const AiAnswer = () => {
                 [curConversation]: messages,
             }));
         }
-      
+
         return () => { isMounted = false };
     }, []);
     
