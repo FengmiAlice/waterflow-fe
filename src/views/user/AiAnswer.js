@@ -1,5 +1,5 @@
 import  { useEffect, useState,useRef } from 'react';
-import { Button, Switch, Avatar, Flex, Spin, Space,message,} from 'antd';
+import { Button, Avatar, Flex, Spin, Space,message,} from 'antd';
 import { Bubble,Conversations,Sender,Welcome } from "@ant-design/x";
 import { 
   CopyOutlined,
@@ -10,8 +10,6 @@ import {
   PlusOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
-  ShareAltOutlined,
-  EllipsisOutlined
   } from '@ant-design/icons';
 import store from '../../store';
 // ==================== 自定义打字机效果 Hook ====================
@@ -205,11 +203,6 @@ const AiAnswer = () => {
         // 检查Token是否存在
         if (!userStore.token) {
             message.error('请先登录获取Token');
-            return;
-        }
-        // 如果没有当前会话，创建一个新会话
-        if (!curConversation) {
-            createNewConversation(userInput);
             return;
         }
         // 创建新的中止控制器
@@ -608,10 +601,11 @@ const AiAnswer = () => {
                                 onSubmit(inputValue);
                                 setInputValue('');
                             }}
-                            onChange={setInputValue}
+                            onChange={(val)=>setInputValue(val)}
                             onCancel={() => {
                                 abortController.current?.abort();
                                 setLoading(false);
+                                stopTypingEffect();
                                 setInputValue("");
                             }}
                             autoSize={{ minRows: 2, maxRows: 4 }}
@@ -650,10 +644,11 @@ const AiAnswer = () => {
                                 onSubmit(inputValue);
                                 setInputValue('');
                             }}
-                            onChange={setInputValue}
+                            onChange={(val)=>setInputValue(val)}
                             onCancel={() => {
                                 abortController.current?.abort();
                                 setLoading(false);
+                                stopTypingEffect();
                                 setInputValue("");
                             }}
                             autoSize={{ minRows: 2, maxRows: 4 }}
@@ -677,42 +672,16 @@ const AiAnswer = () => {
     );
     
     useEffect(() => {
-        // history mock
-        if ( curConversation && messages.length > 0) {
+        let isMounted = true;  
+        if (curConversation && messages.length > 0 && isMounted) {
             setMessageHistory((prev) => ({
                 ...prev,
                 [curConversation]: messages,
             }));
         }
-        if (!userStore.token) {
-            console.warn('未检测到Token，需要登录');
-        }
+      
+        return () => { isMounted = false };
     }, []);
-
-    // 另一个 useEffect 用于聚焦
-    useEffect(() => {
-            // 当切换会话时，聚焦输入框
-            if (senderRef.current) {
-                senderRef.current.focus({ cursor: 'end' });
-            }
-    }, []); 
-
-    useEffect(() => {
-            // 初始化时创建一个默认对话
-            if ( conversations.length === 0 && !curConversation) {
-                const defaultKey = Date.now().toString();
-                const defaultConversation = {
-                    key: defaultKey,
-                    label: '新对话',
-                    group: '今天',
-                    timestamp: defaultKey,
-                    createTime: new Date().toISOString()
-                };
-                setConversations([defaultConversation]);
-                setCurConversation(defaultKey);
-                setMessages([]);
-            }
-     }, []);
     
     return (
         <div className='layout'>
