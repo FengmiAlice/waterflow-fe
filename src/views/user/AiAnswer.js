@@ -1,5 +1,5 @@
 import  { useEffect, useState,useRef } from 'react';
-import { Button, Avatar, Flex, Spin, Space,message,} from 'antd';
+import { Button, Avatar, Spin, Space,message,} from 'antd';
 import { Bubble,Conversations,Sender,Welcome } from "@ant-design/x";
 import { 
   CopyOutlined,
@@ -10,7 +10,6 @@ import {
   PlusOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
-  StopOutlined
   } from '@ant-design/icons';
 import store from '../../store';
 // ==================== 自定义打字机效果 Hook ====================
@@ -93,6 +92,7 @@ const AiAnswer = () => {
     const abortController = useRef(null);
     const listRef = useRef(null);
     const senderRef = useRef(null);
+
      // 生成默认的会话标签
     const generateDefaultLabel = (userInput) => {
         if (!userInput) return '新对话';
@@ -208,6 +208,7 @@ const AiAnswer = () => {
         }
         // 创建新的中止控制器
         abortController.current = new AbortController();
+        const { signal } = abortController.current; // 将中止控制器传递给请求
         try {
             setLoading(true);
             // 添加用户消息到消息列表
@@ -218,7 +219,7 @@ const AiAnswer = () => {
                 id: Date.now() + '-user'
             };
             const updatedMessages = [...messages, userMessage];
-            console.log('updatedMessages---',updatedMessages);
+            // console.log('updatedMessages---',updatedMessages);
             setMessages(updatedMessages);
             // 添加初始的助手消息（loading状态）
             const assistantMessageId = Date.now() + '-assistant';
@@ -240,9 +241,11 @@ const AiAnswer = () => {
             };
             // console.log('发起的请求参数---',requestData)
             // 使用 XRequest 发起请求
-            const response = await chatRequest.sendMessageData(requestData, {
-                signal: abortController.current.signal,
-            })
+            const response = await chatRequest.sendMessageData(requestData, { signal: signal })
+             // 检查是否在请求过程中被取消
+            if (signal.aborted) {
+                throw new DOMException('请求已被取消', 'AbortError');
+            }
             // 处理非流式响应
             await handleNonStreamResponse(response, assistantMessageId);
             setLoading(false);
@@ -252,13 +255,17 @@ const AiAnswer = () => {
             setLoading(false);
         }
         finally {
-            // setLoading(false);
             setInputValue("");
         }
     };
     // ==================== 非流式响应处理 ====================
     const handleNonStreamResponse = (data, messageId) => {
         return new Promise((resolve) => {
+            // 检查是否已被取消
+            if (abortController.current?.signal?.aborted) {
+                resolve();
+                return;
+            }
             let responseData = data;
             if (data.data) {
                 responseData = data.data;
@@ -308,14 +315,15 @@ const AiAnswer = () => {
     const handleRequestError = (error) => {
         if (error.name === 'AbortError') {
             message.info('请求已取消');
-            // 停止打字机效果
+             // 停止打字机效果
             if (abortController.current.typingStopper) {
                 abortController.current.typingStopper();
             }
             // 移除 streaming 状态的消息
-            setMessages(prev => prev.filter(msg => 
+            setMessages(prev => prev.filter(msg =>
                 msg.status !== 'streaming' && msg.status !== 'loading'
             ));
+
         } else {
             // 添加错误消息
             const errorMessage = {
@@ -342,25 +350,31 @@ const AiAnswer = () => {
     };
      // ==================== 停止生成函数 ====================
     const handleStopGeneration = () => {
-            if (abortController.current) {
-                abortController.current.abort();
-                message.info('请求已取消');
+        // 停止打字机效果
+        if (abortController.current.typingStopper) {
+            abortController.current.typingStopper();
+            abortController.current.typingStopper = null;
+        }
+        // 停止 typing effect
+        stopTypingEffect();
+         // 中止 fetch 请求
+        if (abortController.current) {
+            abortController.current.abort();
+            //  abortController.current = null;
+        }
+        // 更新消息状态
+        setMessages(prev => prev.map(msg => {
+            if (msg.status === 'loading' || msg.status === 'streaming') {
+                    return { 
+                        ...msg, 
+                        status: 'stopped', 
+                        content: msg.content || '生成已停止' 
+                    };
             }
-            // 停止打字机效果
-            if (abortController.current.typingStopper) {
-                abortController.current.typingStopper();
-                abortController.current.typingStopper = null;
-            }
-            // 停止 typing effect
-            stopTypingEffect();
-            // 移除 loading 状态的消息
-            setMessages(prev => prev.map(msg => 
-                (msg.status === 'loading' || msg.status === 'streaming')?{ ...msg, status: 'stopped', content: msg.content || '生成已停止' }
-                : msg
-            ));
-            setLoading(false);
-            setInputValue('');
-            message.info('已停止生成');
+            return msg;
+        }));
+        setLoading(false);
+        setInputValue('');
     };
     // ==================== 会话管理 ====================
     const createNewConversation = (userInput = '') => {
@@ -399,7 +413,7 @@ const AiAnswer = () => {
 
   const switchConversation = (key) => {
         if (loading) {
-        abortController.current?.abort();
+            abortController.current?.abort();
         }
         // 保存当前会话的消息到历史记录
         if (curConversation && messages.length > 0) {
@@ -616,10 +630,10 @@ const AiAnswer = () => {
                             />
                         </Space>
                     </div>
-                    
                     {/* 居中的输入框 */}
                     <div className='center-sender-container'>
                         <Sender
+                            loading={loading}
                             value={inputValue}
                             key={curConversation + '-center'}
                             ref={senderRef}
@@ -628,28 +642,10 @@ const AiAnswer = () => {
                                 onSubmit(inputValue);
                                 setInputValue('');
                             }}
+                            onCancel={handleStopGeneration}
                             onChange={(val)=>setInputValue(val)}
                             autoSize={{ minRows: 2, maxRows: 4 }}
-                            actions={(_, info) => {
-                                const { SendButton, LoadingButton } = info.components;
-                                return (
-                               
-                                        <Flex gap={4}>
-                                        {loading ? <Button 
-                                            type="default" 
-                                            danger
-                                            icon={<StopOutlined />}
-                                            onClick={handleStopGeneration}
-                                            style={{ marginRight: 8 }}
-                                        >
-                                            停止生成
-                                        </Button> : <SendButton type="primary" />}
-                                        </Flex>
-                                
-                                );
-                            }}
                             placeholder="Press Enter to send message"
-                   
                         />
                     </div>
                 </div>
@@ -661,10 +657,10 @@ const AiAnswer = () => {
                     <div className='messages-container'>
                         {chatList}
                     </div>
-                    
                     {/* 底部输入框 */}
                     <div className='bottom-sender-container'>
                         <Sender
+                            loading={loading}
                             value={inputValue}
                             key={curConversation + '-bottom'}
                             ref={senderRef}
@@ -673,28 +669,10 @@ const AiAnswer = () => {
                                 onSubmit(inputValue);
                                 setInputValue('');
                             }}
+                            onCancel={handleStopGeneration}
                             onChange={(val)=>setInputValue(val)}
                             autoSize={{ minRows: 2, maxRows: 4 }}
-                            actions={(_, info) => {
-                                const { SendButton, LoadingButton } = info.components;
-                                return (
-                               
-                                        <Flex gap={4}>
-                                            {loading ? <Button 
-                                            type="default" 
-                                            danger
-                                            icon={<StopOutlined />}
-                                            onClick={handleStopGeneration}
-                                            style={{ marginRight: 8 }}
-                                        >
-                                            停止生成
-                                        </Button> : <SendButton type="primary" />}
-                                        </Flex>
-                                
-                                );
-                            }}
                             placeholder="Press Enter to send message"
-
                         />
                     </div>
                 </>
