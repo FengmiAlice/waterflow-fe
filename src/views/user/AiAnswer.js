@@ -487,7 +487,7 @@ const AiAnswer = () => {
   };
     // ==================== 节点渲染 ====================
     const chatSider = (
-        <div className='sider'>
+        <div className='chat-sider'>
             {/* 🌟 Logo */}
             <div className='logo'>
                 <img
@@ -693,11 +693,11 @@ const AiAnswer = () => {
     }, []);
     
     return (
-        <div className='layout'>
+        <div className='chat-layout'>
             {chatSider}
-            < div className='chat' >
-                {chatContent}
-            </div>
+            <section className='chat'>
+              {chatContent}
+            </section>
         </div>
     )
 }

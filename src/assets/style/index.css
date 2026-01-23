@@ -42,8 +42,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-    
-.layout{
+
+.chat-layout{
     width: 100%;
     min-width: 1000px;
     height: 100vh;
@@ -51,7 +51,7 @@ code {
     background: var(--ant-color-bg-container);
     font-family: AlibabaPuHuiTi, var(--ant-font-family), sans-serif;
 }
-.sider{
+.chat-sider{
     background:var(--ant-color-bg-layout);
     width: 280px;
     height: 100%;
@@ -285,12 +285,28 @@ code {
 /* 媒体查询适配屏幕分辨率 */
 @media screen and (max-width: 576px) {
     html{
-      font-size: 12px!important;  
+      font-size: 12px;  
     } 
     .ant-table{
-        font-size: 10px;
-        word-break: break-all;
+        font-size: 12px;
+        /* word-break: break-all;*/
+        table-layout: fixed; /* 固定表格布局，使列宽均匀分配 */
+        width: 100%;
     }
+    .ant-table-thead > tr > th {
+        word-wrap: break-word!important;
+        word-break: break-word!important;
+        white-space: normal!important; /* 允许换行 */
+        padding: 8px 4px!important; /* 减少内边距 */
+    }
+    /* 表格单元格 */
+    .ant-table-tbody > tr > td {
+        word-wrap: break-word!important;
+        word-break: break-word!important;
+        white-space: normal!important; /* 允许换行 */
+        padding: 8px 4px!important;
+    }
+
     .ant-btn-sm, .ant-btn{
       font-size: 12px;
       margin: 10px 0;
@@ -394,6 +410,14 @@ code {
     }
     .debtSectionContainer{
         width: 100% !important;
+    }
+    /* 手机屏幕下隐藏sider */
+    .chat-layout{
+        min-width: 100%!important;
+        height: 100% !important;
+    }
+    .chat-sider{
+        display:none!important;
     }
 
 }

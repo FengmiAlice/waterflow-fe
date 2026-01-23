@@ -688,15 +688,18 @@ function Invest() {
                         </Form.Item>
                 </Form>
             </header>
-            <section>
-                <Button size="small" type="primary" className="addInvestBtn"  onClick={handleAdd} >添加新理财项目</Button>
-                <Button size="small" type="primary"    onClick={turnInvestSoft}>统计图表</Button>
-                <span className='totalStyle'>计划投资 {totalPlan}￥ </span>
-                <span className='totalStyle'>已投资 {totalAmount}￥ </span>
-                <span className='totalStyle'>总仓位 {totalPosition}% </span>
-                <span className='totalStyle'>当前余额 {totalCurrent}￥ </span>
-                <span className='totalStyle'>共盈利 {totalProfit}￥ </span>
-                <span className='totalStyle'>整体收益率 {totalProfitRate}% </span>
+            <section >
+               
+                    <Button size="small" type="primary" className="addInvestBtn"  onClick={handleAdd} >添加新理财项目</Button>
+                    <Button size="small" type="primary" onClick={turnInvestSoft}>统计图表</Button>
+                  
+                    <span className='totalStyle'>计划投资 {totalPlan}￥ </span>
+                    <span className='totalStyle'>已投资 {totalAmount}￥ </span>
+                    <span className='totalStyle'>总仓位 {totalPosition}% </span>
+                    <span className='totalStyle'>当前余额 {totalCurrent}￥ </span>
+                    <span className='totalStyle'>共盈利 {totalProfit}￥ </span>
+                    <span className='totalStyle'>整体收益率 {totalProfitRate}% </span>
+                
                 <ArgTable 
                     ref={tableRef}
                     tableType={'invest'}            
