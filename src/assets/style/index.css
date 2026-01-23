@@ -44,21 +44,90 @@ code {
 }
 
 .chat-layout{
-    width: 100%;
-    min-width: 1000px;
-    height: 100vh;
+    /* width: 100%;
+    min-width: 1000px; */
+    
     display: flex;
+    height: 100vh;
+    position: relative;
     background: var(--ant-color-bg-container);
     font-family: AlibabaPuHuiTi, var(--ant-font-family), sans-serif;
 }
 .chat-sider{
     background:var(--ant-color-bg-layout);
-    width: 280px;
+    width: 260px;
     height: 100%;
     display: flex;
     flex-direction: column;
     padding: 0 12px;
     box-sizing: border-box;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+/* 桌面端样式 */
+.chat-sider:not(.mobile) {
+    position: relative;
+}
+
+/* 手机端样式 */
+.chat-sider.mobile {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.chat-sider.mobile.visible {
+    transform: translateX(0);
+}
+
+/* 遮罩层 */
+.sider-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 999;
+}
+
+/* 手机端展开/收起按钮 */
+.expandBtn{
+    width:44px;
+    height:44px;
+    z-index: 0;
+    background-color: transparent;
+    border-radius: 50%;
+    transition: background-color .2s;
+    position: relative;
+    top: 26px;
+    left: 26px;
+    transform: translate(-50%, -50%);
+}
+.mobile-toggle-btn {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 100;
+}
+
+/* 手机端关闭按钮 */
+.close-sider-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.chat{
+    flex:1;
+    display: flex;
+    flex-direction: column;
+      position: relative;
+    gap: 16px;
+    padding-block: var(--ant-padding-lg);
 }
 .logo{
     display: flex;
@@ -112,16 +181,7 @@ code {
     position: relative;
     top:8px;
 }
-.chat{
-    height: 100%;
-    width: 100%;
-    box-sizing: border-box;
-    flex:1;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding-block: var(--ant-padding-lg);
-}
+
 .chatList{
     flex: 1;
     overflow-y: auto;
@@ -133,7 +193,7 @@ code {
     flex-direction: column;
     height: 100%;
 }
-    /* 无消息时的居中内容 */
+/* 无消息时的居中内容 */
 .center-content {
     display: flex;
     flex-direction: column;
@@ -411,14 +471,11 @@ code {
     .debtSectionContainer{
         width: 100% !important;
     }
-    /* 手机屏幕下隐藏sider */
-    .chat-layout{
-        min-width: 100%!important;
-        height: 100% !important;
-    }
-    .chat-sider{
-        display:none!important;
-    }
+
+     .center-content{
+        margin-top:60px;
+        height:auto!important;
+     }
 
 }
 @media screen and (min-width:576px) and (max-width:760px){
@@ -462,11 +519,33 @@ code {
       display: none;
     }
 
+    .chat-content {
+        padding-top: 60px; /* 为展开按钮留出空间 */
+    }
+    .messages-container {
+        padding: 0 8px;
+    }
+    .sender-bottom,
+    .sender-center {
+        padding: 0 12px;
+    }
+
 }
 @media screen and (min-width:760px) and (max-width:1200px){
     .miniBtnBox{
       display: none;
     }
+
+    .chat-sider {
+        transform: translateX(0) !important;
+    }
+    .mobile-toggle-btn {
+        display: none !important;
+    }
+    .close-sider-btn {
+        display: none !important;
+    }
+    
 }
 @media screen and (min-width: 1200px) {
     .ant-btn-sm{

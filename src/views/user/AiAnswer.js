@@ -2,14 +2,14 @@ import  { useEffect, useState,useRef } from 'react';
 import { Button, Avatar, Spin, Space,message,} from 'antd';
 import { Bubble,Conversations,Sender,Welcome } from "@ant-design/x";
 import { 
-  CopyOutlined,
-  DeleteOutlined,
-  DislikeOutlined,
-  EditOutlined,
-  LikeOutlined,
-  PlusOutlined,
-  QuestionCircleOutlined,
-  ReloadOutlined,
+    CopyOutlined,
+    DeleteOutlined,
+    DislikeOutlined,
+    EditOutlined,
+    LikeOutlined,
+    PlusOutlined,
+    QuestionCircleOutlined,
+    ReloadOutlined,
   } from '@ant-design/icons';
 import store from '../../store';
 // ==================== 自定义打字机效果 Hook ====================
@@ -86,7 +86,9 @@ const AiAnswer = () => {
     const [curConversation, setCurConversation] = useState(null);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
-
+    // 添加新的状态
+    const [isMobile, setIsMobile] = useState(false);
+    const [siderVisible, setSiderVisible] = useState(false);
     // 获取store数据
     const { userStore } = store;
     const abortController = useRef(null);
@@ -487,7 +489,7 @@ const AiAnswer = () => {
   };
     // ==================== 节点渲染 ====================
     const chatSider = (
-        <div className='chat-sider'>
+        <div className={`chat-sider ${isMobile ? 'mobile' : ''} ${siderVisible ? 'visible' : 'hidden'}`}>
             {/* 🌟 Logo */}
             <div className='logo'>
                 <img
@@ -501,7 +503,7 @@ const AiAnswer = () => {
             </div>
               {/* 🌟 添加会话 */}
             <Button
-                onClick={()=>createNewConversation()}
+                onClick={() => { createNewConversation();if (isMobile) setSiderVisible(false); }}
                 type="link"
                 className='addBtn'
                 icon={<PlusOutlined />}
@@ -513,7 +515,7 @@ const AiAnswer = () => {
                 items={conversations}
                 className='conversations'
                 activeKey={curConversation}
-                onActiveChange={switchConversation}
+                onActiveChange={(key) => { switchConversation(key); if (isMobile) setSiderVisible(false); }}
                 groupable
                 styles={{ item: { padding: '0 8px' } }}
                 menu={(conversation) => ({
@@ -527,6 +529,7 @@ const AiAnswer = () => {
                             if (newLabel) {
                                 renameConversation(conversation.key, newLabel);
                             }
+                            if (isMobile) setSiderVisible(false);
                         }
                     },
                     {
@@ -534,7 +537,7 @@ const AiAnswer = () => {
                         key: 'delete',
                         icon: <DeleteOutlined />,
                         danger: true,
-                        onClick: () => deleteConversation(conversation.key),
+                        onClick: () => { deleteConversation(conversation.key);if (isMobile) setSiderVisible(false); },
                     },
                 ],
                 })}
@@ -547,6 +550,18 @@ const AiAnswer = () => {
                 <Button type="text" icon={<QuestionCircleOutlined />} />
             </div>
         </div>
+    );
+    // 手机端展开按钮
+    const mobileToggleButton = isMobile && !siderVisible && (
+        <div className='expandBtn'>
+            <div className='mobile-toggle-btn'  onClick={() => setSiderVisible(true)}>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.2027 4.90036V6.43657H2.79727V4.90036H17.2027Z" fill="currentColor"></path>
+                    <path d="M10.9604 13.0635V14.5997H2.79727V13.0635H10.9604Z" fill="currentColor"></path>
+                </svg>
+            </div>
+        </div>
+
     );
     const hasMessages = messages && messages.length > 0;
     const chatList = (
@@ -614,6 +629,8 @@ const AiAnswer = () => {
     const chatContent = (
         <div className='chat-content'>
             {/* 无消息时显示欢迎界面和居中的输入框 */}
+            {/* 手机端展开按钮 */}
+             {mobileToggleButton}
             {!hasMessages && (
                 <div className='center-content'>
                     <div className='welcome-section'>
@@ -689,12 +706,33 @@ const AiAnswer = () => {
             }));
         }
 
-        return () => { isMounted = false };
+        const checkIsMobile = () => {
+            const mobile = window.innerWidth <= 576;
+            setIsMobile(mobile);
+            // 如果是桌面端，确保侧边栏可见
+            if (!mobile) {
+                setSiderVisible(true);
+            } else {
+                setSiderVisible(false);
+            }
+        };
+        // 初始检查
+        checkIsMobile();
+        // 监听窗口大小变化
+        window.addEventListener('resize', checkIsMobile);
+        return () => { isMounted = false; window.removeEventListener('resize', checkIsMobile); };
     }, []);
     
     return (
         <div className='chat-layout'>
-            {chatSider}
+             {/* 桌面端一直显示侧边栏，手机端根据状态显示 */}
+            {(!isMobile || siderVisible) && chatSider}
+
+             {/* 手机端添加遮罩层 */}
+            {isMobile && siderVisible && (
+                <div className='sider-mask' onClick={() => setSiderVisible(false)} />
+            )}
+
             <section className='chat'>
               {chatContent}
             </section>
