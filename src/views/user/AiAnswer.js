@@ -1,5 +1,5 @@
 import  { useEffect, useState,useRef } from 'react';
-import { Button, Avatar, Spin, Space,message,} from 'antd';
+import { Button, Avatar, Spin, Space,message,FloatButton,Modal,Input } from 'antd';
 import { Bubble,Conversations,Sender,Welcome } from "@ant-design/x";
 import { 
     CopyOutlined,
@@ -8,10 +8,11 @@ import {
     EditOutlined,
     LikeOutlined,
     PlusOutlined,
-    QuestionCircleOutlined,
+    HeartOutlined,
     ReloadOutlined,
   } from '@ant-design/icons';
 import store from '../../store';
+const { TextArea } = Input;
 // ==================== 自定义打字机效果 Hook ====================
 const useTypingEffect = () => {
     const timersRef = useRef(new Map());
@@ -89,6 +90,8 @@ const AiAnswer = () => {
     // 添加新的状态
     const [isMobile, setIsMobile] = useState(false);
     const [siderVisible, setSiderVisible] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);//指示词弹窗状态
+    const [promptWords, setPromptWords] = useState('');//指示词
     // 获取store数据
     const { userStore } = store;
     const abortController = useRef(null);
@@ -486,7 +489,26 @@ const AiAnswer = () => {
          const lastUserMessage = userMessages[userMessages.length - 1];
       onRequest(lastUserMessage.content);
     }
-  };
+    };
+     // ==================== 指示词事件处理 ====================
+    const showModal = () => {
+        // 如果有上次输入的内容，则清空
+        if (promptWords) {
+            setPromptWords('');
+        }
+        // 打开指示词模态窗
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+    const onTextareaChange = (e) => {
+        // console.log('输入的词---',e.target.value);
+        setPromptWords( e.target.value)
+    }
     // ==================== 节点渲染 ====================
     const chatSider = (
         <div className={`chat-sider ${isMobile ? 'mobile' : ''} ${siderVisible ? 'visible' : 'hidden'}`}>
@@ -547,7 +569,34 @@ const AiAnswer = () => {
                     <Avatar className='userAvatar' size={24} src={userStore.avatar} />
                     <div className='userName'>{userStore.userInfo.name}</div>
                 </div>
-                <Button type="text" icon={<QuestionCircleOutlined />} />
+                <Button type="text" icon={<HeartOutlined />} onClick={showModal} />
+                <Modal
+                    title="指示词"
+                    closable
+                    open={isModalOpen}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    okText='保存'
+                >
+                    <TextArea
+                        showCount
+                        value={promptWords}
+                        maxLength={1000}
+                        onChange={onTextareaChange}
+                        placeholder="请输入指示词"
+                        style={{ height: 120, resize: 'none' }}
+                        styles={{
+                        count: {
+                            position: 'absolute',
+                            bottom: '8px',
+                            right: '12px',
+                            background: 'transparent',
+                            color: 'rgba(0, 0, 0, 0.45)'
+                        }
+                    }}
+                    className="custom-textarea-wrapper"
+                        />
+                </Modal>
             </div>
         </div>
     );
@@ -561,75 +610,79 @@ const AiAnswer = () => {
                 </svg>
             </div>
         </div>
-
     );
     const hasMessages = messages && messages.length > 0;
     const chatList = (
         <div className='chatList'>
         {hasMessages? (
             /* 🌟 消息列表 */
-                <Bubble.List
-                ref={listRef}
-                items={messages.map((msg, index) => ({
-                        key: msg.id || msg.timestamp,
-                        content: msg.content,
-                        role: msg.role,
-                        classNames: {
-                        content: msg.status === 'streaming' ? 'streamingMessage' : '',
-                        },
-                        // 对于 streaming 状态的消息，使用打字机效果
-                       typing: msg.status === 'typing' ? { step: 1, interval: 100 } : false,
-                        // 可以根据状态添加额外样式
-                        style: msg.status === 'error' ? { 
-                            color: '#ff4d4f',
-                            backgroundColor: '#fff2f0'
-                        } : {}
-                }))}
-                style={{ 
-                        height: '100%', 
-                        maxWidth: '700px',
-                        margin: '0 auto',
-                        padding: '0 16px'
-                    }}
-                roles={{
-                    assistant: {
-                        placement: 'start',
-                        avatar: ( <Avatar 
-                            src="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*eco6RrQhxbMAAAAAAAAAAAAADgCCAQ/original"
-                            size="small"
-                                />),
-                        footer: (content) => {
-                             // 只在消息完成时显示操作按钮
-                            const message = messages.find(m => m.content === content);
-                            if (message && message.status === 'streaming') {
-                                return null;
-                            }
-                            return (
-                                <div style={{ display: 'flex' }}>
-                                    <Button type="text" size="small" icon={<ReloadOutlined />}  onClick={regenerateResponse}/>
-                                    <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => copyMessage(content)}/>
-                                    <Button type="text" size="small" icon={<LikeOutlined />} />
-                                    <Button type="text" size="small" icon={<DislikeOutlined />} />
+                <div>
+                    <Bubble.List
+                    ref={listRef}
+                    items={messages.map((msg, index) => ({
+                            key: msg.id || msg.timestamp,
+                            content: msg.content,
+                            role: msg.role,
+                            classNames: {
+                            content: msg.status === 'streaming' ? 'streamingMessage' : '',
+                            },
+                            // 对于 streaming 状态的消息，使用打字机效果
+                        typing: msg.status === 'typing' ? { step: 1, interval: 100 } : false,
+                            // 可以根据状态添加额外样式
+                            style: msg.status === 'error' ? { 
+                                color: '#ff4d4f',
+                                backgroundColor: '#fff2f0'
+                            } : {}
+                    }))}
+                    style={{ 
+                            height: '100%', 
+                            maxWidth: '700px',
+                            margin: '0 auto',
+                            padding: '0 16px'
+                        }}
+                    roles={{
+                        assistant: {
+                            placement: 'start',
+                            avatar: ( <Avatar 
+                                src="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*eco6RrQhxbMAAAAAAAAAAAAADgCCAQ/original"
+                                size="small"
+                                    />),
+                            footer: (content) => {
+                                // 只在消息完成时显示操作按钮
+                                const message = messages.find(m => m.content === content);
+                                if (message && message.status === 'streaming') {
+                                    return null;
+                                }
+                                return (
+                                    <div style={{ display: 'flex' }}>
+                                        <Button type="text" size="small" icon={<ReloadOutlined />}  onClick={regenerateResponse}/>
+                                        <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => copyMessage(content)}/>
+                                        <Button type="text" size="small" icon={<LikeOutlined />} />
+                                        <Button type="text" size="small" icon={<DislikeOutlined />} />
+                                    </div>
+                                    )
+                            },
+                            loadingRender: () => (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <Spin size="small" />
+                                    <span style={{ fontSize: 12, color: '#999' }}>思考中...</span>
                                 </div>
-                                )
+                            ),
                         },
-                        loadingRender: () => (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <Spin size="small" />
-                                <span style={{ fontSize: 12, color: '#999' }}>思考中...</span>
-                            </div>
-                        ),
-                    },
-                    user: { placement: 'end', avatar: (<Avatar src={userStore.avatar || 'https://example.com/user-avatar.png'} size="small"/>) },
-                }}
-            />
-            ) :null}
+                        user: { placement: 'end', avatar: (<Avatar src={userStore.avatar || 'https://example.com/user-avatar.png'} size="small"/>) },
+                    }}
+                    />
+                    <FloatButton.BackTop />
+                </div>
+                
+            ) : null}
+           
         </div>
+        
     );
     const chatContent = (
         <div className='chat-content'>
             {/* 无消息时显示欢迎界面和居中的输入框 */}
-            {/* 手机端展开按钮 */}
              {mobileToggleButton}
             {!hasMessages && (
                 <div className='center-content'>
@@ -667,7 +720,6 @@ const AiAnswer = () => {
                     </div>
                 </div>
             )}
-            
             {/* 有消息时显示消息列表和底部输入框 */}
             {hasMessages && (
                 <>
@@ -696,7 +748,7 @@ const AiAnswer = () => {
             )}
         </div>
     );
-    
+
     useEffect(() => {
         let isMounted = true;  
         if (curConversation && messages.length > 0 && isMounted) {
@@ -705,7 +757,7 @@ const AiAnswer = () => {
                 [curConversation]: messages,
             }));
         }
-
+       
         const checkIsMobile = () => {
             const mobile = window.innerWidth <= 576;
             setIsMobile(mobile);

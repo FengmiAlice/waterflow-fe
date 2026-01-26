@@ -245,13 +245,6 @@ code {
     margin: 0 auto;
     padding:16px;
 }
-/* .loadingMessage{
-    background-image: linear-gradient(90deg, #ff6b23 0%, #af3cb8 31%, #53b6ff 89%);
-    background-size: 100% 2px;
-    background-repeat: no-repeat;
-    background-position: bottom;
-    min-height: 20px;
-} */
 .placeholder {
     padding-top: 32px;
 }
@@ -292,9 +285,6 @@ code {
 .ant-bubble-placement-start {
     margin-bottom: 16px;
 }
-/* .ant-sender-content{
-    display: block !important;
-} */
  .ant-sender .ant-sender-content{
     align-items: center!important;
  }
@@ -337,7 +327,14 @@ code {
     animation: blink 1s infinite;
     vertical-align: middle;
 }
+.custom-textarea-wrapper {
+    position: relative;
+    padding-bottom: 24px; /* 为计数器留出空间 */
+}
 
+.custom-textarea-wrapper .ant-input {
+    padding-bottom: 32px; /* 防止文字被计数器遮挡 */
+}
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
@@ -471,11 +468,13 @@ code {
     .debtSectionContainer{
         width: 100% !important;
     }
-
-     .center-content{
+    .center-content{
         margin-top:60px;
         height:auto!important;
-     }
+    }
+    .messages-container {
+        margin-top:40px;
+    }
 
 }
 @media screen and (min-width:576px) and (max-width:760px){
