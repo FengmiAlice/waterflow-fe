@@ -198,3 +198,13 @@ export function typePieInvestCurrent(params) {
 export function typeLineInvestAmount(data) {
     return http('post', '/api1/report/statistics/multiData/invest', data)
 }
+
+/***********************智能聊天模块*****************************/
+// 获取智能提示词接口
+export function getPromptData(params) {
+    return http('get', "/api1/v1/chat/prompt", params)
+}
+// 添加智能提示词接口
+export function addPrompt(data) {
+    return http('post', "/api1/v1/chat/prompt", data)
+}

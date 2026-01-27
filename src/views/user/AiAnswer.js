@@ -13,12 +13,13 @@ import {
     ReloadOutlined,
   } from '@ant-design/icons';
 import store from '../../store';
+import {getPromptData,addPrompt} from '../../api/user';
 const { TextArea } = Input;
 
 const AiAnswer = () => {
     const { startTypingEffect, stopTypingEffect } = useTypingEffect(); // 获取打字效果函数
     const [inputValue, setInputValue] = useState("");
-    const [messageHistory, setMessageHistory] = useState({});
+    // const [messageHistory, setMessageHistory] = useState({});
     const [conversations, setConversations] = useState([]);
     const [curConversation, setCurConversation] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -34,6 +35,34 @@ const AiAnswer = () => {
     const listRef = useRef(null);
     const senderRef = useRef(null);
 
+    useEffect(() => {
+        getPromptWordsData();//获取提示词初始化数据
+        loadConverSationList();//获取会话列表
+        let isMounted = true;  
+        // if (curConversation && messages.length > 0 && isMounted) {
+        //     setMessageHistory((prev) => ({
+        //         ...prev,
+        //         [curConversation]: messages,
+        //     }));
+        // }
+    
+        const checkIsMobile = () => {
+            const mobile = window.innerWidth <= 576;
+            setIsMobile(mobile);
+            // 如果是桌面端，确保侧边栏可见
+            if (!mobile) {
+                setSiderVisible(true);
+            } else {
+                setSiderVisible(false);
+            }
+        };
+        // 初始检查
+        checkIsMobile();
+        // 监听窗口大小变化
+        window.addEventListener('resize', checkIsMobile);
+        return () => { isMounted = false; window.removeEventListener('resize', checkIsMobile); };
+    }, []);
+    
      // 生成默认的会话标签
     const generateDefaultLabel = (userInput) => {
         if (!userInput) return '新对话';
@@ -68,18 +97,13 @@ const AiAnswer = () => {
             return response.json();
         },
          // 获取会话列表
-        getConversationsData: async (options = {}) => {
-            const response = await fetch(`http://waterflow-cloud.cn/v1/chat/conversations`, {
+        getConversationsData: async () => {                     
+            const response = await fetch(`http://waterflow-cloud.cn/v1/chat/records/list`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${userStore.token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    model: 'Qwen3-8B',
-                   
-                }),
-                signal: options.signal
             });
             
             if (!response.ok) {
@@ -318,30 +342,68 @@ const AiAnswer = () => {
         setInputValue('');
     };
     // ==================== 会话管理 ====================
+    // 根据时间分组
+    const getTimeGroup = (timestamp) => {
+        const now = new Date();
+        const date = new Date(timestamp);
+        const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 0) return '今天';
+        if (diffDays === 1) return '昨天';
+        if (diffDays < 7) return '最近7天';
+        if (diffDays < 30) return '最近30天';
+        return '更早';
+    };
+    const loadConverSationList = async () => {
+        try {
+            const response = await chatRequest.getConversationsData();
+            console.log('获取会话列表数据response',response)
+            if (response.success === true) {
+                let list = response.page.list;
+                console.log('会话列表数据：', list)
+                // 转换后端数据格式到前端格式
+                const formattedConversations = list.map(conv => ({
+                    key:  conv.recordId,
+                    label: conv.label || '新对话',
+                    group: getTimeGroup(conv.create_time),
+                    timestamp: conv.updateTime || Date.now(),
+                    createTime: conv.create_time || new Date().toISOString(),
+                    // 保留原始数据，便于后续使用
+                    raw: conv
+                }));
+                setConversations(formattedConversations);
+                setCurConversation(null);
+                setMessages([]);
+            }
+            
+        }catch(error) {
+            message.error('获取会话列表失败',error);
+        }
+   }
     const createNewConversation = (userInput = '') => {
         if (typeof userInput !== 'string') { 
              userInput = '';
         }
         if (loading) {
-        message.error('正在请求中，请等待请求完成或取消当前请求');
-        return;
+            message.error('正在请求中，请等待请求完成或取消当前请求');
+            return;
         }
     
         const now = Date.now().toString();
         const newConversation = {
-        key: now,
-        label: generateDefaultLabel(userInput),
-        group: '今天',
+            key: now,
+            label: generateDefaultLabel(userInput),
+            group: '今天',
             timestamp: now,
-        createTime: new Date().toISOString()
+            createTime: new Date().toISOString()
         };
-        // 保存当前会话消息
-        if (curConversation && messages.length > 0) {
-            setMessageHistory(prev => ({
-            ...prev,
-            [curConversation]: messages
-            }));
-        }
+        // // 保存当前会话消息
+        // if (curConversation && messages.length > 0) {
+        //     setMessageHistory(prev => ({
+        //     ...prev,
+        //     [curConversation]: messages
+        //     }));
+        // }
         setConversations(prev => [newConversation, ...prev]);
         setCurConversation(now);
         setMessages([]);
@@ -356,13 +418,13 @@ const AiAnswer = () => {
         if (loading) {
             abortController.current?.abort();
         }
-        // 保存当前会话的消息到历史记录
-        if (curConversation && messages.length > 0) {
-            setMessageHistory(prev => ({
-                    ...prev,
-                    [curConversation]: messages
-                }));
-        }
+        // // 保存当前会话的消息到历史记录
+        // if (curConversation && messages.length > 0) {
+        //     setMessageHistory(prev => ({
+        //             ...prev,
+        //             [curConversation]: messages
+        //         }));
+        // }
         // 切换到新会话
         setCurConversation(key);
         //    // 从历史记录中恢复消息
@@ -385,9 +447,9 @@ const AiAnswer = () => {
                     setMessages([]);
                 }
                 // 更新消息历史
-                const newMessageHistory = { ...messageHistory };
-                delete newMessageHistory[key];
-                setMessageHistory(newMessageHistory);
+                // const newMessageHistory = { ...messageHistory };
+                // delete newMessageHistory[key];
+                // setMessageHistory(newMessageHistory);
             }
         } catch (error) {
             console.error('删除会话失败:', error);
@@ -421,26 +483,52 @@ const AiAnswer = () => {
     
     // 获取最后一条用户消息
     const userMessages =  messages.filter(msg => msg.role === 'user');
-      if (userMessages.length > 0) {
-         const lastUserMessage = userMessages[userMessages.length - 1];
-      onRequest(lastUserMessage.content);
-    }
+        if (userMessages.length > 0) {
+            const lastUserMessage = userMessages[userMessages.length - 1];
+            onRequest(lastUserMessage.content);
+        }
     };
-     // ==================== 指示词事件处理 ====================
+    // ==================== 指示词事件处理 ====================
+    // 获取提示词数据
+    function getPromptWordsData(){
+        getPromptData({}).then((res) => {
+            // console.log('提示词数据---',res)
+            if (res.data.success === true) {
+                setPromptWords(res.data.obj.prompt);
+            }
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+    // 打开提示词弹窗事件
     const showModal = () => {
         // 如果有上次输入的内容，则清空
         if (promptWords) {
             setPromptWords('');
         }
         // 打开指示词模态窗
+        getPromptWordsData();
         setIsModalOpen(true);
     };
+    // 提示词弹窗确认按钮事件
     const handleOk = () => {
-        setIsModalOpen(false);
+        let param = {
+            prompt: promptWords,
+        }
+        addPrompt(param).then((res) => {
+            if (res.data.success === true) {
+                setIsModalOpen(false);
+                  message.success("设置提示词成功");
+            }
+        }).catch((error)=>{
+            console.log(error)
+        })
     };
+    // 提示词弹窗取消按钮事件
     const handleCancel = () => {
         setIsModalOpen(false);
     };
+    // 输入框change事件
     const onTextareaChange = (e) => {
         // console.log('输入的词---',e.target.value);
         setPromptWords( e.target.value)
@@ -684,32 +772,8 @@ const AiAnswer = () => {
             )}
         </div>
     );
+    
 
-    useEffect(() => {
-        let isMounted = true;  
-        if (curConversation && messages.length > 0 && isMounted) {
-            setMessageHistory((prev) => ({
-                ...prev,
-                [curConversation]: messages,
-            }));
-        }
-       
-        const checkIsMobile = () => {
-            const mobile = window.innerWidth <= 576;
-            setIsMobile(mobile);
-            // 如果是桌面端，确保侧边栏可见
-            if (!mobile) {
-                setSiderVisible(true);
-            } else {
-                setSiderVisible(false);
-            }
-        };
-        // 初始检查
-        checkIsMobile();
-        // 监听窗口大小变化
-        window.addEventListener('resize', checkIsMobile);
-        return () => { isMounted = false; window.removeEventListener('resize', checkIsMobile); };
-    }, []);
     
     return (
         <div className='chat-layout'>
