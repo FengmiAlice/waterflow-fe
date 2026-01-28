@@ -9,7 +9,6 @@ import {
     EditOutlined,
     LikeOutlined,
     PlusOutlined,
-    HeartOutlined,
     ReloadOutlined,
   } from '@ant-design/icons';
 import store from '../../store';
@@ -19,7 +18,6 @@ const { TextArea } = Input;
 const AiAnswer = () => {
     const { startTypingEffect, stopTypingEffect } = useTypingEffect(); // 获取打字效果函数
     const [inputValue, setInputValue] = useState("");
-    // const [messageHistory, setMessageHistory] = useState({});
     const [conversations, setConversations] = useState([]);
     const [curConversation, setCurConversation] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -29,6 +27,7 @@ const AiAnswer = () => {
     const [siderVisible, setSiderVisible] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);//指示词弹窗状态
     const [promptWords, setPromptWords] = useState('');//指示词
+
     // 获取store数据
     const { userStore } = store;
     const abortController = useRef(null);
@@ -43,30 +42,33 @@ const AiAnswer = () => {
     };
 
     useEffect(() => {
-        let isMounted = true;  
-        if (isMounted) {
-            getPromptWordsData();//获取提示词初始化数据
-            loadConverSationList();//获取会话列表
-        }
-        //检查是否是移动端设备
-        const checkIsMobile = () => {
-            const mobile = window.innerWidth <= 576;
-            setIsMobile(mobile);
-            // 如果是桌面端，确保侧边栏可见
-            if (!mobile) {
-                setSiderVisible(true);
-            } else {
-                setSiderVisible(false);
+            let isMounted = true;  
+            if ( isMounted) {
+                getPromptWordsData();//获取提示词初始化数据
+                loadConverSationList();//获取会话列表
             }
-        };
-        // 初始检查
-        checkIsMobile();
-        // 监听窗口大小变化
-        window.addEventListener('resize', checkIsMobile);
-        return () => { isMounted = false; window.removeEventListener('resize', checkIsMobile); };
+            //检查是否是移动端设备
+            const checkIsMobile = () => {
+                const mobile = window.innerWidth <= 576;
+                setIsMobile(mobile);
+                // 如果是桌面端，确保侧边栏可见
+                if (!mobile) {
+                    setSiderVisible(true);
+                } else {
+                    setSiderVisible(false);
+                }
+            };
+            // 初始检查
+            checkIsMobile();
+            // 监听窗口大小变化
+            window.addEventListener('resize', checkIsMobile);
+       
+            return () => {
+                isMounted = false;
+                window.removeEventListener('resize', checkIsMobile);
+            };
     }, []);
-    
-   
+
     // ==================== request 配置 ====================
     // 创建请求实例
     const chatRequest = {
@@ -518,7 +520,8 @@ const AiAnswer = () => {
         })
     }
     // 打开提示词弹窗事件
-    const showModal = () => {
+    const showModal = (e) => {
+         e.stopPropagation(); // 阻止事件冒泡
         // 如果有上次输入的内容，则清空
         if (promptWords) {
             setPromptWords('');
@@ -610,7 +613,11 @@ const AiAnswer = () => {
                     <Avatar className='userAvatar' size={24} src={userStore.avatar} />
                     <div className='userName'>{userStore.userInfo.name}</div>
                 </div>
-                <Button type="text" icon={<HeartOutlined />} onClick={showModal} />
+                <div className='shadowSider' onClick={showModal} title='个性提示语'>
+                    <svg t="1769570579134" className="single-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2497" width="16" height="16">
+                        <path d="M710.144 375.296l168.448-168.448-61.44-61.44-168.448 168.448 61.44 61.44zM967.68 206.848c0 10.24-3.584 18.944-10.24 26.112L217.088 972.8c-6.656 6.656-16.384 10.752-26.112 10.24-9.728 0.512-18.944-3.584-26.112-10.24L51.2 858.624c-6.656-6.656-10.752-16.384-10.24-26.112 0-10.24 3.584-18.944 10.24-26.112L791.552 66.56c6.656-6.656 16.384-10.752 26.112-10.24 10.24 0 18.944 3.584 26.112 10.24L957.44 180.736c6.656 6.656 10.24 15.36 10.24 26.112zM189.952 97.28l56.32 17.408-56.32 17.408-17.408 56.32-17.408-56.32-56.32-17.408 56.32-17.408 17.408-56.32 17.408 56.32z m201.728 93.184l112.64 34.304-112.64 34.304-34.304 112.64-34.304-112.64-112.64-34.304 112.64-34.304 34.304-112.64 34.304 112.64z m535.04 274.944l56.32 17.408-56.32 17.408-17.408 56.32-17.408-56.32-56.32-17.408 56.32-17.408 17.408-56.32 17.408 56.32zM558.592 97.28l56.32 17.408-56.32 17.408-17.408 56.32-17.408-56.32-56.32-17.408 56.32-17.408 17.408-56.32 17.408 56.32z m0 0" p-id="2498" fill="#0f1115"></path>
+                    </svg>
+                </div>
                 <Modal
                     title="指示词"
                     closable
