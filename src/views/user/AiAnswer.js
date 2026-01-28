@@ -27,7 +27,9 @@ const AiAnswer = () => {
     const [siderVisible, setSiderVisible] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);//指示词弹窗状态
     const [promptWords, setPromptWords] = useState('');//指示词
-
+  // 添加编辑相关状态
+    const [renameModalVisible, setRenameModalVisible] = useState(false); // 重命名弹窗状态
+    const [renamingConversation, setRenamingConversation] = useState(null); // 正在重命名的会话
     // 获取store数据
     const { userStore } = store;
     const abortController = useRef(null);
@@ -43,7 +45,7 @@ const AiAnswer = () => {
 
     useEffect(() => {
             let isMounted = true;  
-            if ( isMounted) {
+            if (  isMounted) {
                 getPromptWordsData();//获取提示词初始化数据
                 loadConverSationList();//获取会话列表
             }
@@ -475,20 +477,34 @@ const AiAnswer = () => {
             console.error('删除会话失败:', error);
         }
     };
-    //   重命名会话
-    const renameConversation =  (key, newLabel) => {
-        // try {
-        //     await chatRequest.updateConversationData(key,newLabel); // 更新本地会话
-             setConversations(prev => 
+    // //   重命名会话
+    // const renameConversation =  async(key, newLabel) => {
+    //     try {
+    //         await chatRequest.updateConversationData(key,newLabel); // 更新本地会话
+    //          setConversations(prev => 
+    //             prev.map(conv => 
+    //                 conv.key === key ? { ...conv, label: newLabel } : conv
+    //             )
+    //         )
+    //     }catch (error) {
+    //         console.error('重命名会话失败:', error);
+    //     }
+    // };
+    // 重命名弹窗会话确认按钮事件
+    const handleConversationConfirm = async () => {
+        if (renamingConversation && renamingConversation.label.trim()) {
+            await chatRequest.updateConversationData(renamingConversation.key, renamingConversation.label.trim());
+            setConversations(prev => 
                 prev.map(conv => 
-                    conv.key === key ? { ...conv, label: newLabel } : conv
+                    conv.key === renamingConversation.key 
+                        ? { ...conv, label: renamingConversation.label.trim() } 
+                        : conv
                 )
-            )
-        // }catch (error) {
-        //     console.error('重命名会话失败:', error);
-        // }
-    };
-
+            );
+        }
+        setRenameModalVisible(false);
+        setRenamingConversation(null);
+   }
     // ==================== 消息处理函数 ====================
     // 复制消息
     const copyMessage = (content) => {
@@ -553,6 +569,7 @@ const AiAnswer = () => {
         // console.log('输入的词---',e.target.value);
         setPromptWords( e.target.value)
     }
+   
     // ==================== 节点渲染 ====================
     const chatSider = (
         <div className={`chat-sider ${isMobile ? 'mobile' : ''} ${siderVisible ? 'visible' : 'hidden'}`}>
@@ -584,6 +601,7 @@ const AiAnswer = () => {
                 onActiveChange={(key) => { switchConversation(key); if (isMobile) setSiderVisible(false); }}
                 groupable
                 styles={{ item: { padding: '0 8px' } }}
+               
                 menu={(conversation) => ({
                 items: [
                     {
@@ -591,10 +609,12 @@ const AiAnswer = () => {
                         key: 'rename',
                         icon: <EditOutlined />,
                         onClick: () => {
-                            const newLabel = prompt('请输入新的对话名称:', conversation.label);
-                            if (newLabel) {
-                                renameConversation(conversation.key, newLabel);
-                            }
+                            setRenamingConversation(conversation);
+                            setRenameModalVisible(true);
+                            // const newLabel = prompt('请输入新的对话名称:', conversation.label);
+                            // if (newLabel) {
+                            //     renameConversation(conversation.key, newLabel);
+                            // }
                             if (isMobile) setSiderVisible(false);
                         }
                     },
@@ -608,6 +628,25 @@ const AiAnswer = () => {
                 ],
                 })}
             />
+            {/* 重命名会话弹窗*/}
+            <Modal
+                title="重命名会话"
+                open={renameModalVisible}
+                onOk={handleConversationConfirm}
+                onCancel={() => {
+                    setRenameModalVisible(false);
+                    setRenamingConversation(null);
+                }}
+            >
+                <Input
+                    value={renamingConversation?.label || ''}
+                    onChange={(e) => setRenamingConversation(prev => 
+                        prev ? {...prev, label: e.target.value} : null
+                    )}
+                    placeholder="请输入"
+                    onPressEnter={handleConversationConfirm}
+                />
+            </Modal>
             <div className='siderFooter'>
                 <div className='leftSider'>
                     <Avatar className='userAvatar' size={24} src={userStore.avatar} />
