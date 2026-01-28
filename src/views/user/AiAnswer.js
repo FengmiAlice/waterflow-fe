@@ -34,18 +34,21 @@ const AiAnswer = () => {
     const abortController = useRef(null);
     const listRef = useRef(null);
     const senderRef = useRef(null);
+    // 生成默认的会话标签
+    const generateDefaultLabel = (userInput) => {
+        if (!userInput) return '新对话';
+        return userInput.length > 20 
+            ? userInput.substring(0, 20) + '...' 
+            : userInput;
+    };
 
     useEffect(() => {
-        getPromptWordsData();//获取提示词初始化数据
-        loadConverSationList();//获取会话列表
         let isMounted = true;  
-        // if (curConversation && messages.length > 0 && isMounted) {
-        //     setMessageHistory((prev) => ({
-        //         ...prev,
-        //         [curConversation]: messages,
-        //     }));
-        // }
-    
+        if (isMounted) {
+            getPromptWordsData();//获取提示词初始化数据
+            loadConverSationList();//获取会话列表
+        }
+        //检查是否是移动端设备
         const checkIsMobile = () => {
             const mobile = window.innerWidth <= 576;
             setIsMobile(mobile);
@@ -63,13 +66,7 @@ const AiAnswer = () => {
         return () => { isMounted = false; window.removeEventListener('resize', checkIsMobile); };
     }, []);
     
-     // 生成默认的会话标签
-    const generateDefaultLabel = (userInput) => {
-        if (!userInput) return '新对话';
-        return userInput.length > 20 
-            ? userInput.substring(0, 20) + '...' 
-            : userInput;
-    };
+   
     // ==================== request 配置 ====================
     // 创建请求实例
     const chatRequest = {
@@ -347,48 +344,71 @@ const AiAnswer = () => {
         const now = new Date();
         const date = new Date(timestamp);
         const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-        
+        const nowYear = now.getFullYear();
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+
         if (diffDays === 0) return '今天';
         if (diffDays === 1) return '昨天';
         if (diffDays < 7) return '最近7天';
         if (diffDays < 30) return '最近30天';
-        return '更早';
+        // 超过30天但在同一年内，显示月份
+        if (year === nowYear) {
+            return `${month}月`;
+        } else {
+            // 跨年显示年月
+            return `${year}年${month}月`;
+        }
     };
+    // 渲染会话列表
     const loadConverSationList = async () => {
         try {
             const response = await chatRequest.getConversationsData();
-            console.log('获取会话列表数据response',response)
+            // console.log('获取会话列表数据response',response)
             if (response.success === true) {
-                let list = response.page.list;
-                console.log('会话列表数据：', list)
+                let list = response.page.list;               
                 // 转换后端数据格式到前端格式
-                const formattedConversations = list.map(conv => ({
-                    key:  conv.recordId,
-                    label: conv.label || '新对话',
-                    group: getTimeGroup(conv.create_time),
-                    timestamp: conv.updateTime || Date.now(),
-                    createTime: conv.create_time || new Date().toISOString(),
-                    // 保留原始数据，便于后续使用
-                    raw: conv
-                }));
+                const formattedConversations = list.map(conv => {
+                const userMessage = conv.messages?.find(msg => msg.role === 'user');
+                const label = userMessage 
+                    ? (userMessage.content.length > 20 
+                        ? userMessage.content.substring(0, 20) + '...' 
+                        : userMessage.content)
+                        : '新对话';
+                    return {
+                            key:  conv.recordId,
+                            label: label,
+                            group: getTimeGroup(conv.create_time),
+                            timestamp: conv.create_time || Date.now(),
+                            createTime: conv.create_time || new Date().toISOString(),
+                            // 保留原始数据，便于后续使用
+                            raw: conv
+                    }
+                });
+                // console.log('格式化后的会话列表：', formattedConversations);
                 setConversations(formattedConversations);
-                setCurConversation(null);
+                // 如果有会话数据，默认选择第一个
+                if (formattedConversations.length > 0) {
+                    setCurConversation(formattedConversations[0].key);
+                } else {
+                    setCurConversation(null);
+                }
                 setMessages([]);
             }
             
         }catch(error) {
             message.error('获取会话列表失败',error);
         }
-   }
+    }
+    // 创建会话
     const createNewConversation = (userInput = '') => {
         if (typeof userInput !== 'string') { 
-             userInput = '';
+            userInput = '';
         }
         if (loading) {
             message.error('正在请求中，请等待请求完成或取消当前请求');
             return;
         }
-    
         const now = Date.now().toString();
         const newConversation = {
             key: now,
@@ -397,39 +417,40 @@ const AiAnswer = () => {
             timestamp: now,
             createTime: new Date().toISOString()
         };
-        // // 保存当前会话消息
-        // if (curConversation && messages.length > 0) {
-        //     setMessageHistory(prev => ({
-        //     ...prev,
-        //     [curConversation]: messages
-        //     }));
-        // }
         setConversations(prev => [newConversation, ...prev]);
         setCurConversation(now);
         setMessages([]);
+
         // 如果有用户输入，直接发送
         if (userInput) {
             setInputValue(userInput);
             onRequest(userInput);
+            loadConverSationList(); // 刷新会话列表
         }
-  };
-
-  const switchConversation = (key) => {
+    };
+    // 切换会话
+    const switchConversation = (key) => {
         if (loading) {
             abortController.current?.abort();
         }
-        // // 保存当前会话的消息到历史记录
-        // if (curConversation && messages.length > 0) {
-        //     setMessageHistory(prev => ({
-        //             ...prev,
-        //             [curConversation]: messages
-        //         }));
-        // }
-        // 切换到新会话
-        setCurConversation(key);
-        //    // 从历史记录中恢复消息
-        //     const historyMessages = messageHistory[key] || [];
-        setMessages([]);
+         // 从当前会话列表中找到要切换的会话
+        const targetConversation = conversations.find(conv => conv.key === key);
+        if (targetConversation) {
+            // 如果找到了，并且有原始消息数据，则设置消息
+            const rawMessages = targetConversation.raw?.messages;
+            if (rawMessages) {
+                setMessages(rawMessages);
+            } else {
+                // 如果没有，则清空消息
+                setMessages([]);
+            }
+            // 设置当前会话
+            setCurConversation(key);
+        } else {
+            // 如果没有找到，清空消息并设置当前会话为null
+            setMessages([]);
+            setCurConversation(null);
+        }
     };
     //   删除会话
     const deleteConversation = async (key) => {
@@ -446,16 +467,12 @@ const AiAnswer = () => {
                     setCurConversation(null);
                     setMessages([]);
                 }
-                // 更新消息历史
-                // const newMessageHistory = { ...messageHistory };
-                // delete newMessageHistory[key];
-                // setMessageHistory(newMessageHistory);
+                loadConverSationList(); // 刷新会话列表
             }
         } catch (error) {
             console.error('删除会话失败:', error);
         }
     };
-
     //   重命名会话
     const renameConversation =  (key, newLabel) => {
         // try {
@@ -472,21 +489,21 @@ const AiAnswer = () => {
 
     // ==================== 消息处理函数 ====================
     // 复制消息
-  const copyMessage = (content) => {
-    navigator.clipboard.writeText(content)
-      .then(() => message.success('已复制到剪贴板'))
-      .catch(() => message.error('复制失败'));
-  };
+    const copyMessage = (content) => {
+        navigator.clipboard.writeText(content)
+        .then(() => message.success('已复制到剪贴板'))
+        .catch(() => message.error('复制失败'));
+    };
     //重新生成
-  const regenerateResponse = () => {
-    if (messages.length < 2) return;
-    
-    // 获取最后一条用户消息
-    const userMessages =  messages.filter(msg => msg.role === 'user');
-        if (userMessages.length > 0) {
-            const lastUserMessage = userMessages[userMessages.length - 1];
-            onRequest(lastUserMessage.content);
-        }
+    const regenerateResponse = () => {
+        if (messages.length < 2) return;
+        
+        // 获取最后一条用户消息
+        const userMessages =  messages.filter(msg => msg.role === 'user');
+            if (userMessages.length > 0) {
+                const lastUserMessage = userMessages[userMessages.length - 1];
+                onRequest(lastUserMessage.content);
+            }
     };
     // ==================== 指示词事件处理 ====================
     // 获取提示词数据
@@ -772,9 +789,6 @@ const AiAnswer = () => {
             )}
         </div>
     );
-    
-
-    
     return (
         <div className='chat-layout'>
              {/* 桌面端一直显示侧边栏，手机端根据状态显示 */}
