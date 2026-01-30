@@ -341,7 +341,33 @@ code {
     background-repeat: no-repeat;
     background-position: bottom;
 }
+/* 会话容器样式 */
+.conversations-container {
+  flex: 1;
+  overflow-y: auto;
+  height: calc(100vh - 120px); /* 根据您的布局调整高度 */
+}
 
+/* 加载指示器样式 */
+.loading-indicator {
+  text-align: center;
+  padding: 12px 0;
+  color: var(--ant-color-text);
+}
+
+.no-more-data {
+  text-align: center;
+  padding: 12px 0;
+  color: var(--ant-color-text);
+  font-size: 14px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--ant-color-text);
+   font-size: 14px;
+}
 /* .cursor {
     display: inline-block;
     width: 8px;

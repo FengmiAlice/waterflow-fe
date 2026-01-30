@@ -1,4 +1,4 @@
-import  { useEffect, useState,useRef } from 'react';
+import  { useEffect, useState,useRef,useCallback } from 'react';
 import { Button, Avatar, Spin, Space,message,FloatButton,Modal,Input } from 'antd';
 import { Bubble, Conversations, Sender, Welcome } from "@ant-design/x";
 import { useTypingEffect } from '../../hooks/useTypingEffect';
@@ -10,6 +10,7 @@ import {
     LikeOutlined,
     PlusOutlined,
     ReloadOutlined,
+    LoadingOutlined
   } from '@ant-design/icons';
 import store from '../../store';
 import {getPromptData,addPrompt} from '../../api/user';
@@ -19,15 +20,20 @@ const AiAnswer = () => {
     const { startTypingEffect, stopTypingEffect } = useTypingEffect(); // 获取打字效果函数
     const [inputValue, setInputValue] = useState("");
     const [conversations, setConversations] = useState([]);
+    const [pagination, setPagination] = useState({
+        pageNum: 1,
+        pageSize: 10,
+        total: 0,
+        hasMore: true,
+        loading: false,
+    }); // 添加分页状态
     const [curConversation, setCurConversation] = useState(null);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
-    // 添加新的状态
     const [isMobile, setIsMobile] = useState(false);
     const [siderVisible, setSiderVisible] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);//指示词弹窗状态
     const [promptWords, setPromptWords] = useState('');//指示词
-  // 添加编辑相关状态
     const [renameModalVisible, setRenameModalVisible] = useState(false); // 重命名弹窗状态
     const [renamingConversation, setRenamingConversation] = useState(null); // 正在重命名的会话
     // 获取store数据
@@ -35,7 +41,11 @@ const AiAnswer = () => {
     const abortController = useRef(null);
     const listRef = useRef(null);
     const senderRef = useRef(null);
-    // 生成默认的会话标签
+    const containerRef = useRef(null);
+
+    const loadingRef = useRef(false);//添加一个 ref 来跟踪是否正在请求
+    const hasMoreRef = useRef(true);
+     // 生成默认的会话标签
     const generateDefaultLabel = (userInput) => {
         if (!userInput) return '新对话';
         return userInput.length > 20 
@@ -44,11 +54,12 @@ const AiAnswer = () => {
     };
 
     useEffect(() => {
-            let isMounted = true;  
+            let isMounted = true; 
             if (  isMounted) {
                 getPromptWordsData();//获取提示词初始化数据
-                loadConverSationList();//获取会话列表
+                loadConverSationList(1,false);//获取会话列表
             }
+           
             //检查是否是移动端设备
             const checkIsMobile = () => {
                 const mobile = window.innerWidth <= 576;
@@ -60,17 +71,16 @@ const AiAnswer = () => {
                     setSiderVisible(false);
                 }
             };
-            // 初始检查
-            checkIsMobile();
-            // 监听窗口大小变化
-            window.addEventListener('resize', checkIsMobile);
-       
+            checkIsMobile(); // 初始化时检查一次
+            window.addEventListener('resize', checkIsMobile);// 监听窗口大小变化
+            
             return () => {
                 isMounted = false;
                 window.removeEventListener('resize', checkIsMobile);
             };
     }, []);
 
+   
     // ==================== request 配置 ====================
     // 创建请求实例
     const chatRequest = {
@@ -98,8 +108,19 @@ const AiAnswer = () => {
             return response.json();
         },
          // 获取会话列表
-        getConversationsData: async () => {                     
-            const response = await fetch(`http://waterflow-cloud.cn/v1/chat/records/list`, {
+        getConversationsData: async (params = {}) => { 
+             // 构建查询参数
+            const queryParams = new URLSearchParams();
+            // 设置分页参数
+            if (params.pageNum) {
+                queryParams.append('pageNum', params.pageNum);
+            }
+            if (params.pageSize) {
+                queryParams.append('pageSize', params.pageSize);
+            }
+            const queryString = queryParams.toString();
+            const url = queryString ? `http://waterflow-cloud.cn/v1/chat/records/list?${queryString}` : 'http://waterflow-cloud.cn/v1/chat/records/list';
+            const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${userStore.token}`,
@@ -365,12 +386,46 @@ const AiAnswer = () => {
         }
     };
     // 渲染会话列表
-    const loadConverSationList = async () => {
+    const loadConverSationList = async (pageNum = 1, append = false) => {
+        // console.log(`开始加载第${pageNum}页，追加模式: ${append}`);
+        // console.log('当前加载状态:', loadingRef.current, 'hasMore:', hasMoreRef.current);
+        if (loadingRef.current || (pagination.loading && !append)) {
+            console.log('阻止重复加载');
+            return;
+        }
         try {
-            const response = await chatRequest.getConversationsData();
+            loadingRef.current = true; // 设置加载状态
+            setPagination(prev => ({ ...prev, loading: true }));
+            const response = await chatRequest.getConversationsData(
+                {   pageNum,
+                    pageSize: pagination.pageSize
+                }
+            );
             // console.log('获取会话列表数据response',response)
             if (response.success === true) {
-                let list = response.page.list;               
+                const {
+                    list = [],
+                    total = 0,
+                    pageNum: currentPage = 1,
+                    pageSize = pagination.pageSize
+                } = response.page;
+                // 处理空数据情况
+                if (!list || list.length === 0) {
+                    if (!append && conversations.length === 0) {
+                        // 首次加载无数据
+                        setConversations([]);
+                    }
+                    loadingRef.current = false;
+                    hasMoreRef.current = false;
+                    setPagination(prev => ({
+                        ...prev,
+                        pageNum:currentPage,
+                        total,
+                        hasMore: false,
+                        loading: false
+                    }));
+                    return;
+                }
                 // 转换后端数据格式到前端格式
                 const formattedConversations = list.map(conv => {
                 const userMessage = conv.messages?.find(msg => msg.role === 'user');
@@ -390,20 +445,131 @@ const AiAnswer = () => {
                     }
                 });
                 // console.log('格式化后的会话列表：', formattedConversations);
-                setConversations(formattedConversations);
-                // 如果有会话数据，默认选择第一个
-                if (formattedConversations.length > 0) {
-                    setCurConversation(formattedConversations[0].key);
+                // 如果是追加数据（加载更多），合并数组
+                if (append) {
+                    setConversations(prev => { 
+                         // 防止重复数据：过滤掉已经存在的key
+                        const existingKeys = new Set(prev.map(item => item.key));
+                        const newItems = formattedConversations.filter(item => !existingKeys.has(item.key));
+                         // 如果没有新数据，说明已经加载完了
+                        if (newItems.length === 0) {
+                            hasMoreRef.current = false;
+                        } 
+                        return [...prev, ...newItems];
+                    });
                 } else {
-                    setCurConversation(null);
+                    // 如果是刷新数据，直接替换
+                    setConversations(formattedConversations);
+                    // 如果是第一页，默认选择第一个会话
+                    if (pageNum === 1 && formattedConversations.length > 0) {
+                        setCurConversation(formattedConversations[0].key);
+                    }
                 }
-                setMessages([]);
+                // 正确计算hasMore：当前页码 * 每页条数 < 总条数
+                 const hasMoreData = (() => {
+                    // 如果当前页数据小于pageSize，肯定没有更多了
+                    if (list.length < pageSize) {
+                    return false;
+                    }
+                    
+                    // 如果当前页码 * 每页条数 >= 总条数，没有更多了
+                    if (currentPage * pageSize >= total) {
+                    return false;
+                    }
+                    
+                    return true;
+                })();
+                // 更新 refs
+                loadingRef.current = false;
+                hasMoreRef.current = hasMoreData;
+                // 更新分页信息
+                setPagination(prev => ({
+                    ...prev,
+                    pageNum:currentPage,
+                    total,
+                    hasMore: hasMoreData,
+                    loading: false
+                }));
+                
+                // 如果不是追加加载，清空消息
+                if (!append) {
+                    setMessages([]);
+                } else {
+                    loadingRef.current = false;
+                    setPagination(prev => ({ ...prev, loading: false }));
+                }
             }
             
         }catch(error) {
-            message.error('获取会话列表失败',error);
+            message.error('获取会话列表失败', error);
+            loadingRef.current = false;
+            setPagination(prev => ({ ...prev, loading: false }));
         }
     }
+    // 创建节流函数
+    const useThrottle = (fn, delay) => {
+        const timeoutRef = useRef(null);
+        const lastExecRef = useRef(0);
+        
+        return useCallback((...args) => {
+            const now = Date.now();
+            const timeSinceLastExec = now - lastExecRef.current;
+            
+            if (timeSinceLastExec >= delay) {
+            fn(...args);
+            lastExecRef.current = now;
+            } else {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+            
+            timeoutRef.current = setTimeout(() => {
+                fn(...args);
+                lastExecRef.current = Date.now();
+            }, delay - timeSinceLastExec);
+            }
+        }, [fn, delay]);
+    };
+
+    // 在组件中使用
+    const handleScrollThrottled = useThrottle((e) => {
+        const container = e.target;
+        const { scrollTop, scrollHeight, clientHeight } = container;
+        
+        // 距离底部100px时触发
+        const threshold = 100;
+        const isNearBottom = scrollHeight - scrollTop - clientHeight <= threshold;
+        
+        if (isNearBottom && !loadingRef.current && hasMoreRef.current) {
+            loadMoreConversations();
+        }
+    }, 200); // 200ms节流
+
+     // 添加滚动事件处理函数
+    const handleScroll = useCallback((e) => {
+        handleScrollThrottled(e);
+    }, []);
+
+    // 添加加载更多数据的函数
+    const loadMoreConversations = useCallback(() => {
+       // 双重检查防止重复加载
+        if (loadingRef.current || !hasMoreRef.current) {
+            return;
+        }
+        const nextPage = pagination.pageNum + 1;
+        loadConverSationList(nextPage, true);
+    }, [pagination.pageNum]);
+    // 重置分页状态
+    const resetPagination = () => {
+        loadingRef.current = false;
+        hasMoreRef.current = true;
+        setPagination(prev => ({
+            ...prev,
+            pageNum: 1,
+            hasMore: true,
+            loading: false
+        }));
+    };
     // 创建会话
     const createNewConversation = (userInput = '') => {
         if (typeof userInput !== 'string') { 
@@ -429,7 +595,8 @@ const AiAnswer = () => {
         if (userInput) {
             setInputValue(userInput);
             onRequest(userInput);
-            loadConverSationList(); // 刷新会话列表
+            resetPagination(); // 重置分页信息
+            loadConverSationList(1, false);
         }
     };
     // 切换会话
@@ -471,25 +638,13 @@ const AiAnswer = () => {
                     setCurConversation(null);
                     setMessages([]);
                 }
-                loadConverSationList(); // 刷新会话列表
+                resetPagination(); // 重置分页信息
+                loadConverSationList(1, false); // 重新加载会话列表
             }
         } catch (error) {
             console.error('删除会话失败:', error);
         }
     };
-    // //   重命名会话
-    // const renameConversation =  async(key, newLabel) => {
-    //     try {
-    //         await chatRequest.updateConversationData(key,newLabel); // 更新本地会话
-    //          setConversations(prev => 
-    //             prev.map(conv => 
-    //                 conv.key === key ? { ...conv, label: newLabel } : conv
-    //             )
-    //         )
-    //     }catch (error) {
-    //         console.error('重命名会话失败:', error);
-    //     }
-    // };
     // 重命名弹窗会话确认按钮事件
     const handleConversationConfirm = async () => {
         if (renamingConversation && renamingConversation.label.trim()) {
@@ -593,41 +748,59 @@ const AiAnswer = () => {
             >
                 开启新对话
             </Button>
-              {/* 🌟 会话管理 */}
-            <Conversations
-                items={conversations}
-                className='conversations'
-                activeKey={curConversation}
-                onActiveChange={(key) => { switchConversation(key); if (isMobile) setSiderVisible(false); }}
-                groupable
-                styles={{ item: { padding: '0 8px' } }}
-               
-                menu={(conversation) => ({
-                items: [
-                    {
-                        label: '重命名',
-                        key: 'rename',
-                        icon: <EditOutlined />,
-                        onClick: () => {
-                            setRenamingConversation(conversation);
-                            setRenameModalVisible(true);
-                            // const newLabel = prompt('请输入新的对话名称:', conversation.label);
-                            // if (newLabel) {
-                            //     renameConversation(conversation.key, newLabel);
-                            // }
-                            if (isMobile) setSiderVisible(false);
-                        }
-                    },
-                    {
-                        label: '删除',
-                        key: 'delete',
-                        icon: <DeleteOutlined />,
-                        danger: true,
-                        onClick: () => { deleteConversation(conversation.key);if (isMobile) setSiderVisible(false); },
-                    },
-                ],
-                })}
-            />
+            {/* 🌟 会话管理 */}
+            <div 
+                className="conversations-container"
+                ref={containerRef}
+                onScroll={handleScroll}>
+                <Conversations
+                    items={conversations}
+                    className='conversations'
+                    activeKey={curConversation}
+                    onActiveChange={(key) => { switchConversation(key); if (isMobile) setSiderVisible(false); }}
+                    groupable
+                    styles={{
+                        item: { padding: '0 8px' },
+                    }}
+                    menu={(conversation) => ({
+                    items: [
+                        {
+                            label: '重命名',
+                            key: 'rename',
+                            icon: <EditOutlined />,
+                            onClick: () => {
+                                setRenamingConversation(conversation);
+                                setRenameModalVisible(true);
+                                if (isMobile) setSiderVisible(false);
+                            }
+                        },
+                        {
+                            label: '删除',
+                            key: 'delete',
+                            icon: <DeleteOutlined />,
+                            danger: true,
+                            onClick: () => { deleteConversation(conversation.key);if (isMobile) setSiderVisible(false); },
+                        },
+                    ],
+                    })}
+                />
+                 {/* 加载状态指示器 */}
+                {pagination.loading && (
+                    <div className="loading-indicator">
+                    <Spin size="small" />
+                    <span style={{ marginLeft: 8,fontSize: 14}}>加载中...</span>
+                    </div>
+                )}
+                {/* 无更多数据提示 */}
+                {!pagination.hasMore && conversations.length > 0 && (
+                    <div className="no-more-data">---已经到底啦---</div>
+                )}
+                
+                {/* 暂无数据提示 */}
+                {!pagination.loading && conversations.length === 0 && (
+                    <div className="no-data">暂无会话</div>
+                )}
+            </div>
             {/* 重命名会话弹窗*/}
             <Modal
                 title="重命名会话"
