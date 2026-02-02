@@ -10,11 +10,43 @@ import {
     LikeOutlined,
     PlusOutlined,
     ReloadOutlined,
-    LoadingOutlined
+
   } from '@ant-design/icons';
 import store from '../../store';
 import {getPromptData,addPrompt} from '../../api/user';
+import { throttle } from 'echarts';
 const { TextArea } = Input;
+// 自定义防抖 Hook
+const useDebounce = (callback, delay) => {
+  const timeoutRef = useRef(null);
+  const callbackRef = useRef(callback);
+  
+  // 更新 callbackRef 当 callback 变化时
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+  
+  const debouncedFn = useCallback((...args) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    timeoutRef.current = setTimeout(() => {
+      callbackRef.current(...args);
+    }, delay);
+  }, [delay]);
+  
+  // 清理函数
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+  
+  return debouncedFn;
+};
 
 const AiAnswer = () => {
     const { startTypingEffect, stopTypingEffect } = useTypingEffect(); // 获取打字效果函数
@@ -41,8 +73,7 @@ const AiAnswer = () => {
     const abortController = useRef(null);
     const listRef = useRef(null);
     const senderRef = useRef(null);
-    const containerRef = useRef(null);
-
+    const observerRef = useRef(null);
     const loadingRef = useRef(false);//添加一个 ref 来跟踪是否正在请求
     const hasMoreRef = useRef(true);
      // 生成默认的会话标签
@@ -53,34 +84,6 @@ const AiAnswer = () => {
             : userInput;
     };
 
-    useEffect(() => {
-            let isMounted = true; 
-            if (  isMounted) {
-                getPromptWordsData();//获取提示词初始化数据
-                loadConverSationList(1,false);//获取会话列表
-            }
-           
-            //检查是否是移动端设备
-            const checkIsMobile = () => {
-                const mobile = window.innerWidth <= 576;
-                setIsMobile(mobile);
-                // 如果是桌面端，确保侧边栏可见
-                if (!mobile) {
-                    setSiderVisible(true);
-                } else {
-                    setSiderVisible(false);
-                }
-            };
-            checkIsMobile(); // 初始化时检查一次
-            window.addEventListener('resize', checkIsMobile);// 监听窗口大小变化
-            
-            return () => {
-                isMounted = false;
-                window.removeEventListener('resize', checkIsMobile);
-            };
-    }, []);
-
-   
     // ==================== request 配置 ====================
     // 创建请求实例
     const chatRequest = {
@@ -119,7 +122,7 @@ const AiAnswer = () => {
                 queryParams.append('pageSize', params.pageSize);
             }
             const queryString = queryParams.toString();
-            const url = queryString ? `http://waterflow-cloud.cn/v1/chat/records/list?${queryString}` : 'http://waterflow-cloud.cn/v1/chat/records/list';
+            const url = queryString ? `https://m1.apifoxmock.com/m1/685290-535011-default/records/list?${queryString}` : 'http://waterflow-cloud.cn/v1/chat/records/list';
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -387,15 +390,13 @@ const AiAnswer = () => {
     };
     // 渲染会话列表
     const loadConverSationList = async (pageNum = 1, append = false) => {
-        // console.log(`开始加载第${pageNum}页，追加模式: ${append}`);
-        // console.log('当前加载状态:', loadingRef.current, 'hasMore:', hasMoreRef.current);
         if (loadingRef.current || (pagination.loading && !append)) {
-            console.log('阻止重复加载');
             return;
         }
         try {
             loadingRef.current = true; // 设置加载状态
             setPagination(prev => ({ ...prev, loading: true }));
+            // console.log(`📡 发起请求: pageNum=${pageNum}, pageSize=${pagination.pageSize}`);
             const response = await chatRequest.getConversationsData(
                 {   pageNum,
                     pageSize: pagination.pageSize
@@ -469,14 +470,12 @@ const AiAnswer = () => {
                  const hasMoreData = (() => {
                     // 如果当前页数据小于pageSize，肯定没有更多了
                     if (list.length < pageSize) {
-                    return false;
+                        return false;
                     }
-                    
                     // 如果当前页码 * 每页条数 >= 总条数，没有更多了
                     if (currentPage * pageSize >= total) {
-                    return false;
+                        return false;
                     }
-                    
                     return true;
                 })();
                 // 更新 refs
@@ -494,10 +493,7 @@ const AiAnswer = () => {
                 // 如果不是追加加载，清空消息
                 if (!append) {
                     setMessages([]);
-                } else {
-                    loadingRef.current = false;
-                    setPagination(prev => ({ ...prev, loading: false }));
-                }
+                } 
             }
             
         }catch(error) {
@@ -506,59 +502,16 @@ const AiAnswer = () => {
             setPagination(prev => ({ ...prev, loading: false }));
         }
     }
-    // 创建节流函数
-    const useThrottle = (fn, delay) => {
-        const timeoutRef = useRef(null);
-        const lastExecRef = useRef(0);
-        
-        return useCallback((...args) => {
-            const now = Date.now();
-            const timeSinceLastExec = now - lastExecRef.current;
-            
-            if (timeSinceLastExec >= delay) {
-            fn(...args);
-            lastExecRef.current = now;
-            } else {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-            
-            timeoutRef.current = setTimeout(() => {
-                fn(...args);
-                lastExecRef.current = Date.now();
-            }, delay - timeSinceLastExec);
-            }
-        }, [fn, delay]);
-    };
-
-    // 在组件中使用
-    const handleScrollThrottled = useThrottle((e) => {
-        const container = e.target;
-        const { scrollTop, scrollHeight, clientHeight } = container;
-        
-        // 距离底部100px时触发
-        const threshold = 100;
-        const isNearBottom = scrollHeight - scrollTop - clientHeight <= threshold;
-        
-        if (isNearBottom && !loadingRef.current && hasMoreRef.current) {
-            loadMoreConversations();
-        }
-    }, 200); // 200ms节流
-
-     // 添加滚动事件处理函数
-    const handleScroll = useCallback((e) => {
-        handleScrollThrottled(e);
-    }, []);
-
-    // 添加加载更多数据的函数
-    const loadMoreConversations = useCallback(() => {
-       // 双重检查防止重复加载
+    // 加载更多函数
+    const loadMoreConversations = useCallback(throttle(() => {
+        //  console.log('开始加载更多，loadingRef:', loadingRef.current, 'hasMoreRef:', hasMoreRef.current);
         if (loadingRef.current || !hasMoreRef.current) {
+              console.log('阻止加载: 正在加载中或没有更多数据');
             return;
         }
         const nextPage = pagination.pageNum + 1;
         loadConverSationList(nextPage, true);
-    }, [pagination.pageNum]);
+    },500), [pagination.pageNum]);
     // 重置分页状态
     const resetPagination = () => {
         loadingRef.current = false;
@@ -724,7 +677,61 @@ const AiAnswer = () => {
         // console.log('输入的词---',e.target.value);
         setPromptWords( e.target.value)
     }
-   
+
+    // 使用防抖的加载更多函数
+    const loadMoreConversationsDebounced = useDebounce(loadMoreConversations, 300);
+
+    useEffect(() => {
+        let isMounted = true; 
+        if (isMounted) {
+                getPromptWordsData();//获取提示词初始化数据
+                loadConverSationList(1,false);//获取会话列表
+        }
+        //检查是否是移动端设备
+        const checkIsMobile = () => {
+            const mobile = window.innerWidth <= 576;
+            setIsMobile(mobile);
+            // 如果是桌面端，确保侧边栏可见
+            if (!mobile) {
+                setSiderVisible(true);
+            } else {
+                setSiderVisible(false);
+            }
+        };
+        checkIsMobile(); // 初始化时检查一次
+        window.addEventListener('resize', checkIsMobile);// 监听窗口大小变化
+    
+    
+        // 使用 setTimeout 确保 DOM 已经渲染
+        const setupScrollObserver = () => {
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+            }
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    const [entry] = entries;
+                    if (entry.isIntersecting && !loadingRef.current && hasMoreRef.current) {
+                        loadMoreConversationsDebounced();
+                    }
+                },
+                {
+                    root: null, // 使用视口作为root，监听元素是否进入视口
+                    rootMargin: '0px 0px 100px 0px',//提前100px触发
+                    threshold: 0.1,//// 当10%的元素可见时触发
+                }
+            );
+            observerRef.current = observer;
+        };
+        setTimeout(setupScrollObserver(),300);
+        return () => {
+            isMounted = false;
+            window.removeEventListener('resize', checkIsMobile);
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+            }
+        };
+    }, []);
+
     // ==================== 节点渲染 ====================
     const chatSider = (
         <div className={`chat-sider ${isMobile ? 'mobile' : ''} ${siderVisible ? 'visible' : 'hidden'}`}>
@@ -749,13 +756,10 @@ const AiAnswer = () => {
                 开启新对话
             </Button>
             {/* 🌟 会话管理 */}
-            <div 
-                className="conversations-container"
-                ref={containerRef}
-                onScroll={handleScroll}>
+            <div className="conversations-container">
                 <Conversations
                     items={conversations}
-                    className='conversations'
+                    className='conversations-sider'
                     activeKey={curConversation}
                     onActiveChange={(key) => { switchConversation(key); if (isMobile) setSiderVisible(false); }}
                     groupable
@@ -784,18 +788,23 @@ const AiAnswer = () => {
                     ],
                     })}
                 />
-                 {/* 加载状态指示器 */}
-                {pagination.loading && (
-                    <div className="loading-indicator">
-                    <Spin size="small" />
-                    <span style={{ marginLeft: 8,fontSize: 14}}>加载中...</span>
+                {/* 有数据时显示加载更多 */}
+                {pagination.hasMore && (
+                    <div style={{ padding: '16px', textAlign: 'center' }}>
+                        <Button 
+                            type="link"
+                            loading={pagination.loading}
+                            onClick={loadMoreConversations}
+                            disabled={loadingRef.current}
+                        >
+                            {pagination.loading ? <Spin size="small" /> :  '加载更多'}
+                        </Button>
                     </div>
                 )}
                 {/* 无更多数据提示 */}
                 {!pagination.hasMore && conversations.length > 0 && (
                     <div className="no-more-data">---已经到底啦---</div>
                 )}
-                
                 {/* 暂无数据提示 */}
                 {!pagination.loading && conversations.length === 0 && (
                     <div className="no-data">暂无会话</div>
