@@ -122,7 +122,7 @@ const AiAnswer = () => {
                 queryParams.append('pageSize', params.pageSize);
             }
             const queryString = queryParams.toString();
-            const url = queryString ? `https://m1.apifoxmock.com/m1/685290-535011-default/records/list?${queryString}` : 'http://waterflow-cloud.cn/v1/chat/records/list';
+            const url = queryString ? `http://waterflow-cloud.cn/v1/chat/records/list?${queryString}` : 'http://waterflow-cloud.cn/v1/chat/records/list';
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
