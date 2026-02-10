@@ -14,7 +14,6 @@ import {
   } from '@ant-design/icons';
 import store from '../../store';
 import {getPromptData,addPrompt} from '../../api/user';
-import { throttle } from 'echarts';
 const { TextArea } = Input;
 // 自定义防抖 Hook
 const useDebounce = (callback, delay) => {
@@ -47,6 +46,33 @@ const useDebounce = (callback, delay) => {
   
   return debouncedFn;
 };
+// 自定义节流throttleHook
+const throttle=(func, wait)=> {
+  let timeout = null;
+  let lastArgs = null;
+  let lastThis = null;
+  let lastCallTime = 0;
+
+  return function(...args) {
+    const now = Date.now();
+    lastArgs = args;
+    lastThis = this;
+
+    if (now - lastCallTime >= wait) {
+      // 第一次或超过等待时间，立即执行
+      lastCallTime = now;
+      func.apply(lastThis, lastArgs);
+    } else if (!timeout) {
+      // 在等待时间内，设置定时器
+      timeout = setTimeout(() => {
+        lastCallTime = Date.now();
+        timeout = null;
+        func.apply(lastThis, lastArgs);
+      }, wait - (now - lastCallTime));
+    }
+  };
+}
+
 
 const AiAnswer = () => {
     const { startTypingEffect, stopTypingEffect } = useTypingEffect(); // 获取打字效果函数
