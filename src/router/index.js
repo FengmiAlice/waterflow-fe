@@ -176,6 +176,14 @@ const routes = [
                         },
                         component: () => import( '../views/user/report/Flow'),
                     },
+                         {
+                        path: '/index/report/homeView',
+                        hidden: true,
+                        meta:{
+                            title: "家庭视图",
+                        },
+                        component: () => import( '../views/user/report/HomeView'),
+                    },
                 ],
                 
             },

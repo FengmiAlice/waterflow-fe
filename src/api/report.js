@@ -6,12 +6,16 @@ export function getOverview(params){
     return http('get','/api1/report/overview/content',params)
 }
 // 获取报告页面各类开支占比图数据
-export function getConsumePie(params){
+export function getConsume(params){
     return http('get','/api1/report/statistics/pieChart/consumeTypeAmount',params)
 }
 // 获取报告页面各类支付方式占比图数据
 export function getConsumePieType(params){
     return http('get','/api1/report/statistics/pieChart/consumePaymentAmount',params)
+}
+// 获取报告页面各类账户余额占比图数据
+export function getAccount(params){
+    return http('get','/api1/report/statistics/pieChart/typeAccount',params)
 }
 // 获取报告页面各类收入占比图数据
 export function getIncome(params){
@@ -60,4 +64,25 @@ export function executeGraphById(data) {
 // 删除图表
 export function deleteGraphById(params){
     return http('post','/api1/report/nodeflow/graph/delete?id='+params)
+}
+
+// 家庭支出收入余额信息数据
+export function getFamilyOverview(params){
+    return http('get', '/api1/report/family/overview/content', params)
+}
+// 家庭各类账户余额占比图数据
+export function getFamilyAccount(params){
+    return http('get','/api1/report/family/statistics/pieChart/typeAccount',params)
+}
+// 家庭各类支出方式占比图数据
+export function getFamilyConsume(params){
+    return http('get','/api1/report/family/statistics/pieChart/consumeTypeAmount',params)
+}
+// 家庭各类收入占比图数据
+export function getFamilyIncome(params){
+    return http('get','/api1/report/family/statistics/pieChart/incomeTypeAmount',params)
+}
+// 家庭支出、收入、余额折线图数据
+export function getFamilyLineConsumeData(data){
+    return http('post','/api1/report/family/statistics/multiData',data)
 }

@@ -537,4 +537,17 @@ height:100%;
     padding-left:0!important;
 }
 
+.reportSearchHeader{
+    display: flex;
+    justify-content:space-between;
 
+}
+.turnHomeView{
+    padding:0;
+    color: #1677ff;
+    
+}
+.turnHomeView:hover{
+    color: #1677ff!important;
+    background: transparent!important;
+}

@@ -6,7 +6,7 @@ import AsyncModal from '../../../components/Modal';
 import ArgPieEcharts from '../../../components/Echarts/pie';
 import ArgBarEcharts from '../../../components/Echarts/bar';
 import ArgLineEcharts from '../../../components/Echarts/line';
-import {getOverview,getConsumePie,getConsumePieType,getIncome,getConsumeIncomeLately,getThreeConsumeLately,getLineConsumeData,createGraph,getGraphList,executeGraphById,deleteGraphById} from '../../../api/report';
+import {getOverview,getConsume,getAccount,getConsumePieType,getIncome,getConsumeIncomeLately,getThreeConsumeLately,getLineConsumeData,createGraph,getGraphList,executeGraphById,deleteGraphById} from '../../../api/report';
 import { debounce } from '../../../utils/appTools';
 import { useNavigate } from 'react-router-dom';
 import {DeleteOutlined,EditOutlined} from '@ant-design/icons';
@@ -20,19 +20,18 @@ function Report(){
     const year = useRef('');//设置年份  
     const navigate = useNavigate();
 
-    // const reportFooter = useState(false);
     const [isModalType,setIsModalType] = useState('');//设置弹窗输出类型
     const [reportVisible,setReportVisble] = useState(false);//设置详细报告弹窗false
     const [reportTitle,setReportTitle] = useState('');//设置详细报告弹窗title
     const [reportText, setReportText] = useState('');//设置详细报告弹窗text
     const [customVisible, setCustomVisible] = useState(false);//设置自定义图表弹窗false
-
     const [consumeAcount,setConsumeAcount] = useState(0);
     const [incomeAcount,setIncomeAcount] =useState(0);
     const [wealthAcount,setWealthAcount] =useState(0);
     const [pieData,setPieData] = useState([]);  // 设置获取各类开支占比饼图数据
-    const [pieTypeData,setPieTypeData] =useState([]); // 设置获取各类支付方式占比饼图数据
-    const [incomeData,setIncomeData] =useState([]);  // 设置获取各类收入占比饼图数据
+    // const [pieTypeData,setPieTypeData] =useState([]); // 设置获取各类支付方式占比饼图数据
+    const [incomeData, setIncomeData] = useState([]);  // 设置获取各类收入占比饼图数据
+    const [accountData, setAccountData] = useState([]);  // 设置获取各类财富余额占比饼图数据
     const [barTitle,setBarTitle] = useState('');//最近半年收支柱状图title
     const [barXData,setBarXData] = useState([]);//最近半年收支柱状图x轴数据
     const [barData,setBarData] = useState([]);//最近半年收支柱状图series数据
@@ -45,19 +44,8 @@ function Report(){
     const [lineXData,setLineXData] =useState([]);//支出收入折线图x轴数据
     const [lineLenData,setLineLenData] = useState([]);//支出收入折线图例数据
     const [chartWords, setChartWords] = useState(''); //自定义图表关键词
-    
-
     const [customGraphArray,setCustomGraphArray] = useState([]); //自定义图表数据
-    // const [customBarTitle,setCustomBarTitle] = useState(''); //自定义柱状图title
-    // const [customBarXData,setCustomBarXData] = useState([]); //自定义柱状图x轴数据
-    // const [customBarSeriesData,setCustomBarSeriesData] = useState([]); //自定义柱状图series数据
-    // const [customPieTitle, setCustomPieTitle] = useState(''); //自定义饼图title
-    // const [customPieSeriesData, setCustomPieSeriesData] = useState([]); //自定义饼图series数据
-    // const [customLineSereiesData, setCustomLineSereiesData] = useState([]); //自定义折线图series数据
-    // const [customLineXData, setCustomLineXData] = useState([]); //自定义折线图x轴数据
-    // const [customLineTitle, setCustomLineTitle] = useState(''); //自定义折线图title
-    // const [customLineLegendData, setCustomLineLegendData] = useState([]); //自定义折线图legend数据
-
+    // 创建表单实例
     const [lineForm] = Form.useForm();
     const startDate = useRef('');//开始日期
     const endDate = useRef('');//结束日期
@@ -88,7 +76,6 @@ function Report(){
         dateString =dateString || '';
         year.current = dateString
     }
-
     // 获取折线图搜索开始日期
     const getStartDateChange=(date,dateString)=>{
         let startVal = dayjs(date).valueOf();
@@ -113,7 +100,6 @@ function Report(){
        }
         endDate.current = dateString;
     }
- 
     // 获取统计粒度
     const countChange=(value)=>{
         if(value === null || value === undefined){
@@ -122,7 +108,7 @@ function Report(){
             statisticType.current = value;
         }
     }
-
+    
     useEffect(()=>{
         // 设置支出收入余额搜索参数默认值
         let forwardYear = dayjs().subtract(1, 'year').format('YYYY-MM-DD');//开始日期与结束日期相差1年
@@ -135,20 +121,22 @@ function Report(){
         // 初始化调用buttonSearch内的各个函数，给各类收入、各类开支、各类支付方式饼图，概览数据赋值
         getReportAccount();
         getConsumePieData();
-        getConsumePieTypeData();
+        // getConsumePieTypeData();
         getIncomeData();
+        getAccountData();
         fetchCustomGraphsData();
        
     },[])
     
    // 设置搜索防抖功能
     const debounceReportSearch = debounce(buttonSearch,1000);
-    // 各类收入、各类开支、各类支付方式饼图搜索按钮事件
+    // 各类收入、各类开支、各类账户余额饼图搜索按钮事件
     function buttonSearch() {
         getReportAccount();
         getConsumePieData();
-        getConsumePieTypeData();
+        // getConsumePieTypeData();
         getIncomeData();
+        getAccountData();
     }
     // 获取顶部概览填充数据
     function getReportAccount() {
@@ -174,24 +162,24 @@ function Report(){
             month:month.current,
             year:year.current,
         }
-        getConsumePie(params).then((res)=>{
+        getConsume(params).then((res)=>{
             setPieData(res.data)
         }).catch((error)=>{
             console.log(error)
         })
     }
      // 获取各类支付方式占比图数据
-    function getConsumePieTypeData(){
-        let params={
-            month:month.current,
-            year:year.current,
-        }
-        getConsumePieType(params).then((res) => {
-            setPieTypeData(res.data)
-        }).catch((error)=>{
-            console.log(error)
-        })
-    }
+    // function getConsumePieTypeData(){
+    //     let params={
+    //         month:month.current,
+    //         year:year.current,
+    //     }
+    //     getConsumePieType(params).then((res) => {
+    //         setPieTypeData(res.data)
+    //     }).catch((error)=>{
+    //         console.log(error)
+    //     })
+    // }
     // 获取各类收入占比图数据
     function getIncomeData(){
         let params={
@@ -204,7 +192,18 @@ function Report(){
             console.log(error)
         })
     }
-    
+    // 获取各类财富余额占比图数据
+    function getAccountData(){
+         let params={
+            month:month.current,
+            year:year.current,
+        }
+        getAccount(params).then((res)=>{
+            setAccountData(res.data)
+        }).catch((error)=>{
+            console.log(error)
+        })
+    }
       // 获取最近半年收支情况数据
       function getLaterlyBarData(){
         getConsumeIncomeLately().then((res)=>{
@@ -482,10 +481,14 @@ function Report(){
     const editCustomPieGraph = (id) => {
          navigate(`/index/report/flow?detailId=${id}`);  
     }
+    const turnHomeView = () => {
+        navigate(`/index/report/homeView`);
+    }
+
 
     return(
     <div>
-        <header className='searchFormHeader'>
+        <header className='searchFormHeader reportSearchHeader'>
             <Form  className="reportWrap" layout="inline" name="searchReport"  size="small"  >
                     <Form.Item label="月份选择"  >
                         <DatePicker format='YYYY-MM' picker="month" onChange={getMonthChange} />
@@ -498,7 +501,8 @@ function Report(){
                         <Button type="primary" size="small" className="reportSearchBtn" onClick={detailReport}> 详细报告</Button>
                         <Button type="primary" size="small" className="reportSearchBtn" onClick={handleCustomReport}> 自定义图表</Button>
                     </Form.Item>
-            </Form>
+                </Form>
+                <Button type="text" onClick={turnHomeView} className="turnHomeView">家庭视图</Button>
         </header>
         <section>
             <div className="pieContainer">
@@ -512,11 +516,14 @@ function Report(){
                     <div className='echartsPieItem'>
                         <ArgPieEcharts id="consumePie" title="各类开支占比图" sourceData={pieData} />
                     </div>
-                    <div className='echartsPieItem'>
+                    {/* <div className='echartsPieItem'>
                         <ArgPieEcharts id="consumeTypePie" title="各类支付方式占比图" sourceData={pieTypeData} />
-                    </div>
+                    </div> */}
                     <div className='echartsPieItem'>
                          <ArgPieEcharts id="incomePie" title="各类收入占比图" sourceData={incomeData} />
+                        </div>
+                         <div className='echartsPieItem'>
+                        <ArgPieEcharts id="accountTypePie" title="各类财富余额占比图" sourceData={accountData} />
                     </div>
                 </div>
             </div>
