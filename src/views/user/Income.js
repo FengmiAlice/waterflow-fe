@@ -295,14 +295,14 @@ function Income(){
     // 编辑支出记录按钮操作
     function handleEdit(row){
          setAddFlag(false);
-        if (isAddFlag === false) {
-            incomeTime.current = row.timeStr;
-        }
-        // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
-        row.time = dayjs(row.time);
+        // 创建新的对象来设置表单值，避免直接修改row对象
+        const formValues = {
+            ...row,
+            time: dayjs(row.time) // 将时间转换为dayjs格式用于表单
+        };
         addConsumeType.current = row.typeId;
         addPaymentType.current = row.paymentId;
-        form.setFieldsValue(row); 
+        form.setFieldsValue(formValues); 
         setIncomeTitle('编辑收入记录');
         setIsModalType('common');
         setRowId(row.id);

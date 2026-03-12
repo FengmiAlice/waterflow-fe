@@ -320,10 +320,10 @@ function Consume(){
         addConsumeType.current = '';
         addPaymentType.current = '';
         setAddFlag(true);
-        if (isAddFlag === true) {
-            // console.log(isAddFlag,1111)
-            consumeTime.current = dayjs().format("YYYY-MM-DD")
-        }
+        // if (isAddFlag === true) {
+        //     // console.log(isAddFlag,1111)
+        //     consumeTime.current = dayjs().format("YYYY-MM-DD")
+        // }
         form.resetFields();
         setConsumeTitle('添加支出记录');
         setIsModalType('common');
@@ -335,15 +335,16 @@ function Consume(){
     function handleEdit(row) {
         // console.log('支出编辑',row)
         setAddFlag(false);
-        if (isAddFlag === false) {
-            //  console.log(isAddFlag,2222)
-            consumeTime.current = row.timeStr;
-        }
-        // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
-        row.time = dayjs(row.time)
+        // 创建新的对象来设置表单值，避免直接修改row对象
+        const formValues = {
+            ...row,
+            time: dayjs(row.time) // 将时间转换为dayjs格式用于弹窗表单日期显示
+        };
+        // console.log('编辑时间---',formValues.time)
         addConsumeType.current = row.typeId;
         addPaymentType.current = row.paymentId;
-        form.setFieldsValue(row) 
+        form.setFieldsValue(formValues);
+        
         setConsumeTitle('编辑支出记录');
         setIsModalType('common');
         setRowId(row.id);
@@ -448,10 +449,10 @@ function Consume(){
             if (values) {
                 let params = {
                     id: rowId,
-                    typeId: values.typeId,//addConsumeType.current
-                    time: values.time.format('YYYY-MM-DD'),//consumeTime.current
+                    typeId: values.typeId,
+                    time: values.time.format('YYYY-MM-DD'),
                     description: values.description,
-                    paymentId: values.paymentId,//addPaymentType.current
+                    paymentId: values.paymentId,
                     amount: values.amount,
                     note: values.note
                 };

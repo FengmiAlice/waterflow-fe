@@ -431,9 +431,7 @@ function Invest() {
         if (isAddFlag === false) {
             investTime.current = row.timeStr;
         }
-        // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
-        row.time = dayjs(row.time);
-        // form.setFieldsValue(row);
+        // 注意：这里不再直接修改row对象，因为updateInvestData会从API获取数据并设置表单
         
         setInvestTitle('编辑理财记录');
         setInvestOpen(true);
@@ -536,9 +534,13 @@ function Invest() {
             // console.log(isSingleFlag,2222)
             singleTime.current = row.time;
         }
-        // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
-        row.time = dayjs(row.time);
-        investSingleForm.setFieldsValue(row);
+        // // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
+        // row.time = dayjs(row.time);
+        const formValues = {
+            ...row,
+            time: dayjs(row.time) // 将时间转换为dayjs格式用于弹窗表单日期显示
+        };
+        investSingleForm.setFieldsValue(formValues);
         setInvestSingleTitle('编辑投资明细记录');
         setInvestChildrenOpen(true);
         setSingleId(row.id)

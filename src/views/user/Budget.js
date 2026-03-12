@@ -300,7 +300,6 @@ function Budge() {
     function handleEdit(row) { 
         // console.log('编辑预算', row)
         // console.log('编辑级别',scopeLevel.current)
-        // console.log(row.timeFormat)
         scopeLevel.current = row.scopeLevel;
         row.timeFormat = dayjs(row.timeFormat);
         setSelectedDate(row.timeFormat);//赋值显示在日期组件上
