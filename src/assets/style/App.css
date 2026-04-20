@@ -396,6 +396,10 @@ margin:10px 0;
     border-color:#f56c6c;
     border-radius: 4px;
 }
+.redTips{
+    color:#f56c6c;
+    margin-bottom: 10px;
+}
 .investProfitBtn{
     color: #fff;
     background-color: #e6a23c;

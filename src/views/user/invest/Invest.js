@@ -725,7 +725,10 @@ function Invest() {
                             <Button size="small" onClick={debounceInvestSubmit} type="primary"> 提交</Button>
                             <Button size="small" onClick={handleRed} className="investRedBtn">分红</Button>
                             {isAddFlag ===false && <Button size="small" onClick={handleProfit} className="investProfitBtn">更新收益</Button>}
+                           
                         </Space>
+                       
+                      
                     }
                 >
 
@@ -761,6 +764,7 @@ function Invest() {
                                 <TextArea row={1} placeholder="请输入补充描述，记录一段往事供将来回忆" allowClear/>
                         </Form.Item>
                 </Form>
+                 <div class="redTips">温馨提示：请先更新收益，再进行买入或者卖出操作，不然数据会错乱!!!</div>
                 {isAddFlag === false && <Button size="small" onClick={handleSingleInvest} type="primary"> 买入或卖出</Button>}
            
                 {isAddFlag === false && 
