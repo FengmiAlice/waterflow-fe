@@ -148,12 +148,10 @@ function Invest() {
                     return(
                         <Space size="middle" >
                             <div className='largeBtnBox'>
-                                <Button size="small" type="primary"  onClick={ ()=> handleSingleEdit(record)}>编辑</Button>
-                                <Button size="small" type="danger"   onClick={ ()=> handleSingleDelete(record)}>删除</Button>
+                                <Button size="small" type="primary"  onClick={ ()=> handleSingleDetail(record)}>详情</Button>
                             </div>
                             <div className="miniBtnBox">
-                                <Button size="small" type="text"  className='miniPrimaryBtn' onClick={ ()=> handleSingleEdit(record)}>编辑</Button>
-                                <Button size="small" type="text"  danger onClick={ ()=> handleSingleDelete(record)}>删除</Button>
+                                <Button size="small" type="text"  className='miniPrimaryBtn' onClick={ ()=> handleSingleDetail(record)}>详情</Button>
                             </div>
                         </Space>
                     )
@@ -526,22 +524,21 @@ function Invest() {
         setSingleId('');
     }
 
-    // 编辑投资明细买入卖出
-    function handleSingleEdit(row) {
-        // console.log('投资明细记录编辑---', row)
+    // 投资明细详情
+    function handleSingleDetail(row) {
+        // console.log('投资明细详情---', row)
         setIsSingleFlag(false);
         if (isSingleFlag === false) { 
-            // console.log(isSingleFlag,2222)
+            console.log(isSingleFlag,2222)
             singleTime.current = row.time;
         }
-        // // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
-        // row.time = dayjs(row.time);
+        // 将返回的时间转换为dayjs格式用于编辑显示在时间组件上
         const formValues = {
             ...row,
             time: dayjs(row.time) // 将时间转换为dayjs格式用于弹窗表单日期显示
         };
         investSingleForm.setFieldsValue(formValues);
-        setInvestSingleTitle('编辑投资明细记录');
+        setInvestSingleTitle('投资明细详情');
         setInvestChildrenOpen(true);
         setSingleId(row.id)
     }
